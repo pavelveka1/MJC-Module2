@@ -1,1 +1,1 @@
-# MJC-Module2
+# Template for module 2
