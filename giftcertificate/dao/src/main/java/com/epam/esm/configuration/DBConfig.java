@@ -1,16 +1,19 @@
 package com.epam.esm.configuration;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
+
 
 /**
  * DBConfig class for configure data source and jdbcTemplate as beans of Spring
@@ -18,9 +21,11 @@ import java.beans.PropertyVetoException;
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
 @PropertySource("classpath:db.properties")
+@EnableTransactionManagement
 @EnableWebMvc
 public class DBConfig {
 
+    private Logger logger = Logger.getLogger(DBConfig.class);
     /**
      * String field for driver class of DB
      */
@@ -60,15 +65,15 @@ public class DBConfig {
             dataSource.setUser(USER_NAME);
             dataSource.setPassword(PASSWORD);
         } catch (PropertyVetoException e) {
-            e.printStackTrace();
+            logger.error("Error while setting fields for dataSource");
         }
         return dataSource;
     }
 
     /**
-     * Configure JdbcTemplate bean
+     * Configure JdbcTemplate bean for 'prod' profile
      *
-     * @return
+     * @return JdbcTemplate
      */
     @Bean
     @Profile("prod")
@@ -89,9 +94,21 @@ public class DBConfig {
                 .build();
     }
 
+    /**
+     * Configure JdbcTemplate bean for 'dev' profile
+     *
+     * @return JdbcTemplate
+     */
     @Bean
     @Profile("dev")
     public JdbcTemplate testJdbcTemplate() {
         return new JdbcTemplate(testDataSource());
     }
+
+    @Bean
+    @Profile("prod")
+    public DataSourceTransactionManager dataSourceTransactionManagerProd() {
+        return new DataSourceTransactionManager(dataSourceProd());
+    }
+
 }

@@ -1,13 +1,9 @@
 package com.epam.esm.service.impl;
 
-import com.epam.esm.dao.impl.GiftCertificateJDBCTemplate;
-import com.epam.esm.dao.impl.TagJDBCTemplate;
+import com.epam.esm.dao.impl.GiftCertificateDAOImpl;
+import com.epam.esm.dao.impl.TagDAOImpl;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DuplicateEntryDAOException;
-import com.epam.esm.exception.IdNotExistDAOException;
-import com.epam.esm.exception.RequestParamDAOException;
-import com.epam.esm.exception.UpdateDAOException;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
@@ -27,7 +23,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -36,11 +38,11 @@ import java.util.List;
 public class GiftCertificateServiceImplTest {
 
     @Mock
-    private TagJDBCTemplate tagJDBCTemplate;
+    private TagDAOImpl tagDAOImpl;
     @Mock
     private ModelMapper modelMapper;
     @Mock
-    private GiftCertificateJDBCTemplate giftCertificateJDBCTemplate;
+    private GiftCertificateDAOImpl giftCertificateDAOImpl;
 
     @InjectMocks
     private GiftSertificateServiceImpl giftCertificateService = new GiftSertificateServiceImpl();
@@ -121,15 +123,14 @@ public class GiftCertificateServiceImplTest {
         giftCertificate3.setPrice(giftCertificateDto3.getPrice());
 
         tagDto.setCertificates(giftCertificateDtoList);
-        tag.setCertificates(giftCertificateList);
         giftCertificateDto.setTags(tagDtoList);
-        giftCertificate.setTags(tags);
+
     }
 
     @DisplayName("should be returned created gift certificate")
     @Test
-    public void createGiftCertificate() throws DuplicateEntryDAOException, TagNameNotExistServiceException, DuplicateEntryServiceException {
-        when(giftCertificateJDBCTemplate.create(giftCertificate)).thenReturn(giftCertificate);
+    public void createGiftCertificate() throws DuplicateEntryServiceException, TagNotExistServiceException {
+        when(giftCertificateDAOImpl.create(giftCertificate)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
         assertEquals(giftCertificateDto, giftCertificateService.create(giftCertificateDto));
@@ -137,27 +138,37 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be thrown duplicateEntryServiceException")
     @Test
-    public void createGiftCertificateDuplicateEntryException() throws DuplicateEntryDAOException {
-        when(giftCertificateJDBCTemplate.create(giftCertificate)).thenThrow(DuplicateEntryDAOException.class);
+    public void createGiftCertificateDuplicateEntryException() throws SQLIntegrityConstraintViolationException {
+        when(giftCertificateDAOImpl.create(giftCertificate)).thenThrow(DuplicateKeyException.class);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         assertThrows(DuplicateEntryServiceException.class, () -> {
             giftCertificateService.create(giftCertificateDto);
         });
     }
 
+    @DisplayName("should be thrown TagNotExistServiceException")
+    @Test
+    public void createGiftCertificateTagNotExistServiceException() throws TagNotExistServiceException {
+        when(giftCertificateDAOImpl.create(giftCertificate2)).thenThrow(DataIntegrityViolationException.class);
+        when(modelMapper.map(giftCertificateDto2, GiftCertificate.class)).thenReturn(giftCertificate2);
+        assertThrows(TagNotExistServiceException.class, () -> {
+            giftCertificateService.create(giftCertificateDto2);
+        });
+    }
+
     @DisplayName("should be renurned giftCertificateDto")
     @Test
-    public void readGiftCertificateById() throws IdNotExistDAOException, IdNotExistServiceException {
-        GiftCertificate giftCertificate = giftCertificateList.get(1);
-        when(giftCertificateJDBCTemplate.read(2)).thenReturn(giftCertificate);
+    public void readGiftCertificateById() throws IdNotExistServiceException {
+        GiftCertificate giftCertificate = giftCertificateList.get(0);
+        when(giftCertificateDAOImpl.read(2)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
         assertEquals(giftCertificateDto, giftCertificateService.read(2));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void readGiftCertificateByNotExistId() throws IdNotExistDAOException {
-        when(giftCertificateJDBCTemplate.read(10)).thenThrow(IdNotExistDAOException.class);
+    public void readGiftCertificateByNotExistId() {
+        when(giftCertificateDAOImpl.read(10)).thenThrow(EmptyResultDataAccessException.class);
         assertThrows(IdNotExistServiceException.class, () -> {
             giftCertificateService.read(10);
         });
@@ -165,28 +176,20 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be returned updated giftCertificateDto")
     @Test
-    public void updateGiftCertificate() throws IdNotExistServiceException, IdNotExistDAOException, UpdateDAOException, UpdateServiceException {
-        GiftCertificateDto giftCertificateDto2 = new GiftCertificateDto();
-        giftCertificateDto2.setName("giftCertificateDto 2");
-        giftCertificateDto2.setDescription("description 2 giftCertificateDto");
-        giftCertificateDto2.setPrice(10);
-        giftCertificateDto2.setDuration(30);
-        giftCertificateDto2.setId(4);
-        when(modelMapper.map(giftCertificateDto2, GiftCertificate.class)).thenReturn(giftCertificate);
-        GiftCertificate giftCertificate = giftCertificateList.get(1);
-        when(giftCertificateJDBCTemplate.read(4)).thenReturn(giftCertificate);
-        when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto2);
-        when(modelMapper.map(giftCertificateDto2, GiftCertificate.class)).thenReturn(giftCertificate);
-        when(giftCertificateJDBCTemplate.update(giftCertificate)).thenReturn(giftCertificate);
-        assertEquals(giftCertificateDto2, giftCertificateService.update(giftCertificateDto2));
+    public void updateGiftCertificate() throws IdNotExistServiceException, UpdateServiceException {
+        when(modelMapper.map(giftCertificateDto3, GiftCertificate.class)).thenReturn(giftCertificate3);
+        when(giftCertificateDAOImpl.read(8)).thenReturn(giftCertificate3);
+        when(modelMapper.map(giftCertificate3, GiftCertificateDto.class)).thenReturn(giftCertificateDto3);
+        when(giftCertificateDAOImpl.update(giftCertificate3)).thenReturn(1);
+        assertEquals(giftCertificateDto3, giftCertificateService.update(giftCertificateDto3));
     }
 
-    @DisplayName("should be thrown IdNotExistServiceException")
+    @DisplayName("should be thrown UpdateServiceException")
     @Test
-    public void updateGiftCertificateIdNotExist() throws IdNotExistDAOException {
+    public void updateGiftCertificateIdNotExist() {
         when(modelMapper.map(giftCertificateDto2, GiftCertificate.class)).thenReturn(giftCertificate2);
-        when(giftCertificateJDBCTemplate.read(9)).thenThrow(IdNotExistDAOException.class);
-        assertThrows(IdNotExistServiceException.class, () -> {
+        when(giftCertificateDAOImpl.update(giftCertificate2)).thenReturn(0);
+        assertThrows(UpdateServiceException.class, () -> {
             giftCertificateService.update(giftCertificateDto2);
         });
     }
@@ -194,36 +197,60 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be returned list of giftCertificateDto")
     @Test
-    public void findAllGiftCertificates() throws RequestParamDAOException, RequestParamServiceException {
-        when(giftCertificateJDBCTemplate.findAll("name", "DESC")).thenReturn(giftCertificateList);
+    public void findAllGiftCertificates() throws RequestParamServiceException, SQLSyntaxErrorException {
+        when(giftCertificateDAOImpl.findAll("name", "DESC")).thenReturn(giftCertificateList);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
-        assertEquals(giftCertificateDtoList, giftCertificateService.findAll("name", "DESC"));
+        assertEquals(giftCertificateDtoList, giftCertificateService.findAll(null, null, "name",
+                "DESC"));
     }
 
     @DisplayName("should be thrown RequestParamServiceException")
     @Test
-    public void findAllGiftCertificatesRequestParamsAreNotValid() throws RequestParamDAOException {
-        when(giftCertificateJDBCTemplate.findAll(null, null)).thenThrow(RequestParamDAOException.class);
+    public void findAllGiftCertificatesRequestParamsAreNotValid() throws SQLSyntaxErrorException {
+        when(giftCertificateDAOImpl.findAll("badParam", "asc")).thenThrow(BadSqlGrammarException.class);
         assertThrows(RequestParamServiceException.class, () -> {
-            giftCertificateService.findAll(null, null);
+            giftCertificateService.findAll(null, null, "badParam", null);
         });
     }
 
+    @DisplayName("should be returned list of certificates by tad's name")
+    @Test
+    public void findAllGiftCertificatesByTagName() throws SQLSyntaxErrorException, RequestParamServiceException {
+        List<Tag> tags = new ArrayList<>();
+        when(giftCertificateDAOImpl.findAllCertificatesByTagName("спорт", "id", "asc"))
+                .thenReturn(giftCertificateList);
+        when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
+        when(tagDAOImpl.getTagsByGiftCertificateId(anyLong())).thenReturn(tags);
+        assertEquals(giftCertificateDtoList,
+                giftCertificateService.findAll("tag", "спорт", "id", "asc"));
+    }
+
+    @DisplayName("should be returned list of certificates by name or description")
+    @Test
+    public void findAllGiftCertificatesByNameOrDescription() throws SQLSyntaxErrorException, RequestParamServiceException {
+        List<Tag> tags = new ArrayList<>();
+        when(giftCertificateDAOImpl.findAllCertificatesByNameOrDescription("спорт", "id",
+                "asc")).thenReturn(giftCertificateList);
+        when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
+        when(tagDAOImpl.getTagsByGiftCertificateId(anyLong())).thenReturn(tags);
+        assertEquals(giftCertificateDtoList,
+                giftCertificateService.findAll("name", "спорт", "id", "asc"));
+    }
+
+
     @DisplayName("should be called delete method from DAO")
     @Test
-    public void deleteGiftCertificateById() throws IdNotExistServiceException, IdNotExistDAOException {
-        doNothing().when(giftCertificateJDBCTemplate).delete(5);
-        GiftCertificate giftCertificate = giftCertificateList.get(0);
-        giftCertificateService.delete(5);
-        verify(giftCertificateJDBCTemplate, times(1)).delete(5);
+    public void deleteGiftCertificateById() throws IdNotExistServiceException {
+        when(giftCertificateDAOImpl.delete(1)).thenReturn(1);
+        assertEquals(1, giftCertificateDAOImpl.delete(1));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void deleteGiftCertificateByNotExistId() throws IdNotExistDAOException, IdNotExistServiceException {
-        doNothing().when(giftCertificateJDBCTemplate).delete(7);
-        giftCertificateService.delete(7);
-        verify(giftCertificateJDBCTemplate, times(1)).delete(7);
-
+    public void deleteGiftCertificateByNotExistId() throws IdNotExistServiceException {
+        when(giftCertificateDAOImpl.delete(9)).thenReturn(0);
+        assertThrows(IdNotExistServiceException.class, () -> {
+            giftCertificateService.delete(9);
+        });
     }
 }

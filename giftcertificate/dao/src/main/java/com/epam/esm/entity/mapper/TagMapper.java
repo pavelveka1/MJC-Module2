@@ -1,5 +1,6 @@
-package com.epam.esm.entity;
+package com.epam.esm.entity.mapper;
 
+import com.epam.esm.entity.Tag;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
@@ -26,10 +27,10 @@ public class TagMapper implements RowMapper<Tag> {
     /**
      * Method for mapping data from resultSet to Tag
      *
-     * @param rs
-     * @param rowNum
+     * @param rs     ResultSet
+     * @param rowNum number of rows
      * @return Tag with filled fields
-     * @throws SQLException
+     * @throws SQLException if ResultSet don't contains appropriate value
      */
     @Override
     public Tag mapRow(ResultSet rs, int rowNum) throws SQLException {

@@ -8,13 +8,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * @Class TagDto
+ * Class TagDto
  */
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class TagDto {
-    private Integer id;
+    private Long id;
     private String name;
     private List<GiftCertificateDto> certificates = new ArrayList<>();
 

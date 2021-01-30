@@ -1,13 +1,12 @@
-package com.epam.esm.entity;
+package com.epam.esm.entity.mapper;
 
+import com.epam.esm.entity.GiftCertificate;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Component;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
+
 
 /**
  * Class implements interface what is used by JdbcTemplate for mapping rows
@@ -17,32 +16,32 @@ import java.time.ZoneId;
 public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
 
     /**
-     * id field is mapping with id field GiftCertificate class
+     * Id field is mapping with id field GiftCertificate class
      */
     private static final String ID = "id";
 
     /**
-     * name field is mapping with name field GiftCertificate class
+     * Name field is mapping with name field GiftCertificate class
      */
     private static final String NAME = "name";
 
     /**
-     * description field is mapping with description field GiftCertificate class
+     * Description field is mapping with description field GiftCertificate class
      */
     private static final String DESCRIPTION = "description";
 
     /**
-     * price field is mapping with price field GiftCertificate class
+     * Price field is mapping with price field GiftCertificate class
      */
     private static final String PRICE = "price";
 
     /**
-     * duration field is mapping with duration field GiftCertificate class
+     * Duration field is mapping with duration field GiftCertificate class
      */
     private static final String DURATION = "duration";
 
     /**
-     * create_date field is mapping with createDate field GiftCertificate class
+     * Create_date field is mapping with createDate field GiftCertificate class
      */
     private static final String CREATE_DATE = "create_date";
 
@@ -54,8 +53,8 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
     /**
      * Method for mapping data from resultSet to GiftCertificate
      *
-     * @param rs
-     * @param rowNum
+     * @param rs     ResultSet
+     * @param rowNum number of row
      * @return GiftCertificate with filled fields
      * @throws SQLException
      */
@@ -71,6 +70,4 @@ public class GiftCertificateMapper implements RowMapper<GiftCertificate> {
         giftCertificate.setLastUpdateDate(rs.getTimestamp(LAST_UPDATE_DATE).toLocalDateTime());
         return giftCertificate;
     }
-
-
 }

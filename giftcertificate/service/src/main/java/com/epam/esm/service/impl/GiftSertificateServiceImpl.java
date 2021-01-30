@@ -1,7 +1,5 @@
 package com.epam.esm.service.impl;
 
-import java.time.LocalDateTime;
-import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -9,25 +7,37 @@ import java.util.stream.Collectors;
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.entity.GiftCertificate;
+
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.*;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
 import lombok.Data;
+import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * @class GiftCertificateService
+ * Class GiftCertificateService
  * Contains methods for work with GiftCertificateDto
  */
 @Service
 @Data
 public class GiftSertificateServiceImpl implements GiftCertificateService {
+
+    private static final Logger logger = Logger.getLogger(GiftSertificateServiceImpl.class);
+    private static final String DEFAULT_SORT_ORDER = "asc";
+    private static final String DEFAULT_SORT_TYPE = "id";
+    private static final String SEARCH_BY_TAG = "tag";
+    private static final String SEARCH_BY_NAME = "name";
+    private static final String SEARCH_BY_DESCRIPTION = "description";
 
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -59,7 +69,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      *
      * @param giftCertificateDAO for operations with GiftCertivicate
      * @param tagDAO             for operations with Tag
-     * @param modelMapper                 for convertion object
+     * @param modelMapper        for convertion object
      */
     public GiftSertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDAO tagDAO, ModelMapper modelMapper) {
         this.giftCertificateDAO = giftCertificateDAO;
@@ -76,19 +86,21 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException, TagNameNotExistServiceException {
+    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws TagNotExistServiceException,
+            DuplicateEntryServiceException {
         GiftCertificate createdGiftCertificate;
-
         try {
-            createAndSetTags(giftCertificateDto);
             createdGiftCertificate = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
-            return modelMapper.map(createdGiftCertificate, GiftCertificateDto.class);
-        } catch (DuplicateEntryDAOException e) {
-            throw new DuplicateEntryServiceException(e.getMessage());
-        } catch (TagNameNotExistDAOException ex) {
-            throw new TagNameNotExistServiceException(ex.getMessage());
+            List<Tag> tags = giftCertificateDto.getTags().stream()
+                    .map(tagDto -> modelMapper.map(tagDto, Tag.class))
+                    .collect(Collectors.toList());
+            giftCertificateDAO.attachTags(createdGiftCertificate.getId(), tags);
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateEntryServiceException("Gift certificate with same name or description alredy is exist");
+        } catch (DataIntegrityViolationException e1) {
+            throw new TagNotExistServiceException("You tried to add not exist Tag to GiftCertificate");
         }
-
+        return modelMapper.map(createdGiftCertificate, GiftCertificateDto.class);
     }
 
     /**
@@ -99,15 +111,22 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
     @Override
-    @Transactional
     public GiftCertificateDto read(long id) throws IdNotExistServiceException {
         GiftCertificate foundCertificate;
+        GiftCertificateDto giftCertificateDto;
+        List<TagDto> tagsDto = null;
         try {
             foundCertificate = giftCertificateDAO.read(id);
-        } catch (IdNotExistDAOException e) {
-            throw new IdNotExistServiceException(e.getMessage());
+            List<Tag> tags = tagDAO.getTagsByGiftCertificateId(foundCertificate.getId());
+            tagsDto = tags.stream()
+                    .map(tag -> modelMapper.map(tag, TagDto.class))
+                    .collect(Collectors.toList());
+        } catch (EmptyResultDataAccessException e) {
+            throw new IdNotExistServiceException("There is not GiftCertificate with id = " + id + " in DB");
         }
-        return modelMapper.map(foundCertificate, GiftCertificateDto.class);
+        giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
+        giftCertificateDto.setTags(tagsDto);
+        return giftCertificateDto;
     }
 
     /**
@@ -118,18 +137,16 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public GiftCertificateDto update(GiftCertificateDto modifiedGiftCertificateDto) throws IdNotExistServiceException, UpdateServiceException {
-        GiftCertificate updateGiftCertificate;
+    public GiftCertificateDto update(GiftCertificateDto modifiedGiftCertificateDto) throws IdNotExistServiceException,
+            UpdateServiceException {
         GiftCertificate modifiedGiftCertificate = modelMapper.map(modifiedGiftCertificateDto, GiftCertificate.class);
-        GiftCertificateDto readGiftCertificateDto = read(modifiedGiftCertificateDto.getId());
-        GiftCertificate readGiftCertificate = modelMapper.map(readGiftCertificateDto, GiftCertificate.class);
-        updateGiftCertificateFields(readGiftCertificate, modifiedGiftCertificate);
-        try {
-            updateGiftCertificate = giftCertificateDAO.update(readGiftCertificate);
-        } catch (UpdateDAOException e) {
-            throw new UpdateServiceException(e.getMessage());
+        int i = giftCertificateDAO.update(modifiedGiftCertificate);
+        if (i == 0) {
+            logger.info("GiftCertificate is not updated in DB");
+            throw new UpdateServiceException("giftCertificate has not been updated");
         }
-        return modelMapper.map(updateGiftCertificate, GiftCertificateDto.class);
+        logger.info("GiftCertificate has been updated in DB");
+        return read(modifiedGiftCertificateDto.getId());
     }
 
     /**
@@ -139,13 +156,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @throws IdNotExistServiceException if record with such id not exist in DB
      */
     @Override
-    @Transactional
     public void delete(long id) throws IdNotExistServiceException {
-        try {
-            giftCertificateDAO.delete(id);
-        } catch (IdNotExistDAOException e) {
-            throw new IdNotExistServiceException(e.getMessage());
+        int i = giftCertificateDAO.delete(id);
+        if (i == 0) {
+            logger.info("GiftCertificate isn't deleted from DB");
+            throw new IdNotExistServiceException("GiftCertificate with id = " + id + "is not exist in DB");
         }
+        logger.info("GiftCertificate is deleted from DB");
     }
 
     /**
@@ -157,65 +174,65 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @throws RequestParamServiceException if parameters don't right
      */
     @Override
-    @Transactional
-    public List<GiftCertificateDto> findAll(String sortType, String orderType) throws RequestParamServiceException {
-        List<GiftCertificate> giftCertificates;
+    public List<GiftCertificateDto> findAll(String search, String value, String sortType, String orderType)
+            throws RequestParamServiceException {
+        List<GiftCertificate> giftCertificates = new ArrayList<>();
+        List<GiftCertificateDto> giftCertificateDtoList = null;
         try {
-            giftCertificates = giftCertificateDAO.findAll(sortType, orderType);
-        } catch (RequestParamDAOException e) {
-            throw new RequestParamServiceException(e.getMessage());
-        }
-        return giftCertificates.stream()
-                .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
-
-
-    /**
-     * Method creates tags in DB if such tags aren't exist yet
-     *
-     * @param giftCertificateDto it contains data of GiftCertificate
-     * @throws TagNameNotExistDAOException
-     */
-    private void createAndSetTags(GiftCertificateDto giftCertificateDto) throws TagNameNotExistDAOException {
-        List<TagDto> tags = new ArrayList<>();
-        if (giftCertificateDto.getTags() != null) {
-            TagDto add;
-            for (TagDto tagDto : giftCertificateDto.getTags()) {
-                Tag tag = modelMapper.map(tagDto, Tag.class);
-                try {
-                    tag = tagDAO.create(tag);
-                    add = modelMapper.map(tag, TagDto.class);
-                    tags.add(add);
-                } catch (DuplicateEntryDAOException tagExist) {
-                    add = modelMapper.map(tagDAO.readTagByName(tag.getName()), TagDto.class);
-                    tags.add(add);
+            if (search != null) {
+                giftCertificateDtoList = searchCertificates(search, value, sortType, orderType);
+            } else {
+                if (sortType == null) {
+                    giftCertificates = giftCertificateDAO.findAll(DEFAULT_SORT_TYPE, DEFAULT_SORT_ORDER);
+                } else {
+                    if (orderType == null) {
+                        orderType = DEFAULT_SORT_ORDER;
+                    }
+                    giftCertificates = giftCertificateDAO.findAll(sortType, orderType);
                 }
             }
-            giftCertificateDto.setTags(tags);
+        } catch (BadSqlGrammarException e) {
+            throw new RequestParamServiceException("Passed parameters don't match with allowable");
+        }
+        if (giftCertificateDtoList == null) {
+            giftCertificateDtoList = giftCertificates.stream()
+                    .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
+                    .collect(Collectors.toList());
+        }
+        setTags(giftCertificateDtoList);
+        return giftCertificateDtoList;
+    }
+
+    private void setTags(List<GiftCertificateDto> giftCertificateDtoList) {
+        for (GiftCertificateDto giftCertificateDto : giftCertificateDtoList) {
+            List<Tag> tags = tagDAO.getTagsByGiftCertificateId(giftCertificateDto.getId());
+            List<TagDto> tagsDto = tags.stream()
+                    .map(tag -> modelMapper.map(tag, TagDto.class))
+                    .collect(Collectors.toList());
+            giftCertificateDto.setTags(tagsDto);
         }
     }
 
-    /**
-     * Method updates fieflds GiftCertificate
-     *
-     * @param readGiftCertificateDto  original GiftCertificate
-     * @param modifiedGiftCertificate updated GiftCertificate
-     */
-    private void updateGiftCertificateFields(GiftCertificate readGiftCertificateDto, GiftCertificate
-            modifiedGiftCertificate) {
-        if (modifiedGiftCertificate.getDuration() != null) {
-            readGiftCertificateDto.setDuration(modifiedGiftCertificate.getDuration());
+    private List<GiftCertificateDto> searchCertificates(String search, String value, String sortType, String orderType)
+            throws RequestParamServiceException {
+        List<GiftCertificate> giftCertificateList = new ArrayList<>();
+        if (sortType == null) {
+            sortType = DEFAULT_SORT_TYPE;
         }
-        if (modifiedGiftCertificate.getDescription() != null) {
-            readGiftCertificateDto.setDescription(modifiedGiftCertificate.getDescription());
+        if (orderType == null) {
+            orderType = DEFAULT_SORT_ORDER;
         }
-        if (modifiedGiftCertificate.getName() != null) {
-            readGiftCertificateDto.setName(modifiedGiftCertificate.getName());
+        if (search != null & value != null) {
+            if (search.equals(SEARCH_BY_TAG)) {
+                giftCertificateList = giftCertificateDAO.findAllCertificatesByTagName(value, sortType, orderType);
+            } else if (search.equals(SEARCH_BY_NAME) || search.equals(SEARCH_BY_DESCRIPTION)) {
+                giftCertificateList = giftCertificateDAO.findAllCertificatesByNameOrDescription(value, sortType, orderType);
+            } else {
+                throw new RequestParamServiceException("Passed parameters don't match with allowable");
+            }
         }
-        if (modifiedGiftCertificate.getPrice() != null) {
-            readGiftCertificateDto.setPrice(modifiedGiftCertificate.getPrice());
-        }
-        readGiftCertificateDto.setLastUpdateDate(LocalDateTime.now(ZoneOffset.systemDefault()));
+        return giftCertificateList.stream()
+                .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
+                .collect(Collectors.toList());
     }
 }

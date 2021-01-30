@@ -5,11 +5,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
 
 /**
- * class entity Tag
+ * Class entity Tag
  *
  * @author Pavel Veka
  */
@@ -21,29 +19,13 @@ public class Tag implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id of Tag
+     * Id of Tag
      */
     private long id;
 
     /**
-     * name of Tag
+     * Name of Tag
      */
     private String name;
-
-    /**
-     * list of GiftCertificates linked with Tag
-     */
-    private List<GiftCertificate> certificates = new ArrayList<>();
-
-    /**
-     * Constructor with two parameter
-     *
-     * @param id
-     * @param name
-     */
-    public Tag(long id, String name) {
-        this.id = id;
-        this.name = name;
-    }
 
 }

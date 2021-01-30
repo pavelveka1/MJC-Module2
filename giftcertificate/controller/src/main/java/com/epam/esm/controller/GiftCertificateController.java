@@ -30,6 +30,9 @@ public class GiftCertificateController {
     @Autowired
     private GiftCertificateService service;
 
+    /**
+     * giftCertificateDtoValidator is used  for validation of GiftCertificateDto
+     */
     @Autowired
     private Validator giftCertificateDtoValidator;
 
@@ -39,39 +42,43 @@ public class GiftCertificateController {
     }
 
     /**
+     * method readAll - reads all GiftCertificates from DB
+     *
      * @param sortType  - it is name of field in table gitf_certificates of DB
      * @param orderType ASC or DESC
      * @return List<GiftCertificateDto>
      * @throws RequestParamServiceException if params don't correlate with name of field in DB
-     *                                      method readAll - read all GiftCertificates fro DB
      */
-    @GetMapping("/gift_certificates")
-    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String sortType, @RequestParam(required = false) String orderType) throws RequestParamServiceException {
+    @GetMapping("/giftCertificates")
+    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search, @RequestParam(required = false) String value, @RequestParam(required = false) String sortType, @RequestParam(required = false) String orderType) throws RequestParamServiceException {
         logger.info("read all giftCertificates");
-        return service.findAll(sortType, orderType);
+        return service.findAll(search, value, sortType, orderType);
     }
 
     /**
+     * method read - read one GiftCertificate from DB by passed id
+     *
      * @param id of GiftCertificate
      * @return GiftCertificateDto
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
-     *                                    method read - read one GiftCertificate from DB by passed id
      */
-    @GetMapping("/gift_certificates/{id}")
+    @GetMapping("/giftCertificates/{id}")
     public GiftCertificateDto read(@PathVariable @Min(5) int id) throws IdNotExistServiceException {
         return service.read(id);
     }
 
     /**
+     * Method create - creates new GiftCertificate in DB
+     *
      * @param giftCertificateDto contains data for creation of GiftCertificate
      * @return created GiftCertificate as GiftCertificateDto
      * @throws DuplicateEntryServiceException  if such giftCertificate alredy exist in DB
      * @throws TagNameNotExistServiceException if Tag with such name is not found
-     *                                         method create - creates new GiftCertificate in DB
+     * @throws ValidationException             if passed GiftCertificateDto is not valid
      */
-    @PostMapping("/gift_certificates")
+    @PostMapping("/giftCertificates")
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, TagNameNotExistServiceException, ValidationException {
+    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, TagNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto is not valid for create operation");
         }
@@ -79,13 +86,15 @@ public class GiftCertificateController {
     }
 
     /**
+     * Method update - updates GiftCertificate
+     *
      * @param giftCertificateDto modified
      * @return updated GiftCertificate as GiftCertificateDto
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
-     *                                    method update - updates GiftCertificate
+     * @throws UpdateServiceException     if giftCertificate hasn't been updated
+     * @throws ValidationException        if passed GiftCertificateDto is not valid
      */
-  //  @PutMapping("/gift_certificates")
-    @PutMapping("/gift_certificates")
+    @PutMapping("/giftCertificates")
     public GiftCertificateDto update(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws IdNotExistServiceException, ValidationException, UpdateServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto is not valid for update operation!");
@@ -94,11 +103,12 @@ public class GiftCertificateController {
     }
 
     /**
+     * method delete - delete GiftCertificate from DB by id
+     *
      * @param id of GiftCertificate
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
-     *                                    method delete - delete GiftCertificate from DB by id
      */
-    @DeleteMapping("/gift_certificates/{id}")
+    @DeleteMapping("/giftCertificates/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id) throws IdNotExistServiceException {
         service.delete(id);

@@ -7,6 +7,19 @@ import org.springframework.validation.Validator;
 
 @Component
 public class GiftCertificateDtoValidator implements Validator {
+    private static final String NAME_PATTERN = ".{2,45}";
+    private static final String DESCRIPTION_PATTERN = ".{2,300}";
+    private static final int MIN_PRICE = 0;
+    private static final int MIN_DURATION = 0;
+    private static final String NAME = "name";
+    private static final String DESCRIPTION = "description";
+    private static final String PRICE = "price";
+    private static final String DURATION = "duration";
+    private static final String CERTIFICATE_NAME_INCORRECT = "certificate.name.incorrect";
+    private static final String CERTIFICATE_DESCRIPTION_INCORRECT = "certificate.description.incorrect";
+    private static final String CERTIFICATE_PRICE_INCORRECT = "certificate.price.incorrect";
+    private static final String CERTIFICATE_DURATION_INCORRECT = "certificate.duration.incorrect";
+
     @Override
     public boolean supports(Class<?> clazz) {
         return GiftCertificateDto.class.equals(clazz);
@@ -15,14 +28,18 @@ public class GiftCertificateDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         GiftCertificateDto giftCertificateDto = (GiftCertificateDto) target;
-        if (!giftCertificateDto.getName().matches(".{2,45}")) {
-            errors.rejectValue("name", "certificate.name.incorrect");
-        } else if (!giftCertificateDto.getDescription().matches(".{2,300}")) {
-            errors.rejectValue("description", "certificate.description.incorrect");
-        } else if (giftCertificateDto.getPrice() <= 0) {
-            errors.rejectValue("price", "certificate.price.incorrect");
-        } else if (giftCertificateDto.getDuration() <= 0) {
-            errors.rejectValue("duration", "certificate.duration.incorrect");
+        if (giftCertificateDto.getName() == null) {
+            errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
+        } else if (giftCertificateDto.getDescription() == null) {
+            errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
+        } else if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
+            errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
+        } else if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
+            errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
+        } else if (giftCertificateDto.getPrice() <= MIN_PRICE) {
+            errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
+        } else if (giftCertificateDto.getDuration() <= MIN_DURATION) {
+            errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
         }
     }
 }

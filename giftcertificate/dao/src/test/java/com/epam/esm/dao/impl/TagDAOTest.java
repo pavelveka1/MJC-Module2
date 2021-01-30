@@ -1,16 +1,14 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.configuration.DBConfig;
-import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.GiftCertificateMapper;
+import com.epam.esm.entity.mapper.GiftCertificateMapper;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.TagMapper;
-import com.epam.esm.exception.DuplicateEntryDAOException;
-import com.epam.esm.exception.IdNotExistDAOException;
-import com.epam.esm.exception.TagNameNotExistDAOException;
+import com.epam.esm.entity.mapper.TagMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
@@ -26,25 +24,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 @WebAppConfiguration
 public class TagDAOTest {
 
-    private static final String GET_TAG_BY_ID = "SELECT * FROM gift_db.tags where gift_db.tags.id=?";
-    private static final String GET_CERTIFICATES_BY_TAG_ID = "SELECT \n" +
-            "gift_db.gift_certificates.id,\n" +
-            "gift_db.gift_certificates.name,\n" +
-            "gift_db.gift_certificates.description,\n" +
-            "gift_db.gift_certificates.price,\n" +
-            "gift_db.gift_certificates.duration,\n" +
-            "gift_db.gift_certificates.create_date,\n" +
-            "gift_db.gift_certificates.last_update_date \n" +
-            "FROM gift_db.gift_certificates_has_tags\n" +
-            "join gift_db.gift_certificates\n" +
-            "on gift_db.gift_certificates_has_tags.gift_certificates_id = gift_db.gift_certificates.id\n" +
-            "where gift_db.gift_certificates_has_tags.tags_id = ?;";
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private TagJDBCTemplate tagJDBCTemplate;
+    private TagDAOImpl tagDAOImpl;
 
     @Autowired
     private GiftCertificateMapper giftCertificateMapper;
@@ -54,90 +38,81 @@ public class TagDAOTest {
 
     @DisplayName("should create tag in DB and return this one")
     @Test
-    public void createTag() throws DuplicateEntryDAOException {
+    public void createTag() {
         Tag tag = new Tag();
-        tag.setName("Test tag");
-
-        Tag createdTag = tagJDBCTemplate.create(tag);
-        long idCreatedTag = createdTag.getId();
-        Tag expectedTag = jdbcTemplate.queryForObject(GET_TAG_BY_ID, new Object[]{idCreatedTag}, tagMapper);
-
-        assertEquals(expectedTag, createdTag);
+        tag.setName("Test new tag");
+        Tag createdTag = tagDAOImpl.create(tag);
+        assertEquals(tag.getName(), createdTag.getName());
     }
 
-    @DisplayName("should be thrown DuplicateEntryDAOException")
+    @DisplayName("should be thrown DuplicateKeyException")
     @Test
-    public void createTagDUplicateEntryDAOException() throws DuplicateEntryDAOException {
-        Tag tag = jdbcTemplate.queryForObject(GET_TAG_BY_ID, new Object[]{1}, tagMapper);
-        assertThrows(DuplicateEntryDAOException.class, () -> {
-            tagJDBCTemplate.create(tag);
+    public void createTagDuplicateKeyException() {
+        Tag tag = new Tag();
+        tag.setName("Активный отдых");
+        assertThrows(DuplicateKeyException.class, () -> {
+            tagDAOImpl.create(tag);
         });
 
     }
 
     @DisplayName("should be return not null")
     @Test
-    public void createTagReturnNotNull() throws DuplicateEntryDAOException {
+    public void createTagReturnNotNull() {
         Tag tag = new Tag();
         tag.setName("New Test tag");
-        Tag createdTag = tagJDBCTemplate.create(tag);
+        Tag createdTag = tagDAOImpl.create(tag);
         assertNotNull(createdTag);
+        assertEquals(tag.getName(), createdTag.getName());
     }
 
-    @DisplayName("should be thrown IdNotExistDAOException ")
+    @DisplayName("should be return 0 ")
     @Test
-    public void deleteTagById() throws IdNotExistDAOException {
-        tagJDBCTemplate.delete(15);
-        assertThrows(IdNotExistDAOException.class, () -> {
-            tagJDBCTemplate.read(15);
-        });
+    public void deleteTagByNotExistId() {
+        int i = tagDAOImpl.delete(Integer.MAX_VALUE);
+        assertEquals(0, i);
     }
+
+    @DisplayName("should be return 1 ")
+    @Test
+    public void deleteTagById() {
+        int i = tagDAOImpl.delete(1);
+        assertEquals(1, i);
+    }
+
 
     @DisplayName("read tag by id ")
     @Test
-    public void readTagById() throws IdNotExistDAOException {
-        Tag tag = tagJDBCTemplate.read(5);
-        Tag actualTag = jdbcTemplate.queryForObject(GET_TAG_BY_ID, new Object[]{5}, tagMapper);
-        List<GiftCertificate> giftCertificates = jdbcTemplate.query(GET_CERTIFICATES_BY_TAG_ID, new Object[]{5}, giftCertificateMapper);
-        actualTag.setCertificates(giftCertificates);
-        assertEquals(tag, actualTag);
+    public void readTagById() {
+        Tag tag = tagDAOImpl.read(5);
+        Tag actualTag = new Tag();
+        actualTag.setName("Обучение");
+        assertEquals(tag.getName(), actualTag.getName());
     }
 
-    @DisplayName("should be thrown IdNotExistDAOException ")
+    @DisplayName("should be thrown EmptyResultDataAccessException ")
     @Test
-    public void readTagByNotExistId() throws IdNotExistDAOException {
-        assertThrows(IdNotExistDAOException.class, () -> {
-            tagJDBCTemplate.read(100);
+    public void readTagByNotExistId() {
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            tagDAOImpl.read(Integer.MAX_VALUE);
         });
     }
+
+    @DisplayName("read tag by id, tag is not null")
+    @Test
+    public void readTagByIdNotNull() {
+        assertNotNull(tagDAOImpl.read(5));
+    }
+
 
     @DisplayName("get all tags")
     @Test
     public void readAllTagsNotNull() {
-        List<Tag> tags = tagJDBCTemplate.findAll();
-        assertNotNull(tags);
+        List<Tag> actual = tagDAOImpl.findAll();
+        boolean result = false;
+        if (actual.size() > 13 && actual.size() < 17) {
+            result = true;
+        }
+        assertTrue(result);
     }
-
-    @DisplayName("tag is not null")
-    @Test
-    public void readTagByNameNotNull() throws TagNameNotExistDAOException {
-        Tag tag = tagJDBCTemplate.readTagByName("Развлечения");
-        assertNotNull(tag);
-    }
-
-    @DisplayName("should be thrown TagNameNotExistDAOException")
-    @Test
-    public void readTagByNotExistName() throws TagNameNotExistDAOException {
-        assertThrows(TagNameNotExistDAOException.class, () -> {
-            tagJDBCTemplate.readTagByName("NotExistName");
-        });
-    }
-
-    @DisplayName("should be returned tag with name 'Развлечения'")
-    @Test
-    public void readTagByName() throws TagNameNotExistDAOException {
-        Tag tag = tagJDBCTemplate.readTagByName("Развлечения");
-        assertEquals("Развлечения", tag.getName());
-    }
-
 }

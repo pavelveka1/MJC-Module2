@@ -1,48 +1,39 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.configuration.DBConfig;
+import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.GiftCertificateMapper;
-import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.TagMapper;
-import com.epam.esm.exception.DuplicateEntryDAOException;
-import com.epam.esm.exception.IdNotExistDAOException;
+import com.epam.esm.entity.mapper.GiftCertificateMapper;
+import com.epam.esm.entity.mapper.TagMapper;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-import com.epam.esm.exception.RequestParamDAOException;
-import com.epam.esm.exception.UpdateDAOException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+import java.sql.SQLIntegrityConstraintViolationException;
+import java.sql.SQLSyntaxErrorException;
 import java.util.List;
-import java.util.Optional;
 
 @SpringJUnitConfig(classes = DBConfig.class)
 @ActiveProfiles("dev")
 @WebAppConfiguration
 public class GiftCertificateDAOTest {
 
-    private static final String SELECT_ALL_CERTIFICATES = "SELECT * FROM gift_db.gift_certificates;";
-    private static final String SELECT_ALL_CERTIFICATES_SORT_BY_NAME = "SELECT * FROM gift_db.gift_certificates order by name DESC;";
-    private static final String GET_GIFT_CERTIFICATE_BY_ID = "SELECT * FROM gift_db.gift_certificates where gift_certificates.id=?;";
-    private static final String UPDATE_GIFT_CERTIFICATE = "UPDATE `gift_db`.`gift_certificates` SET `name` = ?, `description` = ?, `price` = ?, `duration` = ?, `last_update_date` = ? WHERE (`id` = ?);\n";
-    private static final String SELECT_TAGS_BY_CERTIFICATE_ID = "SELECT id, name FROM gift_db.gift_certificates_has_tags\n" +
-            "join gift_db.tags\n" +
-            "on gift_db.gift_certificates_has_tags.tags_id = gift_db.tags.id\n" +
-            "where gift_db.gift_certificates_has_tags.gift_certificates_id=?;";
-
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
     @Autowired
-    private GiftCertificateJDBCTemplate giftSertificateJDBCTemplate;
+    private GiftCertificateDAO giftCertificateDAO;
 
     @Autowired
     private GiftCertificateMapper giftCertificateMapper;
@@ -57,127 +48,135 @@ public class GiftCertificateDAOTest {
 
     @DisplayName("should create gift certificate in DB and return this one")
     @Test
-    public void createGiftCertificates() throws DuplicateEntryDAOException {
+    public void createGiftCertificates() throws SQLIntegrityConstraintViolationException {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName("Test 2 gift certificate");
         giftCertificate.setDescription("Description of test 2 gift certificate");
         giftCertificate.setPrice(10);
         giftCertificate.setDuration(30);
-
-        GiftCertificate createdGiftCertificate = giftSertificateJDBCTemplate.create(giftCertificate);
-        long idCreatedGiftCertificate = createdGiftCertificate.getId();
-        GiftCertificate expectedGiftCertificate = jdbcTemplate.queryForObject(GET_GIFT_CERTIFICATE_BY_ID, new Object[]{idCreatedGiftCertificate}, giftCertificateMapper);
-        assertEquals(expectedGiftCertificate, createdGiftCertificate);
+        GiftCertificate createdGiftCertificate = giftCertificateDAO.create(giftCertificate);
+        assertEquals(giftCertificate.getName(), createdGiftCertificate.getName());
+        assertEquals(giftCertificate.getDescription(), createdGiftCertificate.getDescription());
+        assertEquals(giftCertificate.getPrice(), createdGiftCertificate.getPrice());
+        assertEquals(giftCertificate.getDuration(), createdGiftCertificate.getDuration());
     }
 
-    @DisplayName("return value shouldn't be null")
+    @DisplayName("should be thrown DuplicateKeyException ")
     @Test
-    public void createGiftCertificatesNotNull() throws DuplicateEntryDAOException {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName("Test gift certificate");
-        giftCertificate.setDescription("Description of test gift certificate");
-        giftCertificate.setPrice(10);
-        giftCertificate.setDuration(30);
-
-        GiftCertificate createdGiftCertificate = giftSertificateJDBCTemplate.create(giftCertificate);
-        assertNotNull(createdGiftCertificate);
-    }
-
-    @DisplayName("method should throw DuplicateEntryDAOException")
-    @Test
-    public void createGiftCertificatesDuplicateEntryDAOException() throws DuplicateEntryDAOException {
+    public void createGiftCertificatesDuplicateKeyException() throws DuplicateKeyException {
         GiftCertificate giftCertificate = new GiftCertificate();
         giftCertificate.setName("Поeлет на дельтоплане");
-        giftCertificate.setDescription("it doesn't matter");
+        giftCertificate.setPrice(1000);
+        giftCertificate.setDuration(30);
+        giftCertificate.setDescription("Полеты на мотодельтаплане дарят кристально чистый заряд адреналина");
+        assertThrows(DuplicateKeyException.class, () -> {
+            giftCertificateDAO.create(giftCertificate);
+        });
+    }
+
+    @DisplayName("should be returned not null")
+    @Test
+    public void createGiftCertificatesNotNull() throws DuplicateKeyException {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName("Test 3 gift certificate");
+        giftCertificate.setDescription("Description of test 3 gift certificate");
         giftCertificate.setPrice(10);
         giftCertificate.setDuration(30);
+        GiftCertificate actulaGC = giftCertificateDAO.create(giftCertificate);
+        assertNotNull(actulaGC);
+        assertEquals(giftCertificate.getName(), actulaGC.getName());
+    }
 
-        assertThrows(DuplicateEntryDAOException.class, () -> {
-            giftSertificateJDBCTemplate.create(giftCertificate);
+    @DisplayName("read gift certificate by id ")
+    @Test
+    public void readGiftCertificateById() {
+        GiftCertificate expected = giftCertificateDAO.read(5);
+        GiftCertificate actual = new GiftCertificate();
+        actual.setName("Массаж всего тела, спины или лица");
+        assertEquals(expected.getName(), actual.getName());
+    }
+
+    @DisplayName("should be thrown EmptyResultDataAccessException ")
+    @Test
+    public void readGiftCertificateByNotExistId() {
+        assertThrows(EmptyResultDataAccessException.class, () -> {
+            giftCertificateDAO.read(Integer.MAX_VALUE);
         });
     }
 
-
-    @DisplayName("method should update name of gift certificate")
+    @DisplayName("read gift certificate by id, return not bull ")
     @Test
-    public void updateGiftCertificateName() throws UpdateDAOException {
-        GiftCertificate giftCertificate = jdbcTemplate.queryForObject(GET_GIFT_CERTIFICATE_BY_ID, new Object[]{3}, giftCertificateMapper);
-        giftCertificate.setName("name for update");
-        giftSertificateJDBCTemplate.update(giftCertificate);
-        GiftCertificate actualGiftCertificate = jdbcTemplate.queryForObject(GET_GIFT_CERTIFICATE_BY_ID, new Object[]{3}, giftCertificateMapper);
-        assertEquals(giftCertificate.getName(), actualGiftCertificate.getName());
+    public void readGiftCertificateByIdNotNull() {
+        assertNotNull(giftCertificateDAO.read(5));
     }
 
-    @DisplayName("return value shouldn't be null")
+
+    @DisplayName("read all gift certificates by id with sort by name")
     @Test
-    public void updateGiftCertificateReturnNotNull() throws UpdateDAOException {
-        GiftCertificate giftCertificate = jdbcTemplate.queryForObject(GET_GIFT_CERTIFICATE_BY_ID, new Object[]{2}, giftCertificateMapper);
-        giftCertificate.setName("new name for update");
-        assertNotNull(giftSertificateJDBCTemplate.update(giftCertificate));
+    public void findAllGiftCertificatesSort() throws SQLSyntaxErrorException {
+        List<GiftCertificate> actual = giftCertificateDAO.findAll("id", "ASC");
+        assertEquals(1, actual.get(0).getId());
     }
 
-    @DisplayName("return value shouldn't be null")
+    @DisplayName("should be thrown SQLSyntaxErrorException")
     @Test
-    public void readGiftCertificateById() throws IdNotExistDAOException {
-        GiftCertificate giftCertificate = giftSertificateJDBCTemplate.read(1);
-        GiftCertificate expected = jdbcTemplate.queryForObject(GET_GIFT_CERTIFICATE_BY_ID, new Object[]{1}, giftCertificateMapper);
-        List<Tag> tags = jdbcTemplate.query(SELECT_TAGS_BY_CERTIFICATE_ID, new Object[]{expected.getId()}, tagMapper);
-        expected.setTags(tags);
-        assertEquals(giftCertificate, expected);
-    }
-
-    @DisplayName("return value shouldn't be null")
-    @Test
-    public void readGiftCertificateByIdNotNull() throws IdNotExistDAOException {
-        GiftCertificate giftCertificate = giftSertificateJDBCTemplate.read(1);
-
-        assertNotNull(giftCertificate);
-    }
-
-    @DisplayName("throw IdNotExistDAOException")
-    @Test
-    public void readGiftCertificateByNotExistId() throws IdNotExistDAOException {
-        assertThrows(IdNotExistDAOException.class, () -> {
-            giftSertificateJDBCTemplate.read(100);
+    public void findAllGiftCertificatesSQLSyntaxErrorException() throws BadSqlGrammarException {
+        assertThrows(BadSqlGrammarException.class, () -> {
+            giftCertificateDAO.findAll("notExistParam", "DESC");
         });
     }
 
-
-    @DisplayName("should return all gift certificates")
+    @DisplayName("should be thrown SQLSyntaxErrorException")
     @Test
-    public void findAllGiftCertificatesNotNull() throws RequestParamDAOException {
-        List<GiftCertificate> result = giftSertificateJDBCTemplate.findAll(null, null);
-        assertNotNull(result);
-    }
-
-    @DisplayName("should return all gift certificates")
-    @Test
-    public void findAllGiftCertificatesSortAndOrder() throws RequestParamDAOException {
-        List<GiftCertificate> actual = giftSertificateJDBCTemplate.findAll("name", "DESC");
-        List<GiftCertificate> expect = jdbcTemplate.query(SELECT_ALL_CERTIFICATES_SORT_BY_NAME, giftCertificateMapper);
-        GiftCertificate actualGiftCertificate;
-        GiftCertificate expectedGiftCertificate;
-        for (int i = 0; i < actual.size(); i++) {
-            actualGiftCertificate = actual.get(i);
-            expectedGiftCertificate = expect.get(i);
-            assertEquals(actualGiftCertificate.getId(), expectedGiftCertificate.getId());
-        }
-    }
-
-    @DisplayName("should be thrown RequestParamDAOException")
-    @Test
-    public void findAllGiftCertificatesBadRequestParams() {
-        assertThrows(RequestParamDAOException.class, () -> {
-            giftSertificateJDBCTemplate.findAll("not_exist_field", "DESC");
+    public void findAllGiftCertificatesByTagName() throws BadSqlGrammarException {
+        assertThrows(BadSqlGrammarException.class, () -> {
+            giftCertificateDAO.findAllCertificatesByTagName("спорт", "notExistParam", "DESC");
         });
     }
 
-    @DisplayName("gift certificate should be deleted in db")
+    @DisplayName("should be thrown SQLSyntaxErrorException")
     @Test
-    public void deleteGiftCertificatesById() throws IdNotExistDAOException {
-        giftSertificateJDBCTemplate.delete(1);
-        assertThrows(IdNotExistDAOException.class, () -> {
-            giftSertificateJDBCTemplate.read(1);
+    public void findAllGiftCertificatesByNameOrDescription() throws BadSqlGrammarException {
+        assertThrows(BadSqlGrammarException.class, () -> {
+            giftCertificateDAO.findAllCertificatesByNameOrDescription("спорт", "notExistParam", "DESC");
         });
+    }
+
+    @DisplayName("should be return 1 ")
+    @Test
+    public void deleteGiftCertificateById() {
+        int i = giftCertificateDAO.delete(10);
+        assertEquals(1, i);
+    }
+
+    @DisplayName("should be returned 0")
+    @Test
+    public void deleteGiftCertificateByNotExistId() {
+        int i = giftCertificateDAO.delete(Integer.MAX_VALUE);
+        assertEquals(0, i);
+    }
+
+    @DisplayName("should be returned 1")
+    @Test
+    public void updateGiftCertificateExist() {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setId(1);
+        giftCertificate.setName("Поeлет на дельтоплане");
+        giftCertificate.setPrice(1000);
+        giftCertificate.setDuration(30);
+        giftCertificate.setDescription("Полеты на мотодельтаплане дарят кристально чистый заряд адреналина");
+        giftCertificate.setName("new name");
+        int i = giftCertificateDAO.update(giftCertificate);
+        assertEquals(1, i);
+    }
+
+    @DisplayName("should be returned 0")
+    @Test
+    public void updateGiftCertificateNotExist() {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName("new name");
+        giftCertificate.setDescription("new description");
+        int i = giftCertificateDAO.update(giftCertificate);
+        assertEquals(0, i);
     }
 }

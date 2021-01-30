@@ -3,18 +3,20 @@ package com.epam.esm.service.impl;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.exception.DuplicateEntryDAOException;
-import com.epam.esm.exception.IdNotExistDAOException;
 import com.epam.esm.service.TagService;
+import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Class TagServiceImpl.
@@ -24,10 +26,16 @@ import org.springframework.transaction.annotation.Transactional;
 public class TagServiceImpl implements TagService {
 
     /**
-     * TagJDBCTemplate is used for operations with Tag
+     * TagDAO is used for operations with Tag
      */
     @Autowired
     private TagDAO tagDAO;
+
+    /**
+     * GiftCertificateDAO is used for operations with GiftCertificate
+     */
+    @Autowired
+    private GiftCertificateDAO giftCertificateDAO;
 
     /**
      * ModelMapper is used for convertation TagDto to Tag
@@ -45,8 +53,8 @@ public class TagServiceImpl implements TagService {
     /**
      * Constcuctor with all parameters
      *
-     * @param tagDAO for operations with Tag
-     * @param modelMapper     for convertion object
+     * @param tagDAO      for operations with Tag
+     * @param modelMapper for convertion object
      */
     public TagServiceImpl(TagDAO tagDAO, ModelMapper modelMapper) {
         this.tagDAO = tagDAO;
@@ -61,13 +69,12 @@ public class TagServiceImpl implements TagService {
      * @throws DuplicateEntryServiceException if this Tag already exists in the DB
      */
     @Override
-    @Transactional
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
         try {
             addedTag = tagDAO.create(modelMapper.map(tagDto, Tag.class));
-        } catch (DuplicateEntryDAOException e) {
-            throw new DuplicateEntryServiceException(e.getMessage(), e);
+        } catch (DuplicateKeyException e) {
+            throw new DuplicateEntryServiceException("A tag with name = " + tagDto.getName() + " already exists");
         }
         return modelMapper.map(addedTag, TagDto.class);
     }
@@ -82,12 +89,21 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto read(long id) throws IdNotExistServiceException {
         Tag readTag;
+        TagDto tagDto;
+        List<GiftCertificateDto> giftCertificateDtoList;
+        List<GiftCertificate> giftCertificateList;
         try {
             readTag = tagDAO.read(id);
-        } catch (IdNotExistDAOException e) {
-            throw new IdNotExistServiceException(e.getMessage());
+            giftCertificateList = giftCertificateDAO.getGiftCertificatesByTagId(readTag.getId());
+            giftCertificateDtoList = giftCertificateList.stream().map(giftCertificate -> modelMapper.map(giftCertificate,
+                    GiftCertificateDto.class))
+                    .collect(Collectors.toList());
+        } catch (EmptyResultDataAccessException e) {
+            throw new IdNotExistServiceException("Tag with id = " + id + " not found");
         }
-        return modelMapper.map(readTag, TagDto.class);
+        tagDto = modelMapper.map(readTag, TagDto.class);
+        tagDto.setCertificates(giftCertificateDtoList);
+        return tagDto;
     }
 
     /**
@@ -97,12 +113,10 @@ public class TagServiceImpl implements TagService {
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
     @Override
-    @Transactional
     public void delete(long id) throws IdNotExistServiceException {
-        try {
-            tagDAO.delete(id);
-        } catch (IdNotExistDAOException e) {
-            throw new IdNotExistServiceException(e.getMessage());
+        int i = tagDAO.delete(id);
+        if (i == 0) {
+            throw new IdNotExistServiceException("Tag with id = " + id + " is not exist in DB");
         }
     }
 
@@ -115,7 +129,15 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> findAll() {
         List<Tag> tags = tagDAO.findAll();
-        return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
+        List<TagDto> tagDtoList = tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
+        for (TagDto tagDto : tagDtoList) {
+            List<GiftCertificate> giftCertificateList = giftCertificateDAO.getGiftCertificatesByTagId(tagDto.getId());
+            List<GiftCertificateDto> giftCertificateDtoList = giftCertificateList.stream()
+                    .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
+                    .collect(Collectors.toList());
+            tagDto.setCertificates(giftCertificateDtoList);
+        }
+        return tagDtoList;
     }
 
 }

@@ -23,43 +23,38 @@ public class GiftCertificate implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * id of GiftCertificate
+     * Id of GiftCertificate
      */
     private long id;
 
     /**
-     * name of GiftCertificate
+     * Name of GiftCertificate
      */
     private String name;
 
     /**
-     * description of GiftCertificate
+     * Description of GiftCertificate
      */
     private String description;
 
     /**
-     * price of GiftCertificate
+     * Price of GiftCertificate
      */
     private Integer price;
 
     /**
-     * duratuin in days
+     * Duratuin in days
      */
     private Integer duration;
 
     /**
-     * date of creation of GiftCertificate
+     * Date of creation of GiftCertificate
      */
     private LocalDateTime createDate;
 
     /**
-     * last date of updating of GiftCertificate
+     * Last date of updating of GiftCertificate
      */
     private LocalDateTime lastUpdateDate;
-
-    /**
-     * list of tags linked with GiftCertificate
-     */
-    private List<Tag> tags = new ArrayList<>();
 
 }

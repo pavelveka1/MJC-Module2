@@ -22,21 +22,23 @@
         </plugins>
     </build>
     <dependencies>
-
-
+        <dependency>
+            <groupId>javax.validation</groupId>
+            <artifactId>validation-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.core</groupId>
+            <artifactId>jackson-databind</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.epam.esm</groupId>
             <artifactId>model</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${model.version}</version>
         </dependency>
         <dependency>
             <groupId>com.epam.esm</groupId>
             <artifactId>service</artifactId>
-            <version>1.0-SNAPSHOT</version>
-            <scope>compile</scope>
+            <version>${service.version}</version>
         </dependency>
-
     </dependencies>
-
 </project>

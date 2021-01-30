@@ -16,7 +16,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * @Class TagController is Rest controller for Tag
+ * Class TagController is Rest controller for Tag
  */
 @RestController
 @RequestMapping("/api")
@@ -28,6 +28,9 @@ public class TagController {
     @Autowired
     private TagService service;
 
+    /**
+     * tagDtoValidator is used  for validation of TagDto
+     */
     @Autowired
     private Validator tagDtoValidator;
 
@@ -37,8 +40,9 @@ public class TagController {
     }
 
     /**
+     * method readAllTags reads all tags
+     *
      * @return List<TagDto>
-     * @method readAllTags reads all tags
      */
     @GetMapping("/tags")
     public List<TagDto> readAllTags() {
@@ -46,10 +50,12 @@ public class TagController {
     }
 
     /**
+     * Method createTag - create new tag in DB
+     *
      * @param tagDto - it is new Tag
      * @return created tag as tegDto
      * @throws DuplicateEntryServiceException is such tag alredy exist in DB
-     *                                        method createTag - create new tag in DB
+     * @throws ValidationException if passed TagDto is not valid
      */
     @PostMapping("/tags")
     @ResponseStatus(HttpStatus.CREATED)
@@ -61,10 +67,11 @@ public class TagController {
     }
 
     /**
-     * @param id
+     * method readTagById - read tag by id
+     *
+     * @param id - id of Tag which will be read
      * @return Tag with passed is as TagDto
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
-     *                                    method readTagById - read tag by id
      */
     @GetMapping("/tags/{id}")
     public TagDto readTagById(@PathVariable long id) throws IdNotExistServiceException {
@@ -72,9 +79,10 @@ public class TagController {
     }
 
     /**
-     * @param id
+     * method deleteTagById - delete tag by passed id
+     *
+     * @param id id of Tag which will be deleted
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
-     * @method deleteTagById - delete tag by passed id
      */
     @DeleteMapping("/tags/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)

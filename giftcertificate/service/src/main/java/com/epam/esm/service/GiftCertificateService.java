@@ -2,7 +2,6 @@ package com.epam.esm.service;
 
 import java.util.List;
 
-import com.epam.esm.exception.UpdateDAOException;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.exception.*;
 
@@ -19,7 +18,7 @@ public interface GiftCertificateService {
      * @return created GiftCertificate as GiftCertificateDto
      * @throws DuplicateEntryServiceException if this GiftCertificate already exists in the DB
      */
-    GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException, TagNameNotExistServiceException;
+    GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException, TagNotExistServiceException;
 
     /**
      * Read GiftCertificateDto from DB by id
@@ -55,6 +54,7 @@ public interface GiftCertificateService {
      * @return list og GiftCertificates
      * @throws RequestParamServiceException if parameters don't right
      */
-    List<GiftCertificateDto> findAll(String sortType, String orderType) throws RequestParamServiceException;
+    List<GiftCertificateDto> findAll(String search, String value, String sortType, String orderType)
+            throws RequestParamServiceException;
 
 }

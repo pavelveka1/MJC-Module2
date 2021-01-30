@@ -1,9 +1,9 @@
 package com.epam.esm.exceptionhandler;
 
 /**
- * @Class ErrorHandler is used for represent error message and error code
+ * Class ErrorHandler is used for represent error message and error code
  */
-public class ErrorHandler {
+public class ErrorTO {
 
     /**
      * Field contains error message
@@ -19,24 +19,26 @@ public class ErrorHandler {
      * Constructor with two parameters
      *
      * @param errorMessage message about exception
-     * @param errorCode code of exception
+     * @param errorCode    code of exception
      */
-    public ErrorHandler(String errorMessage, int errorCode) {
+    public ErrorTO(String errorMessage, int errorCode) {
         this.errorMessage = errorMessage;
         this.errorCode = errorCode;
     }
 
     /**
+     * Method getErrorMessage
+     *
      * @return error message as String
-     * @method getErrorMessage
      */
     public String getErrorMessage() {
         return errorMessage;
     }
 
     /**
+     * Method getErrorCode
+     *
      * @return error code as int
-     * @method getErrorCode
      */
     public int getErrorCode() {
         return errorCode;
