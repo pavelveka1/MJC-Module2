@@ -105,9 +105,20 @@ public class GiftCertificateController {
     }
 
 
+    /**
+     * Method let to update GiftCertificate partly
+     *
+     * @param id                 of giftCertificate
+     * @param giftCertificateDto passed as json
+     * @param bindingResult      result of validation
+     * @return GiftCertificateDto
+     * @throws IdNotExistServiceException if  certificate with such id not exist
+     * @throws UpdateServiceException     if giftCertificate hasn't been updated
+     * @throws ValidationException        if passed GiftCertificateDto is not valid
+     */
     @PatchMapping("/certificates/{id}")
-    public ResponseEntity<Void> updateGiftCertificate(@PathVariable("id") long id,
-                                                      @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws IdNotExistServiceException, UpdateServiceException, ValidationException {
+    public GiftCertificateDto updateGiftCertificate(@PathVariable("id") long id,
+                                                    @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws IdNotExistServiceException, UpdateServiceException, ValidationException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto has fields, that is not valid for update operation!");
         }
@@ -126,8 +137,10 @@ public class GiftCertificateController {
         if (giftCertificateDto.getDuration() != null) {
             giftCertificateDtoRead.setDuration(giftCertificateDto.getDuration());
         }
+
         service.update(giftCertificateDtoRead);
-        return ResponseEntity.noContent().build();
+
+        return service.read(id);
     }
 
     /**
