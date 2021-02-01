@@ -18,7 +18,6 @@ import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
@@ -90,8 +89,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         GiftCertificate createdGiftCertificate;
         long id;
         try {
-           id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
-           createdGiftCertificate=giftCertificateDAO.read(id);
+            id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
+            createdGiftCertificate = giftCertificateDAO.read(id);
             List<Tag> tags = giftCertificateDto.getTags().stream()
                     .map(tagDto -> modelMapper.map(tagDto, Tag.class))
                     .collect(Collectors.toList());

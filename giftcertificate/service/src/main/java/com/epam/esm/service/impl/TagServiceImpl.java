@@ -5,10 +5,8 @@ import java.util.stream.Collectors;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
-import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;

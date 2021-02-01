@@ -47,4 +47,5 @@ public class GiftCertificateDtoPatchValidator implements Validator {
             }
         }
     }
+
 }

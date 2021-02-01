@@ -5,9 +5,7 @@ import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.mapper.GiftCertificateMapper;
 import com.epam.esm.entity.mapper.TagMapper;
-
 import static org.junit.jupiter.api.Assertions.*;
-
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

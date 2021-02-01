@@ -154,6 +154,15 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         return jdbcTemplate.query(String.format(SELECT_ALL_CERTIFICATES_WITH_SORT, sortType, orderType), giftCertificateMapper);
     }
 
+    /**
+     * Find all giftCertificates by name of tad passed by parameters
+     *
+     * @param tagName   name of Tag
+     * @param sortType  type of sort equals name of field in DB
+     * @param orderType ASC or DESC
+     * @return List of GiftCertificates
+     * @throws BadSqlGrammarException if passed name not exist
+     */
     @Override
     public List<GiftCertificate> findAllCertificatesByTagName(String tagName, String sortType, String orderType)
             throws BadSqlGrammarException {
@@ -162,6 +171,15 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                 giftCertificateMapper);
     }
 
+    /**
+     * Find all giftCertificates by name or description of gift certificate passed by parameters
+     *
+     * @param nameOrDescription part of name or description
+     * @param sortType          type of sort equals name of field in DB
+     * @param orderType         ASC or DESC
+     * @return List of GiftCertificates
+     * @throws BadSqlGrammarException if passed parameter not exist
+     */
     @Override
     public List<GiftCertificate> findAllCertificatesByNameOrDescription(String nameOrDescription, String sortType, String orderType)
             throws BadSqlGrammarException {

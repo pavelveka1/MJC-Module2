@@ -151,11 +151,6 @@
                 <artifactId>c3p0</artifactId>
                 <version>${pool-c3p0.version}</version>
             </dependency>
-            <dependency>
-                <groupId>com.github.java-json-tools</groupId>
-                <artifactId>json-patch</artifactId>
-                <version>${json-tool.version}</version>
-            </dependency>
         </dependencies>
     </dependencyManagement>
 </project>
