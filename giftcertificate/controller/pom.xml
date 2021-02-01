@@ -40,5 +40,9 @@
             <artifactId>service</artifactId>
             <version>${service.version}</version>
         </dependency>
+        <dependency>
+            <groupId>com.github.java-json-tools</groupId>
+            <artifactId>json-patch</artifactId>
+        </dependency>
     </dependencies>
 </project>

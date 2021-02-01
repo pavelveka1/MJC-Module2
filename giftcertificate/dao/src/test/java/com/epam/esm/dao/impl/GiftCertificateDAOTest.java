@@ -49,12 +49,10 @@ public class GiftCertificateDAOTest {
     @DisplayName("should create gift certificate in DB and return this one")
     @Test
     public void createGiftCertificates() throws SQLIntegrityConstraintViolationException {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName("Test 2 gift certificate");
-        giftCertificate.setDescription("Description of test 2 gift certificate");
-        giftCertificate.setPrice(10);
-        giftCertificate.setDuration(30);
-        GiftCertificate createdGiftCertificate = giftCertificateDAO.create(giftCertificate);
+        GiftCertificate giftCertificate = new GiftCertificate(1, "New gift certificate", " new description",
+                1000, 30, null, null);
+        long id = giftCertificateDAO.create(giftCertificate);
+        GiftCertificate createdGiftCertificate=giftCertificateDAO.read(id);
         assertEquals(giftCertificate.getName(), createdGiftCertificate.getName());
         assertEquals(giftCertificate.getDescription(), createdGiftCertificate.getDescription());
         assertEquals(giftCertificate.getPrice(), createdGiftCertificate.getPrice());
@@ -64,11 +62,8 @@ public class GiftCertificateDAOTest {
     @DisplayName("should be thrown DuplicateKeyException ")
     @Test
     public void createGiftCertificatesDuplicateKeyException() throws DuplicateKeyException {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName("Поeлет на дельтоплане");
-        giftCertificate.setPrice(1000);
-        giftCertificate.setDuration(30);
-        giftCertificate.setDescription("Полеты на мотодельтаплане дарят кристально чистый заряд адреналина");
+        GiftCertificate giftCertificate = new GiftCertificate(1, "Поeлет на дельтоплане", "description",
+                1000, 30, null, null);
         assertThrows(DuplicateKeyException.class, () -> {
             giftCertificateDAO.create(giftCertificate);
         });
@@ -77,14 +72,15 @@ public class GiftCertificateDAOTest {
     @DisplayName("should be returned not null")
     @Test
     public void createGiftCertificatesNotNull() throws DuplicateKeyException {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName("Test 3 gift certificate");
-        giftCertificate.setDescription("Description of test 3 gift certificate");
-        giftCertificate.setPrice(10);
-        giftCertificate.setDuration(30);
-        GiftCertificate actulaGC = giftCertificateDAO.create(giftCertificate);
+        GiftCertificate giftCertificate = new GiftCertificate(1, "new test name", "description",
+                1000, 30, null, null);
+       long id = giftCertificateDAO.create(giftCertificate);
+        GiftCertificate actulaGC=giftCertificateDAO.read(id);
         assertNotNull(actulaGC);
         assertEquals(giftCertificate.getName(), actulaGC.getName());
+        assertEquals(giftCertificate.getDescription(), actulaGC.getDescription());
+        assertEquals(giftCertificate.getPrice(), actulaGC.getPrice());
+        assertEquals(giftCertificate.getDuration(), actulaGC.getDuration());
     }
 
     @DisplayName("read gift certificate by id ")
@@ -159,13 +155,8 @@ public class GiftCertificateDAOTest {
     @DisplayName("should be returned 1")
     @Test
     public void updateGiftCertificateExist() {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setId(1);
-        giftCertificate.setName("Поeлет на дельтоплане");
-        giftCertificate.setPrice(1000);
-        giftCertificate.setDuration(30);
-        giftCertificate.setDescription("Полеты на мотодельтаплане дарят кристально чистый заряд адреналина");
-        giftCertificate.setName("new name");
+        GiftCertificate giftCertificate = new GiftCertificate(1, "new name", "description",
+                1000, 30, null, null);
         int i = giftCertificateDAO.update(giftCertificate);
         assertEquals(1, i);
     }
@@ -173,9 +164,8 @@ public class GiftCertificateDAOTest {
     @DisplayName("should be returned 0")
     @Test
     public void updateGiftCertificateNotExist() {
-        GiftCertificate giftCertificate = new GiftCertificate();
-        giftCertificate.setName("new name");
-        giftCertificate.setDescription("new description");
+        GiftCertificate giftCertificate = new GiftCertificate(0, "new name", "description",
+                1000, 30, null, null);
         int i = giftCertificateDAO.update(giftCertificate);
         assertEquals(0, i);
     }

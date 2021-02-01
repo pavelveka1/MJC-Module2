@@ -3,7 +3,6 @@ package com.epam.esm.dao;
 import java.util.List;
 
 import com.epam.esm.entity.Tag;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 
 /**
@@ -18,7 +17,7 @@ public interface TagDAO {
      * @param tag will be created in DB
      * @return created Tag
      */
-    Tag create(Tag tag) throws DuplicateKeyException;
+    long create(Tag tag);
 
     /**
      * Read one Tag from DB by id
@@ -27,7 +26,7 @@ public interface TagDAO {
      * @return Tag
      * @throws EmptyResultDataAccessException if records with such id not exist in DB
      */
-    Tag read(long id) throws EmptyResultDataAccessException;
+    Tag read(long id);
 
     /**
      * Delete Tag from DB by id

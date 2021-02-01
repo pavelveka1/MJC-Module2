@@ -7,7 +7,8 @@ import com.epam.esm.entity.Tag;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
-import org.junit.jupiter.api.BeforeEach;
+import org.junit.Before;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -23,7 +24,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
@@ -47,90 +47,31 @@ public class GiftCertificateServiceImplTest {
     @InjectMocks
     private GiftSertificateServiceImpl giftCertificateService = new GiftSertificateServiceImpl();
 
-    private static GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
-    private static GiftCertificateDto giftCertificateDto2 = new GiftCertificateDto();
-    private static GiftCertificateDto giftCertificateDto3 = new GiftCertificateDto();
-    private static GiftCertificate giftCertificate = new GiftCertificate();
-    private static GiftCertificate giftCertificate2 = new GiftCertificate();
-    private static GiftCertificate giftCertificate3 = new GiftCertificate();
-    private static Tag tag = new Tag();
-    private static TagDto tagDto = new TagDto();
+    private static GiftCertificateDto giftCertificateDto = new GiftCertificateDto(1, "Test name", "Test description", 10, 20, null, null, new ArrayList<>());
+    private static GiftCertificateDto giftCertificateDto2 = new GiftCertificateDto(2, "Test name 2", "Test description 2", 10, 20, null, null, null);
+    private static GiftCertificateDto giftCertificateDto3 = new GiftCertificateDto(3, "Test name 3", "Test description 3", 10, 20, null, null, null);
+    private static GiftCertificate giftCertificate = new GiftCertificate(1, "Test name", "Test description", 10, 20, null, null);
+    private static GiftCertificate giftCertificate2 = new GiftCertificate(2, "Test name 2", "Test description 2", 10, 20, null, null);
+    private static GiftCertificate giftCertificate3 = new GiftCertificate(3, "Test name 3", "Test description 3", 10, 20, null, null);
+    private static Tag tag = new Tag(1, "test tag");
+    private static TagDto tagDto = new TagDto((long) 1, "test tag");
+    private static TagDto tagDto1 = new TagDto((long) 2, "Space");
+    private static TagDto tagDto2 = new TagDto((long) 3, "Aircraft");
     private static List<GiftCertificate> giftCertificateList = new ArrayList<>();
     private static List<GiftCertificateDto> giftCertificateDtoList = new ArrayList<>();
+    private static List<TagDto> tagDtoList = new ArrayList<>();
 
-    @BeforeEach
-    public void init() {
-
-        tag.setName("test tag");
-        List<Tag> tags = new ArrayList<>();
-        tagDto.setName(tag.getName());
-        List<TagDto> tagDtoList = new ArrayList<>();
-
-        TagDto tagDto1 = new TagDto();
-        tagDto1.setName("Space");
-        TagDto tagDto2 = new TagDto();
-        tagDto2.setName("Aircraft");
-
-        List<TagDto> tagsDto = new ArrayList<TagDto>();
-        tagsDto.add(tagDto1);
-        tagsDto.add(tagDto2);
-
-        giftCertificateDto.setId(1);
-        giftCertificateDto.setName("Test name");
-        giftCertificateDto.setDescription("Test description");
-        giftCertificateDto.setDuration(10);
-        giftCertificateDto.setPrice(20);
-        giftCertificateDto.setTags(tagsDto);
-        giftCertificateDtoList.add(giftCertificateDto);
-
-        giftCertificateDto.setId(2);
-        giftCertificateDto.setName("Test name 2");
-        giftCertificateDto.setDescription("Test description 2");
-        giftCertificateDto.setDuration(10);
-        giftCertificateDto.setPrice(20);
-        giftCertificateDto.setTags(tagsDto);
-
-        giftCertificateDto2.setId(9);
-        giftCertificateDto2.setName("Test name 2");
-        giftCertificateDto2.setDescription("Test description 2");
-        giftCertificateDto2.setDuration(10);
-        giftCertificateDto2.setPrice(20);
-
-        giftCertificateDto3.setId(8);
-        giftCertificateDto3.setName("Test name 2");
-        giftCertificateDto3.setDescription("Test description 2");
-        giftCertificateDto3.setDuration(10);
-        giftCertificateDto3.setPrice(20);
-
-
-        giftCertificate.setId(giftCertificateDto.getId());
-        giftCertificate.setName(giftCertificateDto.getName());
-        giftCertificate.setDescription(giftCertificateDto.getDescription());
-        giftCertificate.setDuration(giftCertificateDto.getDuration());
-        giftCertificate.setPrice(giftCertificateDto.getPrice());
+    @BeforeAll
+    public static void init() {
         giftCertificateList.add(giftCertificate);
-
-        giftCertificate2.setId(giftCertificateDto2.getId());
-        giftCertificate2.setName(giftCertificateDto2.getName());
-        giftCertificate2.setDescription(giftCertificateDto2.getDescription());
-        giftCertificate2.setDuration(giftCertificateDto2.getDuration());
-        giftCertificate2.setPrice(giftCertificateDto2.getPrice());
-
-        giftCertificate3.setId(giftCertificateDto3.getId());
-        giftCertificate3.setName(giftCertificateDto3.getName());
-        giftCertificate3.setDescription(giftCertificateDto3.getDescription());
-        giftCertificate3.setDuration(giftCertificateDto3.getDuration());
-        giftCertificate3.setPrice(giftCertificateDto3.getPrice());
-
-        tagDto.setCertificates(giftCertificateDtoList);
-        giftCertificateDto.setTags(tagDtoList);
-
+        giftCertificateDtoList.add(giftCertificateDto);
     }
 
     @DisplayName("should be returned created gift certificate")
     @Test
     public void createGiftCertificate() throws DuplicateEntryServiceException, TagNotExistServiceException {
-        when(giftCertificateDAOImpl.create(giftCertificate)).thenReturn(giftCertificate);
+        when(giftCertificateDAOImpl.create(giftCertificate)).thenReturn((long) 100);
+        when(giftCertificateDAOImpl.read(100)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
         assertEquals(giftCertificateDto, giftCertificateService.create(giftCertificateDto));
@@ -146,15 +87,6 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
-    @DisplayName("should be thrown TagNotExistServiceException")
-    @Test
-    public void createGiftCertificateTagNotExistServiceException() throws TagNotExistServiceException {
-        when(giftCertificateDAOImpl.create(giftCertificate2)).thenThrow(DataIntegrityViolationException.class);
-        when(modelMapper.map(giftCertificateDto2, GiftCertificate.class)).thenReturn(giftCertificate2);
-        assertThrows(TagNotExistServiceException.class, () -> {
-            giftCertificateService.create(giftCertificateDto2);
-        });
-    }
 
     @DisplayName("should be renurned giftCertificateDto")
     @Test
@@ -178,7 +110,7 @@ public class GiftCertificateServiceImplTest {
     @Test
     public void updateGiftCertificate() throws IdNotExistServiceException, UpdateServiceException {
         when(modelMapper.map(giftCertificateDto3, GiftCertificate.class)).thenReturn(giftCertificate3);
-        when(giftCertificateDAOImpl.read(8)).thenReturn(giftCertificate3);
+        when(giftCertificateDAOImpl.read(3)).thenReturn(giftCertificate3);
         when(modelMapper.map(giftCertificate3, GiftCertificateDto.class)).thenReturn(giftCertificateDto3);
         when(giftCertificateDAOImpl.update(giftCertificate3)).thenReturn(1);
         assertEquals(giftCertificateDto3, giftCertificateService.update(giftCertificateDto3));
@@ -227,7 +159,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be returned list of certificates by name or description")
     @Test
-    public void findAllGiftCertificatesByNameOrDescription() throws SQLSyntaxErrorException, RequestParamServiceException {
+    public void findAllGiftCertificatesByNameOrDescription() throws RequestParamServiceException {
         List<Tag> tags = new ArrayList<>();
         when(giftCertificateDAOImpl.findAllCertificatesByNameOrDescription("спорт", "id",
                 "asc")).thenReturn(giftCertificateList);

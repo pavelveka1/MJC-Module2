@@ -3,6 +3,7 @@ package com.epam.esm.validator;
 import com.epam.esm.service.dto.TagDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
 
 @Component
@@ -19,9 +20,8 @@ public class TagDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         TagDto tagDto = (TagDto) target;
-        if (tagDto.getName() == null) {
-            errors.rejectValue(NAME, TAG_NAME_INCORRECT);
-        } else if (!tagDto.getName().matches(NAME_PATTERN)) {
+        ValidationUtils.rejectIfEmpty(errors, NAME, TAG_NAME_INCORRECT);
+        if (!tagDto.getName().matches(NAME_PATTERN)) {
             errors.rejectValue(NAME, TAG_NAME_INCORRECT);
         }
     }

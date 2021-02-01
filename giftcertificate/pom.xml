@@ -19,15 +19,12 @@
         <version>1.0-SNAPSHOT</version>
 
         <lombok.version>1.18.16</lombok.version>
-        <spring-mvc.version>5.2.12.RELEASE</spring-mvc.version>
-        <spring-tx.version>5.2.12.RELEASE</spring-tx.version>
+        <spring.version>5.2.12.RELEASE</spring.version>
         <servlet-api.version>4.0.1</servlet-api.version>
         <log4j.version>1.2.17</log4j.version>
         <model-mapper.version>2.3.8</model-mapper.version>
         <validation-api.version>2.0.1.Final</validation-api.version>
         <jackson-databind.version>2.9.1</jackson-databind.version>
-        <spring-jdbc.version>5.2.12.RELEASE</spring-jdbc.version>
-        <spring-test.version>5.2.12.RELEASE</spring-test.version>
         <test-db-h2.version>1.4.200</test-db-h2.version>
         <mockito-core.version>3.7.7</mockito-core.version>
         <mockito-junit-jupiter.version>3.7.7</mockito-junit-jupiter.version>
@@ -39,6 +36,7 @@
         <pool-c3p0.version>0.9.5.2</pool-c3p0.version>
         <model.version>1.0-SNAPSHOT</model.version>
         <service.version>1.0-SNAPSHOT</service.version>
+        <json-tool.version>1.12</json-tool.version>
 
     </properties>
     <build>
@@ -55,12 +53,12 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-webmvc</artifactId>
-            <version>${spring-mvc.version}</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>${spring-tx.version}</version>
+            <version>${spring.version}</version>
         </dependency>
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -81,7 +79,6 @@
                 <groupId>org.projectlombok</groupId>
                 <artifactId>lombok</artifactId>
                 <version>${lombok.version}</version>
-                <scope>provided</scope>
             </dependency>
             <dependency>
                 <groupId>org.modelmapper</groupId>
@@ -102,19 +99,17 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-jdbc</artifactId>
-                <version>${spring-jdbc.version}</version>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-test</artifactId>
-                <version>${spring-test.version}</version>
-                <scope>test</scope>
+                <version>${spring.version}</version>
             </dependency>
             <dependency>
                 <groupId>com.h2database</groupId>
                 <artifactId>h2</artifactId>
                 <version>${test-db-h2.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.mockito</groupId>
@@ -125,31 +120,26 @@
                 <groupId>org.mockito</groupId>
                 <artifactId>mockito-junit-jupiter</artifactId>
                 <version>${mockito-junit-jupiter.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter</artifactId>
                 <version>${junit-jupiter.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.jupiter</groupId>
                 <artifactId>junit-jupiter-engine</artifactId>
                 <version>${junit-jupiter-engine.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.platform</groupId>
                 <artifactId>junit-platform-runner</artifactId>
                 <version>${junit-platform-runner.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>org.junit.vintage</groupId>
                 <artifactId>junit-vintage-engine</artifactId>
                 <version>${junit-vintage-engine.version}</version>
-                <scope>test</scope>
             </dependency>
             <dependency>
                 <groupId>mysql</groupId>
@@ -160,6 +150,11 @@
                 <groupId>com.mchange</groupId>
                 <artifactId>c3p0</artifactId>
                 <version>${pool-c3p0.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.github.java-json-tools</groupId>
+                <artifactId>json-patch</artifactId>
+                <version>${json-tool.version}</version>
             </dependency>
         </dependencies>
     </dependencyManagement>

@@ -45,49 +45,23 @@ public class TagServiceImplTest {
     @InjectMocks
     private TagServiceImpl tagService = new TagServiceImpl();
 
-    private static GiftCertificateDto giftCertificateDto = new GiftCertificateDto();
-    private static GiftCertificate giftCertificate = new GiftCertificate();
-    private static Tag tag = new Tag();
-    private static TagDto tagDto = new TagDto();
-    private static Tag tag2 = new Tag();
-    private static TagDto tagDto2 = new TagDto();
+    private static GiftCertificateDto giftCertificateDto = new GiftCertificateDto(1,"Test name","Test description",10,20,null,null,null);
+    private static GiftCertificate giftCertificate = new GiftCertificate(1,"Test name","Test description",10,20,null,null);
+    private static Tag tag = new Tag(1,"test tag");
+    private static Tag tag2 = new Tag(2,"test tag 2");
+    private static TagDto tagDto = new TagDto((long)1,"test tag");
+    private static TagDto tagDto2 = new TagDto((long)2,"test tag 2");
     private static List<GiftCertificate> giftCertificateList = new ArrayList<>();
-    private static List<GiftCertificateDto> giftCertificateDtoList = new ArrayList<>();
     private static List<Tag> tagList = new ArrayList<>();
     private static List<TagDto> tagDtoList = new ArrayList<>();
 
     @BeforeAll
     public static void init() {
-        tag.setName("test tag");
-        tag.setId(1);
-        tagDto.setName(tag.getName());
-        tagDto.setId(tag.getId());
-
-        tag2.setName("test tag 2");
-        tag2.setId(2);
-        tagDto2.setName(tag2.getName());
-        tagDto2.setId(tag2.getId());
-
         tagDtoList.add(tagDto);
         tagDtoList.add(tagDto2);
         tagList.add(tag);
         tagList.add(tag2);
-
-        giftCertificateDto.setId(1);
-        giftCertificateDto.setName("Test name");
-        giftCertificateDto.setDescription("Test description");
-        giftCertificateDto.setDuration(10);
-        giftCertificateDto.setPrice(20);
-
-        giftCertificate.setId(giftCertificateDto.getId());
-        giftCertificate.setName(giftCertificateDto.getName());
-        giftCertificate.setDescription(giftCertificateDto.getDescription());
-        giftCertificate.setDuration(giftCertificateDto.getDuration());
-        giftCertificate.setPrice(giftCertificateDto.getPrice());
         giftCertificateList.add(giftCertificate);
-
-        tagDto.setCertificates(giftCertificateDtoList);
-
     }
 
     @DisplayName("should be returned created Tag")
@@ -95,7 +69,8 @@ public class TagServiceImplTest {
     public void createTag() throws DuplicateEntryServiceException {
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
-        when(tagDAOImpl.create(tag)).thenReturn(tag);
+        when(tagDAOImpl.create(tag)).thenReturn((long)100);
+        when(tagDAOImpl.read(100)).thenReturn(tag);
         assertEquals(tagDto, tagService.create(tagDto));
     }
 
@@ -104,7 +79,8 @@ public class TagServiceImplTest {
     public void createTagNotNull() throws DuplicateEntryServiceException {
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
-        when(tagDAOImpl.create(tag)).thenReturn(tag);
+        when(tagDAOImpl.create(tag)).thenReturn((long)100);
+        when(tagDAOImpl.read(100)).thenReturn(tag);
         assertNotNull(tagService.create(tagDto));
     }
 
@@ -147,7 +123,6 @@ public class TagServiceImplTest {
         List<Tag> tags = new ArrayList<>();
         tags.add(testTag);
         when(modelMapper.map(testTag, TagDto.class)).thenReturn(testTagDto);
-        when(giftCertificateDAO.getGiftCertificatesByTagId(anyLong())).thenReturn(giftCertificateList);
         when(tagDAOImpl.findAll()).thenReturn(tags);
         assertEquals(1, tagService.findAll().size());
     }

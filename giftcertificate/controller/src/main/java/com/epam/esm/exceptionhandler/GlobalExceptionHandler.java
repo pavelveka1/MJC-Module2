@@ -11,38 +11,41 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
  */
 @ControllerAdvice
 public class GlobalExceptionHandler {
-    private static final int NOT_FOUND = 404;
-    private static final int BAD_REQUEST = 400;
-    private static final int INTERNAL_SERVER_ERROR = 500;
 
     @ExceptionHandler
     public ResponseEntity<ErrorTO> handleIdNotExistServiceException(IdNotExistServiceException exception) {
-        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), NOT_FOUND), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.NOT_FOUND.getErrorCode()),
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTO> handleDuplicateEntryServiceException(DuplicateEntryServiceException exception) {
-        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTO> handleRequestParamServiceException(RequestParamServiceException exception) {
-        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTO> handleTagNotExistServiceException(TagNotExistServiceException exception) {
-        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), NOT_FOUND), HttpStatus.NOT_FOUND);
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.NOT_FOUND.getErrorCode()),
+                HttpStatus.NOT_FOUND);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTO> handleValidationException(ValidationException exception) {
-        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), BAD_REQUEST), HttpStatus.BAD_REQUEST);
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler
     public ResponseEntity<ErrorTO> handleUpdateException(UpdateServiceException exception) {
-        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), INTERNAL_SERVER_ERROR), HttpStatus.INTERNAL_SERVER_ERROR);
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.INTERNAL_SERVER_ERROR.getErrorCode()),
+                HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 }

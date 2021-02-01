@@ -86,19 +86,18 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws TagNotExistServiceException,
-            DuplicateEntryServiceException {
+    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException {
         GiftCertificate createdGiftCertificate;
+        long id;
         try {
-            createdGiftCertificate = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
+           id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
+           createdGiftCertificate=giftCertificateDAO.read(id);
             List<Tag> tags = giftCertificateDto.getTags().stream()
                     .map(tagDto -> modelMapper.map(tagDto, Tag.class))
                     .collect(Collectors.toList());
             giftCertificateDAO.attachTags(createdGiftCertificate.getId(), tags);
-        } catch (DuplicateKeyException e) {
+        } catch (DataIntegrityViolationException e) {
             throw new DuplicateEntryServiceException("Gift certificate with same name or description alredy is exist");
-        } catch (DataIntegrityViolationException e1) {
-            throw new TagNotExistServiceException("You tried to add not exist Tag to GiftCertificate");
         }
         return modelMapper.map(createdGiftCertificate, GiftCertificateDto.class);
     }

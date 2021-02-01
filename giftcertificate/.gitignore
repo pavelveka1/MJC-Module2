@@ -1,4 +1,9 @@
-/controller/target
-/dao/target
-/service/target
-/.idea
+**/target
+**/.settings
+**/.project
+**/.classpath
+**/logs
+**/log
+**/*.iml
+**/.idea
+

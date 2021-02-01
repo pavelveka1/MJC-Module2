@@ -41,7 +41,8 @@ public class TagDAOTest {
     public void createTag() {
         Tag tag = new Tag();
         tag.setName("Test new tag");
-        Tag createdTag = tagDAOImpl.create(tag);
+        long id = tagDAOImpl.create(tag);
+        Tag createdTag=tagDAOImpl.read(id);
         assertEquals(tag.getName(), createdTag.getName());
     }
 
@@ -61,7 +62,8 @@ public class TagDAOTest {
     public void createTagReturnNotNull() {
         Tag tag = new Tag();
         tag.setName("New Test tag");
-        Tag createdTag = tagDAOImpl.create(tag);
+        long id = tagDAOImpl.create(tag);
+        Tag createdTag=tagDAOImpl.read(id);
         assertNotNull(createdTag);
         assertEquals(tag.getName(), createdTag.getName());
     }

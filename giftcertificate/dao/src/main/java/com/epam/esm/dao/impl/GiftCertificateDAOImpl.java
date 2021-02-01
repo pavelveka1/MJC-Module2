@@ -30,27 +30,29 @@ import org.springframework.stereotype.Repository;
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
     private static final Logger logger = Logger.getLogger(GiftCertificateDAOImpl.class);
-    private static final String SELECT_GIFT_CERTIFICATES_BY_ID = "select * from gift_certificates where id=?;";
-    private static final String SELECT_ALL_CERTIFICATES_WITH_SORT = "select * from gift_certificates order by %s %s;";
+    private static final String SELECT_GIFT_CERTIFICATES_BY_ID = "select id, name, description, price, duration, " +
+            "create_date, last_update_date from gift_certificates where id=?";
+    private static final String SELECT_ALL_CERTIFICATES_WITH_SORT = "select id, name, description, price, duration," +
+            "create_date, last_update_date from gift_certificates order by %s %s";
     private static final String SELECT_ALL_CERTIFICATES_BY_TAG_NAME = "select gc.id, gc.name, gc.description, gc.price, " +
             "gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
             "\t join gift_certificates_has_tags on gc.id=gift_certificates_has_tags.gift_certificates_id\n" +
             "     join tags on tags.id=gift_certificates_has_tags.tags_id\n" +
-            "     where tags.name=%s order by %s %s;";
+            "     where tags.name=%s order by %s %s";
     private static final String SELECT_ALL_CERTIFICATES_BY_NAME_OR_DESCRIPTION = "select gc.id, gc.name, gc.description," +
             " gc.price, gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
-            "     where gc.name like %s order by %s %s;";
+            "     where gc.name like %s order by %s %s";
     private static final String INSERT_CERTIFICATE = "INSERT INTO gift_certificates (name, description, price, duration, " +
-            "create_date, last_update_date) VALUES (?, ?, ?, ?, ?, ?);";
+            "create_date, last_update_date) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String CREATE_CERTIFICATE_HAS_TAG = "INSERT INTO gift_certificates_has_tags (gift_certificates_id," +
-            " tags_id) VALUES (?, ?);\n";
+            " tags_id) VALUES (?, ?)";
     private static final String UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificates SET name = ?, description = ?," +
-            " price = ?, duration = ?, last_update_date = ? WHERE (id = ?);\n";
+            " price = ?, duration = ?, last_update_date = ? WHERE (id = ?)";
     private static final String DELETE_GIFT_CERTIFICATE = "DELETE FROM gift_certificates WHERE id = ?";
     private static final String GET_GIFT_CERTIFICATES_BY_TAG_ID = "select gc.id, gc.name, gc.description, gc.price," +
             " gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
             "\t join gift_certificates_has_tags on gc.id=gift_certificates_has_tags.gift_certificates_id\n" +
-            "     where gift_certificates_has_tags.tags_id=?;";
+            "     where gift_certificates_has_tags.tags_id=?";
     private static final String ANY_CHARACTERS_BEFORE = "\"%";
     private static final String ANY_CHARACTERS_AFTER = "%\"";
     private static final String QUOTES = "\"";
@@ -81,7 +83,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      * @throws DataIntegrityViolationException if this GiftCertificate already exists in the DB
      */
     @Override
-    public GiftCertificate create(GiftCertificate giftCertificate) throws DuplicateKeyException {
+    public long create(GiftCertificate giftCertificate) throws DuplicateKeyException {
         KeyHolder keyHolder = new GeneratedKeyHolder();
         jdbcTemplate.update(connection -> {
             PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CERTIFICATE, Statement.RETURN_GENERATED_KEYS);
@@ -94,8 +96,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
             return preparedStatement;
         }, keyHolder);
         logger.info("GiftCertificate is created in DB");
-        giftCertificate.setId(Objects.requireNonNull(keyHolder.getKey()).intValue());
-        return read(giftCertificate.getId());
+        return Objects.requireNonNull(keyHolder.getKey()).intValue();
     }
 
     /**
@@ -181,11 +182,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public void attachTags(long idGiftCertificate, List<Tag> tags) throws DataIntegrityViolationException {
         batchUpdateGiftCertificateHasTg(idGiftCertificate, tags);
-    }
-
-    @Override
-    public List<GiftCertificate> getGiftCertificatesByTagId(long tagId) {
-        return jdbcTemplate.query(GET_GIFT_CERTIFICATES_BY_TAG_ID, new Object[]{tagId}, giftCertificateMapper);
     }
 
     private void batchUpdateGiftCertificateHasTg(long idGiftCertificate, List<Tag> tags) {

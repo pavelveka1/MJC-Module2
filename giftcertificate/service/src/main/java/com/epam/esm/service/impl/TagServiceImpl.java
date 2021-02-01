@@ -71,8 +71,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
+        long id;
         try {
-            addedTag = tagDAO.create(modelMapper.map(tagDto, Tag.class));
+            id = tagDAO.create(modelMapper.map(tagDto, Tag.class));
+            addedTag = tagDAO.read(id);
         } catch (DuplicateKeyException e) {
             throw new DuplicateEntryServiceException("A tag with name = " + tagDto.getName() + " already exists");
         }
@@ -90,19 +92,12 @@ public class TagServiceImpl implements TagService {
     public TagDto read(long id) throws IdNotExistServiceException {
         Tag readTag;
         TagDto tagDto;
-        List<GiftCertificateDto> giftCertificateDtoList;
-        List<GiftCertificate> giftCertificateList;
         try {
             readTag = tagDAO.read(id);
-            giftCertificateList = giftCertificateDAO.getGiftCertificatesByTagId(readTag.getId());
-            giftCertificateDtoList = giftCertificateList.stream().map(giftCertificate -> modelMapper.map(giftCertificate,
-                    GiftCertificateDto.class))
-                    .collect(Collectors.toList());
         } catch (EmptyResultDataAccessException e) {
             throw new IdNotExistServiceException("Tag with id = " + id + " not found");
         }
         tagDto = modelMapper.map(readTag, TagDto.class);
-        tagDto.setCertificates(giftCertificateDtoList);
         return tagDto;
     }
 
@@ -129,15 +124,7 @@ public class TagServiceImpl implements TagService {
     @Override
     public List<TagDto> findAll() {
         List<Tag> tags = tagDAO.findAll();
-        List<TagDto> tagDtoList = tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
-        for (TagDto tagDto : tagDtoList) {
-            List<GiftCertificate> giftCertificateList = giftCertificateDAO.getGiftCertificatesByTagId(tagDto.getId());
-            List<GiftCertificateDto> giftCertificateDtoList = giftCertificateList.stream()
-                    .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
-                    .collect(Collectors.toList());
-            tagDto.setCertificates(giftCertificateDtoList);
-        }
-        return tagDtoList;
+        return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
 
 }

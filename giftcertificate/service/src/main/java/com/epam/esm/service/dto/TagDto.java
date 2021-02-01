@@ -16,6 +16,5 @@ import java.util.List;
 public class TagDto {
     private Long id;
     private String name;
-    private List<GiftCertificateDto> certificates = new ArrayList<>();
 
 }
