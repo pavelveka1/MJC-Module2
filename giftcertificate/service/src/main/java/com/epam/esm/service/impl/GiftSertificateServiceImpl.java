@@ -37,6 +37,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private static final String SEARCH_BY_TAG = "tag";
     private static final String SEARCH_BY_NAME = "name";
     private static final String SEARCH_BY_DESCRIPTION = "description";
+    private static final String UNDERSCORE="_";
+    private static final String WHITESPACE=" ";
 
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -94,8 +96,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             if(id!=0){
                 throw new RuntimeException();
             }
-
-
  */
             createdGiftCertificate = giftCertificateDAO.read(id);
             List<Tag> tags = giftCertificateDto.getTags().stream()
@@ -103,7 +103,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
                     .collect(Collectors.toList());
             giftCertificateDAO.attachTags(createdGiftCertificate.getId(), tags);
         } catch (DataIntegrityViolationException e) {
-            throw new DuplicateEntryServiceException("Gift certificate with same name or description alredy is exist");
+            throw new DuplicateEntryServiceException("Gift certificate with same name or description alredy exist");
         }
         return modelMapper.map(createdGiftCertificate, GiftCertificateDto.class);
     }
@@ -127,7 +127,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
                     .map(tag -> modelMapper.map(tag, TagDto.class))
                     .collect(Collectors.toList());
         } catch (EmptyResultDataAccessException e) {
-            throw new IdNotExistServiceException("There is not GiftCertificate with id = " + id + " in DB");
+            throw new IdNotExistServiceException("There is no GiftCertificate with id = " + id + " in DB");
         }
         giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
         giftCertificateDto.setTags(tagsDto);
@@ -165,7 +165,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         int i = giftCertificateDAO.delete(id);
         if (i == 0) {
             logger.info("GiftCertificate isn't deleted from DB");
-            throw new IdNotExistServiceException("GiftCertificate with id = " + id + "is not exist in DB");
+            throw new IdNotExistServiceException("GiftCertificate with id = " + id + " does not exist in DB");
         }
         logger.info("GiftCertificate is deleted from DB");
     }
@@ -229,7 +229,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         }
         if (search != null & value != null) {
             if (search.equals(SEARCH_BY_TAG)) {
-                giftCertificateList = giftCertificateDAO.findAllCertificatesByTagName(value, sortType, orderType);
+                giftCertificateList = giftCertificateDAO.findAllCertificatesByTagName(formatTagName(value), sortType, orderType);
             } else if (search.equals(SEARCH_BY_NAME) || search.equals(SEARCH_BY_DESCRIPTION)) {
                 giftCertificateList = giftCertificateDAO.findAllCertificatesByNameOrDescription(value, sortType, orderType);
             } else {
@@ -239,5 +239,9 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return giftCertificateList.stream()
                 .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
                 .collect(Collectors.toList());
+    }
+
+    private String formatTagName(String tagName){
+        return tagName.replace(UNDERSCORE, WHITESPACE);
     }
 }
