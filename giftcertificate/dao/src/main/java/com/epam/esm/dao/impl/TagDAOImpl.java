@@ -24,7 +24,7 @@ import org.springframework.stereotype.Repository;
 public class TagDAOImpl implements TagDAO {
 
     private static final String GET_TAG_BY_ID = "select id, name from tags where id=?";
-    private static final String GET_ALL_TAGS = "select id, name from tags";
+    private static final String GET_ALL_TAGS = "select id, name from tags order by id asc";
     private static final String CREATE_TAG = "INSERT INTO tags (name) VALUES (?)";
     private static final String DELETE_TAG = "DELETE FROM tags WHERE tags.id=?";
     private static final String GET_TAGS_BY_GIFT_CERTIFICATE_ID = "select tags.id, tags.name from tags\n" +

@@ -90,6 +90,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         long id;
         try {
             id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
+/*
+            if(id!=0){
+                throw new RuntimeException();
+            }
+
+
+ */
             createdGiftCertificate = giftCertificateDAO.read(id);
             List<Tag> tags = giftCertificateDto.getTags().stream()
                     .map(tagDto -> modelMapper.map(tagDto, Tag.class))

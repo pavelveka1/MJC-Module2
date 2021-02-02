@@ -31,14 +31,16 @@ public class GiftCertificateDtoValidator implements Validator {
         GiftCertificateDto giftCertificateDto = (GiftCertificateDto) target;
         ValidationUtils.rejectIfEmpty(errors, NAME, CERTIFICATE_NAME_INCORRECT);
         ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
-        if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
-            errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
-        } else if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
-            errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
-        } else if (giftCertificateDto.getPrice() <= MIN_PRICE) {
-            errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
-        } else if (giftCertificateDto.getDuration() <= MIN_DURATION) {
-            errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
-        }
+       if(!errors.hasErrors()){
+           if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
+               errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
+           } else if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
+               errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
+           } else if (giftCertificateDto.getPrice() <= MIN_PRICE) {
+               errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
+           } else if (giftCertificateDto.getDuration() <= MIN_DURATION) {
+               errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
+           }
+       }
     }
 }

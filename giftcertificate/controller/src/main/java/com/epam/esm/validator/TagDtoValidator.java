@@ -21,8 +21,11 @@ public class TagDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         TagDto tagDto = (TagDto) target;
         ValidationUtils.rejectIfEmpty(errors, NAME, TAG_NAME_INCORRECT);
-        if (!tagDto.getName().matches(NAME_PATTERN)) {
-            errors.rejectValue(NAME, TAG_NAME_INCORRECT);
+        if (!errors.hasErrors()) {
+            if (!tagDto.getName().matches(NAME_PATTERN)) {
+                errors.rejectValue(NAME, TAG_NAME_INCORRECT);
+            }
         }
+
     }
 }
