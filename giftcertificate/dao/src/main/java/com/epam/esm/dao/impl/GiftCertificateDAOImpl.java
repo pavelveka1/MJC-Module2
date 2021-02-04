@@ -200,6 +200,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public void attachTags(long idGiftCertificate, List<Tag> tags) throws DataIntegrityViolationException {
         batchUpdateGiftCertificateHasTg(idGiftCertificate, tags);
+        logger.info("Tags has been attached to certificate");
     }
 
     private void batchUpdateGiftCertificateHasTg(long idGiftCertificate, List<Tag> tags) {
