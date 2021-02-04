@@ -49,10 +49,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     private static final String UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificates SET name = ?, description = ?," +
             " price = ?, duration = ?, last_update_date = ? WHERE (id = ?)";
     private static final String DELETE_GIFT_CERTIFICATE = "DELETE FROM gift_certificates WHERE id = ?";
-    private static final String GET_GIFT_CERTIFICATES_BY_TAG_ID = "select gc.id, gc.name, gc.description, gc.price," +
-            " gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
-            "\t join gift_certificates_has_tags on gc.id=gift_certificates_has_tags.gift_certificates_id\n" +
-            "     where gift_certificates_has_tags.tags_id=?";
     private static final String ANY_CHARACTERS_BEFORE = "\"%";
     private static final String ANY_CHARACTERS_AFTER = "%\"";
     private static final String QUOTES = "\"";

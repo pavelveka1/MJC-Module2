@@ -13,7 +13,6 @@ import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
-import lombok.Data;
 import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
  * Contains methods for work with GiftCertificateDto
  */
 @Service
-@Data
 public class GiftSertificateServiceImpl implements GiftCertificateService {
 
     private static final Logger logger = Logger.getLogger(GiftSertificateServiceImpl.class);
@@ -37,8 +35,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private static final String SEARCH_BY_TAG = "tag";
     private static final String SEARCH_BY_NAME = "name";
     private static final String SEARCH_BY_DESCRIPTION = "description";
-    private static final String UNDERSCORE="_";
-    private static final String WHITESPACE=" ";
+    private static final String UNDERSCORE = "_";
+    private static final String WHITESPACE = " ";
 
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -92,11 +90,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         long id;
         try {
             id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
-/*
-            if(id!=0){
-                throw new RuntimeException();
-            }
- */
             createdGiftCertificate = giftCertificateDAO.read(id);
             List<Tag> tags = giftCertificateDto.getTags().stream()
                     .map(tagDto -> modelMapper.map(tagDto, Tag.class))
@@ -119,7 +112,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto read(long id) throws IdNotExistServiceException {
         GiftCertificate foundCertificate;
         GiftCertificateDto giftCertificateDto;
-        List<TagDto> tagsDto = null;
+        List<TagDto> tagsDto;
         try {
             foundCertificate = giftCertificateDAO.read(id);
             List<Tag> tags = tagDAO.getTagsByGiftCertificateId(foundCertificate.getId());
@@ -145,6 +138,11 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto update(GiftCertificateDto modifiedGiftCertificateDto) throws IdNotExistServiceException,
             UpdateServiceException {
         GiftCertificate modifiedGiftCertificate = modelMapper.map(modifiedGiftCertificateDto, GiftCertificate.class);
+        List<Tag> tags = modifiedGiftCertificateDto.getTags().stream().map(tagDto -> modelMapper.map(tagDto, Tag.class))
+                .collect(Collectors.toList());
+        List<Tag> outdatedTags = getListOutdatedTags(modifiedGiftCertificateDto.getId(), tags);
+        List<Tag> tagsNeedAttach = getListTagsNeedAttach(modifiedGiftCertificateDto.getId(), tags);
+        tagDAO.updateListTagsForCertificate(modifiedGiftCertificateDto.getId(), tagsNeedAttach, outdatedTags);
         int i = giftCertificateDAO.update(modifiedGiftCertificate);
         if (i == 0) {
             logger.info("GiftCertificate is not updated in DB");
@@ -241,7 +239,29 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
                 .collect(Collectors.toList());
     }
 
-    private String formatTagName(String tagName){
+    private String formatTagName(String tagName) {
         return tagName.replace(UNDERSCORE, WHITESPACE);
+    }
+
+    private List<Tag> getListOutdatedTags(long idCertificate, List<Tag> tags) {
+        List<Tag> currentTags = tagDAO.getTagsByGiftCertificateId(idCertificate);
+        List<Tag> outdatedTags = new ArrayList<>();
+        for (Tag tag : currentTags) {
+            if (!tags.contains(tag)) {
+                outdatedTags.add(tag);
+            }
+        }
+        return outdatedTags;
+    }
+
+    private List<Tag> getListTagsNeedAttach(long idCertificate, List<Tag> tags) {
+        List<Tag> currentTags = tagDAO.getTagsByGiftCertificateId(idCertificate);
+        List<Tag> tagsNeedAttach = new ArrayList<>();
+        for (Tag tag : tags) {
+            if (!currentTags.contains(tag)) {
+                tagsNeedAttach.add(tag);
+            }
+        }
+        return tagsNeedAttach;
     }
 }

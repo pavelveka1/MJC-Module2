@@ -1,6 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.List;
 import java.util.Objects;
@@ -12,6 +13,7 @@ import com.epam.esm.entity.mapper.TagMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
@@ -30,6 +32,10 @@ public class TagDAOImpl implements TagDAO {
     private static final String GET_TAGS_BY_GIFT_CERTIFICATE_ID = "select tags.id, tags.name from tags\n" +
             "\t join gift_certificates_has_tags on tags.id=gift_certificates_has_tags.tags_id\n" +
             "     where gift_certificates_has_tags.gift_certificates_id=?";
+    private static final String DELETE_CERTIFICATE_HAS_TAG = "DELETE FROM gift_certificates_has_tags WHERE gift_certificates_id=?" +
+            " and tags_id=?";
+    private static final String CREATE_CERTIFICATE_HAS_TAG = "INSERT INTO gift_certificates_has_tags (gift_certificates_id," +
+            " tags_id) VALUES (?, ?)";
     private static final Integer PARAMETER_INDEX_TAG_NAME = 1;
 
 
@@ -103,6 +109,44 @@ public class TagDAOImpl implements TagDAO {
     @Override
     public List<Tag> getTagsByGiftCertificateId(long certificateId) {
         return jdbcTemplate.query(GET_TAGS_BY_GIFT_CERTIFICATE_ID, new Object[]{certificateId}, tagMapper);
+    }
+
+    @Override
+    public void updateListTagsForCertificate(long idCertificate, List<Tag> newTags, List<Tag> oldTags) {
+        batchDeleteOldTags(idCertificate, oldTags);
+        batchSetNewTags(idCertificate, newTags);
+    }
+
+    private void batchDeleteOldTags(long idGiftCertificate, List<Tag> oldTags) {
+        jdbcTemplate.batchUpdate(
+                DELETE_CERTIFICATE_HAS_TAG,
+                new BatchPreparedStatementSetter() {
+                    public void setValues(PreparedStatement ps, int i)
+                            throws SQLException {
+                        ps.setLong(1, idGiftCertificate);
+                        ps.setLong(2, oldTags.get(i).getId());
+                    }
+
+                    public int getBatchSize() {
+                        return oldTags.size();
+                    }
+                });
+    }
+
+    private void batchSetNewTags(long idGiftCertificate, List<Tag> newTags) {
+        jdbcTemplate.batchUpdate(
+                CREATE_CERTIFICATE_HAS_TAG,
+                new BatchPreparedStatementSetter() {
+                    public void setValues(PreparedStatement ps, int i)
+                            throws SQLException {
+                        ps.setLong(1, idGiftCertificate);
+                        ps.setLong(2, newTags.get(i).getId());
+                    }
+
+                    public int getBatchSize() {
+                        return newTags.size();
+                    }
+                });
     }
 
 }

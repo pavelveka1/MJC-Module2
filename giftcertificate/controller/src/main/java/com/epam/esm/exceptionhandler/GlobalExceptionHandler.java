@@ -13,6 +13,12 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler
+    public ResponseEntity<ErrorTO> unKnownException(Exception exception) {
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
     public ResponseEntity<ErrorTO> handleIdNotExistServiceException(IdNotExistServiceException exception) {
         return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.NOT_FOUND.getErrorCode()),
                 HttpStatus.NOT_FOUND);

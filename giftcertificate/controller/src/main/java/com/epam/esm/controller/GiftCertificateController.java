@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
-import java.util.Optional;
 
 /**
  * Class GiftCertificateController - Rest controller for process of request to GiftCertificates
@@ -31,6 +30,8 @@ public class GiftCertificateController {
     @Autowired
     private GiftCertificateService service;
 
+    @Autowired
+    private GiftCertificateService service1;
     /**
      * giftCertificateDtoValidator is used  for validation of GiftCertificateDto
      */

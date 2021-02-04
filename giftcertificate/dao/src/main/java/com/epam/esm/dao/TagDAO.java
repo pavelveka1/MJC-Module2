@@ -50,5 +50,12 @@ public interface TagDAO {
      */
     List<Tag> getTagsByGiftCertificateId(long certificateId);
 
+    /**
+     *  Method updates list of tags by certificate id
+     * @param idCertificate id of certificate
+     * @param newTags list of tags to be added
+     * @param oldTags list of tags to be deleted
+     */
+    void updateListTagsForCertificate(long idCertificate, List<Tag> newTags, List<Tag> oldTags);
 
 }
