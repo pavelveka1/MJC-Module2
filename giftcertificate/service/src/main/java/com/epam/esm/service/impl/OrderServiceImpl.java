@@ -7,7 +7,6 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
@@ -58,7 +57,7 @@ public class OrderServiceImpl implements OrderService {
         List<GiftCertificate> giftCertificateList = orderDto.getCertificates();
         int cost = calculateOrderCost(giftCertificateList);
         order.setCost(cost);
-        giftCertificateList = getCertificates(giftCertificateList);
+        giftCertificateList = getFilledCertificates(giftCertificateList);
         order.setCertificates(giftCertificateList);
         order.setDate(LocalDateTime.now(ZoneId.systemDefault()).toString());
         long idOrder = orderDAO.makeOrder(order);
@@ -93,7 +92,7 @@ public class OrderServiceImpl implements OrderService {
         return cost;
     }
 
-    private List<GiftCertificate> getCertificates(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
+    private List<GiftCertificate> getFilledCertificates(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
         List<GiftCertificate> certificates = new ArrayList<>();
         for (GiftCertificate giftCertificate : giftCertificateList) {
             GiftCertificate giftCertificate1 = giftCertificateDAO.readByName(giftCertificate.getName());

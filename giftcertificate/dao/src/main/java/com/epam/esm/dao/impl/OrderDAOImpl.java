@@ -6,7 +6,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -19,19 +18,10 @@ public class OrderDAOImpl implements OrderDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static final String ID="id";
+    private static final String ID = "id";
     private static final String SELECT_ORDER_BY_ID = "Order.findById";
-    private static final String GET_ORDERS_BY_USER_ID ="Order.findOrdersByUserId";
-
+    private static final String GET_ORDERS_BY_USER_ID = "Order.findOrdersByUserId";
     private static final Logger logger = Logger.getLogger(OrderDAOImpl.class);
-    private static final String MAKE_ORDER = "INSERT INTO orders (users_id, gift_certificates_id, cost, create_date) VALUES (?, ?, ?, ?)";
-
-
-
-    private static final String GET_ORDERS_BY_USER_ID_AND_CERTIFICATE_NAME="select orders.id, gift_certificates.name as" +
-            " certificate_name, gift_certificates.description as certificate_description, gift_certificates.duration as" +
-            " certificate_duration, orders.cost, orders.create_date from orders join gift_certificates on " +
-            "orders.gift_certificates_id=gift_certificates.id  where orders.users_id=? and gift_certificates.name=?";
 
     @Override
     public long makeOrder(Order order) {
@@ -42,7 +32,7 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public List<Order> getOrdersByUserId(long userId) {
-        return  sessionFactory.getCurrentSession().getNamedQuery(GET_ORDERS_BY_USER_ID).setParameter(ID, userId).list();
+        return sessionFactory.getCurrentSession().getNamedQuery(GET_ORDERS_BY_USER_ID).setParameter(ID, userId).list();
     }
 
 

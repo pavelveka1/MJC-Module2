@@ -1,6 +1,5 @@
 package com.epam.esm.service.impl;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -14,8 +13,6 @@ import com.epam.esm.service.exception.IdNotExistServiceException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -74,11 +71,11 @@ public class TagServiceImpl implements TagService {
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
         long id;
-        try{
+        try {
             id = tagDAO.create(modelMapper.map(tagDto, Tag.class));
             addedTag = tagDAO.read(id);
-        }catch (ConstraintViolationException e){
-            throw new DuplicateEntryServiceException("Tag with name = "+tagDto.getName()+" alredy exist in DB");
+        } catch (ConstraintViolationException e) {
+            throw new DuplicateEntryServiceException("Tag with name = " + tagDto.getName() + " alredy exist in DB");
         }
         return modelMapper.map(addedTag, TagDto.class);
     }
@@ -114,10 +111,10 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(long id) throws IdNotExistServiceException {
-        Tag tag=tagDAO.read(id);
-        try{
+        Tag tag = tagDAO.read(id);
+        try {
             tagDAO.delete(tag);
-        }catch (IllegalArgumentException e){
+        } catch (IllegalArgumentException e) {
             throw new IdNotExistServiceException("There is no Tag with id = " + id + " in DB");
         }
 

@@ -1,24 +1,13 @@
 package com.epam.esm.dao.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.List;
-import java.util.Objects;
 
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -33,16 +22,6 @@ public class TagDAOImpl implements TagDAO {
     private static final String GET_TAG_BY_NAME = "Tag.getTagByName";
     private static final String ID = "id";
     public static final String NAME_TAG="name";
-
-
-    private static final String CREATE_TAG = "INSERT INTO tags (name) VALUES (?)";
-
-    private static final String DELETE_CERTIFICATE_HAS_TAG = "DELETE FROM gift_certificates_has_tags WHERE gift_certificates_id=?" +
-            " and tags_id=?";
-    private static final String CREATE_CERTIFICATE_HAS_TAG = "INSERT INTO gift_certificates_has_tags (gift_certificates_id," +
-            " tags_id) VALUES (?, ?)";
-    private static final Integer PARAMETER_INDEX_TAG_NAME = 1;
-
 
     /**
      * Instance of SessionFactory for work with DB
@@ -95,21 +74,16 @@ public class TagDAOImpl implements TagDAO {
         return getSession().getNamedQuery(GET_ALL_TAGS).list();
     }
 
+    /**
+     *  Get Tags by id of certificate
+     * @param certificateId id of gift certificate
+     * @return list of tags
+     */
     @Override
     public List<Tag> getTagsByGiftCertificateId(long certificateId) {
         return getSession().getNamedQuery(GET_TAGS_BY_GIFT_CERTIFICATE_ID).setParameter(ID, certificateId).list();
     }
 
-    @Override
-    public void updateListTagsForCertificate(long idCertificate, List<Tag> newTags, List<Tag> oldTags) {
-        // получаем сертификат и через setter устанавливаем новый список тэгов и вызываес save
-
-        /*
-        deleteOldTags(idCertificate, oldTags);
-        setNewTags(idCertificate, newTags);
-
-         */
-    }
 
     /**
      * Get Tag by name
@@ -122,47 +96,16 @@ public class TagDAOImpl implements TagDAO {
         return (Tag) getSession().getNamedQuery(GET_TAG_BY_NAME).setParameter(NAME_TAG, tagName).uniqueResult();
     }
 
+    /**
+     *  Get Tag widely used by user with highest cost
+     * @param userId id of user
+     * @return Tag
+     */
     @Override
     public Tag getWidelyUsedByUserTagWithHighestCost(long userId) {
         return null;
     }
 
-   /*
-    private void deleteOldTags(long idGiftCertificate, List<Tag> oldTags) {
-
-        jdbcTemplate.batchUpdate(
-                DELETE_CERTIFICATE_HAS_TAG,
-                new BatchPreparedStatementSetter() {
-                    public void setValues(PreparedStatement ps, int i)
-                            throws SQLException {
-                        ps.setLong(1, idGiftCertificate);
-                        ps.setLong(2, oldTags.get(i).getId());
-                    }
-
-                    public int getBatchSize() {
-                        return oldTags.size();
-                    }
-                });
-    }
-
-    private void setNewTags(long idGiftCertificate, List<Tag> newTags) {
-        jdbcTemplate.batchUpdate(
-                CREATE_CERTIFICATE_HAS_TAG,
-                new BatchPreparedStatementSetter() {
-                    public void setValues(PreparedStatement ps, int i)
-                            throws SQLException {
-                        ps.setLong(1, idGiftCertificate);
-                        ps.setLong(2, newTags.get(i).getId());
-                    }
-
-                    public int getBatchSize() {
-                        return newTags.size();
-                    }
-                });
-    }
-
-
-    */
 
     private Session getSession() {
         return sessionFactory.getCurrentSession();

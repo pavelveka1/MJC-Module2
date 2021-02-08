@@ -3,7 +3,6 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.OrderService;
-import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;

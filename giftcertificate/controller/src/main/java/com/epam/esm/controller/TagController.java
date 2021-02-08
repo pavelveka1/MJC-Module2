@@ -55,7 +55,7 @@ public class TagController {
      * @param tagDto - it is new Tag
      * @return created tag as tegDto
      * @throws DuplicateEntryServiceException is such tag alredy exist in DB
-     * @throws ValidationException if passed TagDto is not valid
+     * @throws ValidationException            if passed TagDto is not valid
      */
     @PostMapping("/tags")
     @ResponseStatus(HttpStatus.CREATED)

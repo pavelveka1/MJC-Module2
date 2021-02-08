@@ -1,33 +1,20 @@
 package com.epam.esm.dao.impl;
 
-import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
-import java.util.Objects;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.Tag;
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.SessionFactory;
-import org.hibernate.StaleStateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
-import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.Parameter;
 
 /**
  * GiftSertificateJDBCTemplate - class for work with GiftCertificate
@@ -44,21 +31,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String NAME_OR_DESCRIPTION = "nameOrDescription";
-
-    private static final String INSERT_CERTIFICATE = "INSERT INTO gift_certificates (name, description, price, duration, " +
-            "create_date, last_update_date) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String CREATE_CERTIFICATE_HAS_TAG = "INSERT INTO gift_certificates_has_tags (gift_certificates_id," +
-            " tags_id) VALUES (?, ?)";
-    private static final String UPDATE_GIFT_CERTIFICATE = "UPDATE gift_certificates SET name = ?, description = ?," +
-            " price = ?, duration = ?, last_update_date = ? WHERE (id = ?)";
-    private static final String DELETE_GIFT_CERTIFICATE = "DELETE FROM gift_certificates WHERE id = ?";
-    private static final String GET_GIFT_CERTIFICATES_BY_TAG_ID = "select gc.id, gc.name, gc.description, gc.price," +
-            " gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
-            "\t join gift_certificates_has_tags on gc.id=gift_certificates_has_tags.gift_certificates_id\n" +
-            "     where gift_certificates_has_tags.tags_id=?";
-    private static final String ANY_CHARACTERS_BEFORE = "\"%";
-    private static final String ANY_CHARACTERS_AFTER = "%\"";
-    private static final String QUOTES = "\"";
 
 
     /**
@@ -94,6 +66,13 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         return (GiftCertificate) sessionFactory.getCurrentSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_ID).setParameter(ID, id).uniqueResult();
     }
 
+    /**
+     * Read certificate by name
+     *
+     * @param certificateName name of certificate
+     * @return GiftCertificate
+     * @throws EmptyResultDataAccessException if certificate with such name is not exist
+     */
     @Override
     public GiftCertificate readByName(String certificateName) throws EmptyResultDataAccessException {
         return (GiftCertificate) sessionFactory.getCurrentSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_NAME).setParameter(NAME, certificateName).uniqueResult();
@@ -145,7 +124,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> findAllCertificatesByTagName(String tagName, String sortType, String orderType)
             throws BadSqlGrammarException {
-      //  tagName = QUOTES + tagName + QUOTES;
+        //  tagName = QUOTES + tagName + QUOTES;
         return sessionFactory.getCurrentSession().getNamedQuery(SELECT_ALL_CERTIFICATES_BY_TAG_NAME).setParameter(NAME, tagName).list();
     }
 
@@ -161,7 +140,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> findAllCertificatesByNameOrDescription(String nameOrDescription, String sortType, String orderType)
             throws BadSqlGrammarException {
-       // nameOrDescription = ANY_CHARACTERS_BEFORE + nameOrDescription + ANY_CHARACTERS_AFTER;
+        // nameOrDescription = ANY_CHARACTERS_BEFORE + nameOrDescription + ANY_CHARACTERS_AFTER;
         return sessionFactory.getCurrentSession().getNamedQuery(SELECT_ALL_CERTIFICATES_BY_NAME_OR_DESCRIPTION).setParameter(NAME_OR_DESCRIPTION, nameOrDescription).list();
     }
 

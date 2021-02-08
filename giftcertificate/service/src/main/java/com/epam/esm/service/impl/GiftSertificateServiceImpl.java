@@ -1,8 +1,5 @@
 package com.epam.esm.service.impl;
 
-import java.sql.SQLIntegrityConstraintViolationException;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -17,16 +14,11 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
 import org.apache.log4j.Logger;
-import org.hibernate.HibernateException;
 import org.hibernate.NonUniqueObjectException;
-import org.hibernate.StaleStateException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
-import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -141,10 +133,10 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         try {
             giftCertificateDAO.update(modifiedGiftCertificate);
         } catch (NonUniqueObjectException e) {
-            throw new UpdateServiceException("GiftCertificatewith name = "+modifiedGiftCertificate.getName()+" alredy exist in DB");
+            throw new UpdateServiceException("GiftCertificatewith name = " + modifiedGiftCertificate.getName() + " alredy exist in DB");
         }
         logger.info("GiftCertificate has been updated in DB");
-       //return read(modifiedGiftCertificateDto.getId());
+        //return read(modifiedGiftCertificateDto.getId());
     }
 
     /**
@@ -242,25 +234,4 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return tagName.replace(UNDERSCORE, WHITESPACE);
     }
 
-    private List<Tag> getListOutdatedTags(long idCertificate, List<Tag> tags) {
-        List<Tag> currentTags = tagDAO.getTagsByGiftCertificateId(idCertificate);
-        List<Tag> outdatedTags = new ArrayList<>();
-        for (Tag tag : currentTags) {
-            if (!tags.contains(tag)) {
-                outdatedTags.add(tag);
-            }
-        }
-        return outdatedTags;
-    }
-
-    private List<Tag> getListTagsNeedAttach(long idCertificate, List<Tag> tags) {
-        List<Tag> currentTags = tagDAO.getTagsByGiftCertificateId(idCertificate);
-        List<Tag> tagsNeedAttach = new ArrayList<>();
-        for (Tag tag : tags) {
-            if (!currentTags.contains(tag)) {
-                tagsNeedAttach.add(tag);
-            }
-        }
-        return tagsNeedAttach;
-    }
 }

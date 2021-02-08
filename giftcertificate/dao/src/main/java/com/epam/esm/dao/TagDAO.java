@@ -18,7 +18,7 @@ public interface TagDAO {
      * @param tag will be created in DB
      * @return created Tag
      */
-    long create(Tag tag) ;
+    long create(Tag tag);
 
     /**
      * Read one Tag from DB by id
@@ -52,22 +52,14 @@ public interface TagDAO {
     List<Tag> getTagsByGiftCertificateId(long certificateId);
 
     /**
-     *  Method updates list of tags by certificate id
-     * @param idCertificate id of certificate
-     * @param newTags list of tags to be added
-     * @param oldTags list of tags to be deleted
-     */
-    void updateListTagsForCertificate(long idCertificate, List<Tag> newTags, List<Tag> oldTags);
-
-    /**
-     *  Get Tag by name
+     * Get Tag by name
+     *
      * @param tagName name of tag
      * @return Tag
      */
     Tag getTagByName(String tagName);
 
     Tag getWidelyUsedByUserTagWithHighestCost(long userId);
-
 
 
 }
