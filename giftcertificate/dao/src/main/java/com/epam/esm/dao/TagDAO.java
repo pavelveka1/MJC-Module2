@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.epam.esm.entity.Tag;
@@ -17,7 +18,7 @@ public interface TagDAO {
      * @param tag will be created in DB
      * @return created Tag
      */
-    long create(Tag tag);
+    long create(Tag tag) ;
 
     /**
      * Read one Tag from DB by id
@@ -31,9 +32,9 @@ public interface TagDAO {
     /**
      * Delete Tag from DB by id
      *
-     * @param id Tag with this id will be deleted from DB
+     * @param tag this will be deleted from DB
      */
-    int delete(long id);
+    void delete(Tag tag);
 
     /**
      * Find all Tags
@@ -49,6 +50,24 @@ public interface TagDAO {
      * @return list of tag
      */
     List<Tag> getTagsByGiftCertificateId(long certificateId);
+
+    /**
+     *  Method updates list of tags by certificate id
+     * @param idCertificate id of certificate
+     * @param newTags list of tags to be added
+     * @param oldTags list of tags to be deleted
+     */
+    void updateListTagsForCertificate(long idCertificate, List<Tag> newTags, List<Tag> oldTags);
+
+    /**
+     *  Get Tag by name
+     * @param tagName name of tag
+     * @return Tag
+     */
+    Tag getTagByName(String tagName);
+
+    Tag getWidelyUsedByUserTagWithHighestCost(long userId);
+
 
 
 }

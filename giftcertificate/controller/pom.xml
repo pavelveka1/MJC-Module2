@@ -27,10 +27,6 @@
             <artifactId>validation-api</artifactId>
         </dependency>
         <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-        </dependency>
-        <dependency>
             <groupId>com.epam.esm</groupId>
             <artifactId>model</artifactId>
             <version>${model.version}</version>
@@ -40,10 +36,5 @@
             <artifactId>service</artifactId>
             <version>${service.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.github.java-json-tools</groupId>
-            <artifactId>json-patch</artifactId>
-        </dependency>
-
     </dependencies>
 </project>

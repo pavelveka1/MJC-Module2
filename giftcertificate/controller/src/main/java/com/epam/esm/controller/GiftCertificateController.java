@@ -21,7 +21,7 @@ import java.util.Optional;
  * Class GiftCertificateController - Rest controller for process of request to GiftCertificates
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/controller/api")
 public class GiftCertificateController {
 
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
@@ -87,24 +87,6 @@ public class GiftCertificateController {
     }
 
     /**
-     * Method update - updates GiftCertificate
-     *
-     * @param giftCertificateDto modified
-     * @return updated GiftCertificate as GiftCertificateDto
-     * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
-     * @throws UpdateServiceException     if giftCertificate hasn't been updated
-     * @throws ValidationException        if passed GiftCertificateDto is not valid
-     */
-    @PutMapping("/certificates")
-    public GiftCertificateDto update(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws IdNotExistServiceException, ValidationException, UpdateServiceException {
-        if (bindingResult.hasErrors()) {
-            throw new ValidationException("GiftCertificateDto is not valid for update operation!");
-        }
-        return service.update(giftCertificateDto);
-    }
-
-
-    /**
      * Method let to update GiftCertificate partly
      *
      * @param id                 of giftCertificate
@@ -136,9 +118,10 @@ public class GiftCertificateController {
         if (giftCertificateDto.getDuration() != null) {
             giftCertificateDtoRead.setDuration(giftCertificateDto.getDuration());
         }
-
+        if (!giftCertificateDto.getTags().isEmpty()) {
+            giftCertificateDtoRead.setTags(giftCertificateDto.getTags());
+        }
         service.update(giftCertificateDtoRead);
-
         return service.read(id);
     }
 
@@ -153,4 +136,5 @@ public class GiftCertificateController {
     public void delete(@PathVariable int id) throws IdNotExistServiceException {
         service.delete(id);
     }
+
 }

@@ -1,5 +1,6 @@
 package com.epam.esm.dao;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.epam.esm.entity.GiftCertificate;
@@ -33,19 +34,26 @@ public interface GiftCertificateDAO {
     GiftCertificate read(long id);
 
     /**
+     * Read GiftCertificate from DB by name
+     *
+     * @param certificateName name of certificate
+     * @return GiftCertificate
+     */
+    GiftCertificate readByName(String certificateName);
+
+    /**
      * Update GiftCertificate
      *
      * @param giftCertificate we wont update
-     * @return updated GiftCertificate
      */
-    int update(GiftCertificate giftCertificate);
+    void update(GiftCertificate giftCertificate);
 
     /**
      * Delete Tag from DB by id
      *
-     * @param id Tag with this id will be deleted from DB
+     * @param giftCertificate - certificate with id will be deleted from DB
      */
-    int delete(long id);
+    void delete(GiftCertificate giftCertificate);
 
     /**
      * Find all giftCertificates with condition determined by parameters
@@ -78,14 +86,5 @@ public interface GiftCertificateDAO {
      * @throws BadSqlGrammarException if passed not correct parameters
      */
     List<GiftCertificate> findAllCertificatesByNameOrDescription(String nameOrDescription, String sortType, String orderType);
-
-    /**
-     * Method attach tags to gift certificate
-     *
-     * @param idGiftCertificate id of gift certificate
-     * @param tags              list of tags
-     * @throws DataIntegrityViolationException exception
-     */
-    void attachTags(long idGiftCertificate, List<Tag> tags);
 
 }

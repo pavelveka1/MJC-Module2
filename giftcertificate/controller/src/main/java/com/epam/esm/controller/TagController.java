@@ -19,7 +19,7 @@ import java.util.List;
  * Class TagController is Rest controller for Tag
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/controller/api")
 public class TagController {
 
     /**

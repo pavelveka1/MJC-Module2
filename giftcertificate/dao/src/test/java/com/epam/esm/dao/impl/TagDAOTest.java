@@ -1,9 +1,7 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.configuration.DBConfig;
-import com.epam.esm.entity.mapper.GiftCertificateMapper;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.mapper.TagMapper;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +11,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.test.context.web.WebAppConfiguration;
+
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -28,15 +28,9 @@ public class TagDAOTest {
     @Autowired
     private TagDAOImpl tagDAOImpl;
 
-    @Autowired
-    private GiftCertificateMapper giftCertificateMapper;
-
-    @Autowired
-    private TagMapper tagMapper;
-
     @DisplayName("should create tag in DB and return this one")
     @Test
-    public void createTag() {
+    public void createTag() throws SQLIntegrityConstraintViolationException {
         Tag tag = new Tag();
         tag.setName("Test new tag");
         long id = tagDAOImpl.create(tag);
@@ -57,7 +51,7 @@ public class TagDAOTest {
 
     @DisplayName("should be return not null")
     @Test
-    public void createTagReturnNotNull() {
+    public void createTagReturnNotNull() throws SQLIntegrityConstraintViolationException {
         Tag tag = new Tag();
         tag.setName("New Test tag");
         long id = tagDAOImpl.create(tag);
@@ -66,6 +60,7 @@ public class TagDAOTest {
         assertEquals(tag.getName(), createdTag.getName());
     }
 
+    /*
     @DisplayName("should be return 0 ")
     @Test
     public void deleteTagByNotExistId() {
@@ -81,6 +76,8 @@ public class TagDAOTest {
     }
 
 
+
+     */
     @DisplayName("read tag by id ")
     @Test
     public void readTagById() {

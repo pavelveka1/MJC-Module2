@@ -1,9 +1,11 @@
 package com.epam.esm.validator;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
+import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+@Component
 public class GiftCertificateDtoPatchValidator implements Validator {
     private static final String NAME_PATTERN = ".{2,45}";
     private static final String DESCRIPTION_PATTERN = ".{2,300}";
@@ -20,7 +22,7 @@ public class GiftCertificateDtoPatchValidator implements Validator {
 
     @Override
     public boolean supports(Class<?> clazz) {
-        return false;
+        return GiftCertificateDto.class.equals(clazz);
     }
 
     @Override

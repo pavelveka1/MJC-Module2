@@ -8,10 +8,13 @@ import java.util.Objects;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.entity.GiftCertificate;
-import com.epam.esm.entity.mapper.GiftCertificateMapper;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.mapper.TagMapper;
 import org.apache.log4j.Logger;
+import org.hibernate.HibernateException;
+import org.hibernate.NonUniqueObjectException;
+import org.hibernate.SessionFactory;
+import org.hibernate.StaleStateException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.dao.DuplicateKeyException;
@@ -21,7 +24,10 @@ import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
+import org.springframework.orm.hibernate5.HibernateOptimisticLockingFailureException;
 import org.springframework.stereotype.Repository;
+
+import javax.persistence.Parameter;
 
 /**
  * GiftSertificateJDBCTemplate - class for work with GiftCertificate
@@ -30,18 +36,15 @@ import org.springframework.stereotype.Repository;
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
     private static final Logger logger = Logger.getLogger(GiftCertificateDAOImpl.class);
-    private static final String SELECT_GIFT_CERTIFICATES_BY_ID = "select id, name, description, price, duration, " +
-            "create_date, last_update_date from gift_certificates where id=?";
-    private static final String SELECT_ALL_CERTIFICATES_WITH_SORT = "select id, name, description, price, duration," +
-            "create_date, last_update_date from gift_certificates order by %s %s";
-    private static final String SELECT_ALL_CERTIFICATES_BY_TAG_NAME = "select gc.id, gc.name, gc.description, gc.price, " +
-            "gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
-            "\t join gift_certificates_has_tags on gc.id=gift_certificates_has_tags.gift_certificates_id\n" +
-            "     join tags on tags.id=gift_certificates_has_tags.tags_id\n" +
-            "     where tags.name=%s order by %s %s";
-    private static final String SELECT_ALL_CERTIFICATES_BY_NAME_OR_DESCRIPTION = "select gc.id, gc.name, gc.description," +
-            " gc.price, gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
-            "     where gc.name like %s order by %s %s";
+    private static final String SELECT_GIFT_CERTIFICATES_BY_ID = "GiftCertificate.findById";
+    private static final String SELECT_GIFT_CERTIFICATES_BY_NAME = "GiftCertificate.findByName";
+    private static final String SELECT_ALL_CERTIFICATES_WITH_SORT = "GiftCertificate.findAll";
+    private static final String SELECT_ALL_CERTIFICATES_BY_TAG_NAME = "GiftCertificate.findByTagName";
+    private static final String SELECT_ALL_CERTIFICATES_BY_NAME_OR_DESCRIPTION = "GiftCertificate.findByNameOrDescription";
+    private static final String ID = "id";
+    private static final String NAME = "name";
+    private static final String NAME_OR_DESCRIPTION = "nameOrDescription";
+
     private static final String INSERT_CERTIFICATE = "INSERT INTO gift_certificates (name, description, price, duration, " +
             "create_date, last_update_date) VALUES (?, ?, ?, ?, ?, ?)";
     private static final String CREATE_CERTIFICATE_HAS_TAG = "INSERT INTO gift_certificates_has_tags (gift_certificates_id," +
@@ -57,23 +60,12 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     private static final String ANY_CHARACTERS_AFTER = "%\"";
     private static final String QUOTES = "\"";
 
-    /**
-     * Instance of JdbcTemplate for work with DB
-     */
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
 
     /**
-     * Instance of GiftCertificateMapper for mapping data from resultSet
+     * Instance of SessionFactory for work with DB
      */
     @Autowired
-    private GiftCertificateMapper giftCertificateMapper;
-
-    /**
-     * Instance of TagMapper for mapping data from resultSet
-     */
-    @Autowired
-    private TagMapper tagMapper;
+    private SessionFactory sessionFactory;
 
     /**
      * Create GiftCertificate in DB
@@ -83,62 +75,49 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      * @throws DataIntegrityViolationException if this GiftCertificate already exists in the DB
      */
     @Override
-    public long create(GiftCertificate giftCertificate) throws DuplicateKeyException {
-        KeyHolder keyHolder = new GeneratedKeyHolder();
-        jdbcTemplate.update(connection -> {
-            PreparedStatement preparedStatement = connection.prepareStatement(INSERT_CERTIFICATE, Statement.RETURN_GENERATED_KEYS);
-            preparedStatement.setString(1, giftCertificate.getName());
-            preparedStatement.setString(2, giftCertificate.getDescription());
-            preparedStatement.setInt(3, giftCertificate.getPrice());
-            preparedStatement.setInt(4, giftCertificate.getDuration());
-            preparedStatement.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now(ZoneId.systemDefault())));
-            preparedStatement.setTimestamp(6, Timestamp.valueOf(LocalDateTime.now(ZoneId.systemDefault())));
-            return preparedStatement;
-        }, keyHolder);
-        logger.info("GiftCertificate is created in DB");
-        return Objects.requireNonNull(keyHolder.getKey()).intValue();
+    public long create(GiftCertificate giftCertificate) throws ConstraintViolationException {
+        giftCertificate.setCreateDate(LocalDateTime.now(ZoneId.systemDefault()));
+        giftCertificate.setLastUpdateDate(giftCertificate.getCreateDate());
+        sessionFactory.getCurrentSession().saveOrUpdate(giftCertificate);
+        return giftCertificate.getId();
     }
 
     /**
      * Read GiftCertificate from DB by id
      *
      * @param id long type parameter
-     * @return Optional<GiftCertificate>
+     * @return GiftCertificate
      * @throws EmptyResultDataAccessException if records with such id not exist in DB
      */
     @Override
     public GiftCertificate read(long id) throws EmptyResultDataAccessException {
-        GiftCertificate giftCertificate = jdbcTemplate.queryForObject(SELECT_GIFT_CERTIFICATES_BY_ID, new Object[]{id},
-                giftCertificateMapper);
-        logger.info("GiftCertificate is read from DB");
-        return giftCertificate;
+        return (GiftCertificate) sessionFactory.getCurrentSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_ID).setParameter(ID, id).uniqueResult();
+    }
+
+    @Override
+    public GiftCertificate readByName(String certificateName) throws EmptyResultDataAccessException {
+        return (GiftCertificate) sessionFactory.getCurrentSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_NAME).setParameter(NAME, certificateName).uniqueResult();
     }
 
     /**
      * Update GiftCertificate
      *
      * @param giftCertificate we wont update
-     * @return updated GiftCertificate
      */
     @Override
-    public int update(GiftCertificate giftCertificate) {
-        return jdbcTemplate.update(UPDATE_GIFT_CERTIFICATE,
-                giftCertificate.getName(),
-                giftCertificate.getDescription(),
-                giftCertificate.getPrice(),
-                giftCertificate.getDuration(),
-                LocalDateTime.now(ZoneId.systemDefault()),
-                giftCertificate.getId());
+    public void update(GiftCertificate giftCertificate) throws NonUniqueObjectException {
+        giftCertificate.setLastUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
+        sessionFactory.getCurrentSession().update(giftCertificate);
     }
 
     /**
      * Delete GiftCertificate from DB by id
      *
-     * @param id GiftCertificate with this id will be deleted from DB
+     * @param giftCertificate - GiftCertificate with id will be deleted from DB
      */
     @Override
-    public int delete(long id) {
-        return jdbcTemplate.update(DELETE_GIFT_CERTIFICATE, id);
+    public void delete(GiftCertificate giftCertificate) throws ConstraintViolationException {
+        sessionFactory.getCurrentSession().delete(giftCertificate);
     }
 
     /**
@@ -151,7 +130,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      */
     @Override
     public List<GiftCertificate> findAll(String sortType, String orderType) throws BadSqlGrammarException {
-        return jdbcTemplate.query(String.format(SELECT_ALL_CERTIFICATES_WITH_SORT, sortType, orderType), giftCertificateMapper);
+        return sessionFactory.getCurrentSession().getNamedQuery(SELECT_ALL_CERTIFICATES_WITH_SORT).list();
     }
 
     /**
@@ -166,9 +145,8 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> findAllCertificatesByTagName(String tagName, String sortType, String orderType)
             throws BadSqlGrammarException {
-        tagName = QUOTES + tagName + QUOTES;
-        return jdbcTemplate.query(String.format(SELECT_ALL_CERTIFICATES_BY_TAG_NAME, tagName, sortType, orderType),
-                giftCertificateMapper);
+      //  tagName = QUOTES + tagName + QUOTES;
+        return sessionFactory.getCurrentSession().getNamedQuery(SELECT_ALL_CERTIFICATES_BY_TAG_NAME).setParameter(NAME, tagName).list();
     }
 
     /**
@@ -183,40 +161,8 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public List<GiftCertificate> findAllCertificatesByNameOrDescription(String nameOrDescription, String sortType, String orderType)
             throws BadSqlGrammarException {
-        nameOrDescription = ANY_CHARACTERS_BEFORE + nameOrDescription + ANY_CHARACTERS_AFTER;
-        return jdbcTemplate.query(String.format(SELECT_ALL_CERTIFICATES_BY_NAME_OR_DESCRIPTION, nameOrDescription,
-                sortType, orderType), giftCertificateMapper);
-
-    }
-
-
-    /**
-     * Method attach tags to gift certificate
-     *
-     * @param idGiftCertificate id of gift certificate
-     * @param tags              list of tags
-     * @throws DataIntegrityViolationException exception
-     */
-    @Override
-    public void attachTags(long idGiftCertificate, List<Tag> tags) throws DataIntegrityViolationException {
-        batchUpdateGiftCertificateHasTg(idGiftCertificate, tags);
-        logger.info("Tags has been attached to certificate");
-    }
-
-    private void batchUpdateGiftCertificateHasTg(long idGiftCertificate, List<Tag> tags) {
-        jdbcTemplate.batchUpdate(
-                CREATE_CERTIFICATE_HAS_TAG,
-                new BatchPreparedStatementSetter() {
-                    public void setValues(PreparedStatement ps, int i)
-                            throws SQLException {
-                        ps.setLong(1, idGiftCertificate);
-                        ps.setLong(2, tags.get(i).getId());
-                    }
-
-                    public int getBatchSize() {
-                        return tags.size();
-                    }
-                });
+       // nameOrDescription = ANY_CHARACTERS_BEFORE + nameOrDescription + ANY_CHARACTERS_AFTER;
+        return sessionFactory.getCurrentSession().getNamedQuery(SELECT_ALL_CERTIFICATES_BY_NAME_OR_DESCRIPTION).setParameter(NAME_OR_DESCRIPTION, nameOrDescription).list();
     }
 
 }

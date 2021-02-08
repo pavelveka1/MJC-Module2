@@ -30,7 +30,6 @@ public class GiftCertificateDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         GiftCertificateDto giftCertificateDto = (GiftCertificateDto) target;
         ValidationUtils.rejectIfEmpty(errors, NAME, CERTIFICATE_NAME_INCORRECT);
-        ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
        if(!errors.hasErrors()){
            if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
                errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);

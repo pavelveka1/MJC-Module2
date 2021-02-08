@@ -48,4 +48,25 @@ public class GlobalExceptionHandler {
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> handleParamException(ParameterServiceException exception) {
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.NOT_FOUND.getErrorCode()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> handleCertificateNameNotExistException(CertificateNameNotExistServiceException exception) {
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.NOT_FOUND.getErrorCode()),
+                HttpStatus.NOT_FOUND);
+    }
+
+    /*
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> unknownException(Exception exception) {
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+     */
+
 }

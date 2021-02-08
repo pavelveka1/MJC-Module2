@@ -30,13 +30,14 @@ public interface GiftCertificateService {
     GiftCertificateDto read(long id) throws IdNotExistServiceException;
 
 
+
     /**
      * Update GiftCertificate as GiftCertificateDto
      *
      * @param giftCertificateDto modified GiftCertificate
      * @return updated GiftCertificateDto
      */
-    GiftCertificateDto update(GiftCertificateDto giftCertificateDto) throws UpdateServiceException, IdNotExistServiceException;
+    void update(GiftCertificateDto giftCertificateDto) throws UpdateServiceException, IdNotExistServiceException;
 
     /**
      * Delete GiftCertificate from DB by id
