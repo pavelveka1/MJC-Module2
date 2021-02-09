@@ -89,6 +89,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         GiftCertificate createdGiftCertificate;
         long id;
         try {
+         //  giftCertificateDto.setTags(getFilledTags(giftCertificateDto.getTags()));
             id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
             createdGiftCertificate = giftCertificateDAO.read(id);
             giftCertificateDto = modelMapper.map(createdGiftCertificate, GiftCertificateDto.class);
@@ -207,6 +208,19 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         }
     }
 
+    /*
+    private List<TagDto> getFilledTags(List<TagDto> tagDtoList) {
+        for (int i=0; i<tagDtoList.size();i++) {
+            Tag tag = tagDAO.getTagByName(tagDtoList.get(i).getName());
+            if (tag != null) {
+                tagDtoList.set(i, modelMapper.map(tag, TagDto.class));
+            }
+        }
+        return tagDtoList;
+    }
+
+
+     */
     private List<GiftCertificateDto> searchCertificates(String search, String value, String sortType, String orderType)
             throws RequestParamServiceException {
         List<GiftCertificate> giftCertificateList = new ArrayList<>();

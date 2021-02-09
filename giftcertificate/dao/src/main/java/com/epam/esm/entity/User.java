@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -25,7 +26,7 @@ import java.util.List;
         @NamedQuery(name = "User.findAll",
                 query = "select distinct u from User u")
 })
-public class User implements Serializable {
+public class User extends RepresentationModel<User> implements Serializable {
 
     private long id;
 

@@ -80,6 +80,11 @@ public class OrderServiceImpl implements OrderService {
         return orderDtoList;
     }
 
+    @Override
+    public OrderDto getOrder(long id) {
+        return modelMapper.map(orderDAO.getOrder(id), OrderDto.class);
+    }
+
     private int calculateOrderCost(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
         int cost = 0;
         for (GiftCertificate giftCertificate : giftCertificateList) {

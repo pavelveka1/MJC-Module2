@@ -6,6 +6,7 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
@@ -14,6 +15,9 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Class TagController is Rest controller for Tag
@@ -45,8 +49,12 @@ public class TagController {
      * @return List<TagDto>
      */
     @GetMapping("/tags")
-    public List<TagDto> readAllTags() {
-        return service.findAll();
+    public List<TagDto> readAllTags() throws IdNotExistServiceException {
+        List<TagDto> tagDtoList = service.findAll();
+        for (TagDto tagDto : tagDtoList) {
+            tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
+        }
+        return tagDtoList;
     }
 
     /**
@@ -59,11 +67,13 @@ public class TagController {
      */
     @PostMapping("/tags")
     @ResponseStatus(HttpStatus.CREATED)
-    public TagDto createTag(@Valid @RequestBody TagDto tagDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException {
+    public TagDto createTag(@Valid @RequestBody TagDto tagDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("TagDto is not valid for create operation");
         }
-        return service.create(tagDto);
+        TagDto tagDtoResult = service.create(tagDto);
+        tagDtoResult.add(linkTo(methodOn(TagController.class).readTagById(tagDtoResult.getId())).withSelfRel());
+        return tagDtoResult;
     }
 
     /**
@@ -75,7 +85,9 @@ public class TagController {
      */
     @GetMapping("/tags/{id}")
     public TagDto readTagById(@PathVariable long id) throws IdNotExistServiceException {
-        return service.read(id);
+        TagDto tagDto = service.read(id);
+        tagDto.add(linkTo(methodOn(TagController.class).readTagById(id)).withSelfRel());
+        return tagDto;
     }
 
     /**

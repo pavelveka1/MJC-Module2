@@ -13,6 +13,9 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+
 import javax.validation.Valid;
 import java.util.List;
 
@@ -44,13 +47,25 @@ public class OrderController {
         User user = new User();
         user.setId(userId);
         orderDto.setUser(user);
-        return orderService.makeOrder(orderDto);
+        OrderDto orderDtoResult = orderService.makeOrder(orderDto);
+        orderDtoResult.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDtoResult.getOrders_id())).withSelfRel());
+        return orderDtoResult;
     }
 
     @GetMapping("/users/{userId}/orders")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId) throws IdNotExistServiceException {
-        return orderService.getOrdersByUserId(userId);
+        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId);
+        for (OrderDto orderDto : orderDtoList) {
+            orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrders_id())).withSelfRel());
+        }
+        return orderDtoList;
     }
 
+    @GetMapping("/orders/{id}")
+    public OrderDto getOrdersById(@PathVariable long orderId) throws IdNotExistServiceException {
+        OrderDto orderDtoResult = orderService.getOrder(orderId);
+        orderDtoResult.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDtoResult.getOrders_id())).withSelfRel());
+        return orderDtoResult;
+    }
 }
 

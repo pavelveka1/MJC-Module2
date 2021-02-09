@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
+import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -98,7 +99,7 @@ public class GiftCertificate implements Serializable {
         return orders;
     }
 
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "gift_certificates_has_tags",
             joinColumns = @JoinColumn(name = "gift_certificates_id"),
             inverseJoinColumns = @JoinColumn(name = "tags_id"))

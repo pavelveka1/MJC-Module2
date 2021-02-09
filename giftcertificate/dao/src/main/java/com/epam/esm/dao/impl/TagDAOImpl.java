@@ -9,6 +9,7 @@ import com.epam.esm.entity.Tag;
 import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * TagJDBCTemplate - class for work with Tag

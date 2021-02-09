@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.jws.soap.SOAPBinding;
 import javax.validation.constraints.Min;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 @RestController
 @RequestMapping("/controller/api")
@@ -27,12 +31,18 @@ public class UserController {
 
     @GetMapping("/users/{id}")
     public User getUser(@PathVariable @Min(1) long id) throws IdNotExistServiceException {
-        return userService.getUser(id);
+        User user = userService.getUser(id);
+        user.add(linkTo(methodOn(UserController.class).getUser(id)).withSelfRel());
+        return user;
     }
 
     @GetMapping("/users")
-    public List<User> getUsers(){
-        return userService.getUsers();
+    public List<User> getUsers() throws IdNotExistServiceException {
+        List<User> users=userService.getUsers();
+        for(User user:users){
+            user.add(linkTo(methodOn(UserController.class).getUser(user.getId())).withSelfRel());
+        }
+        return users;
     }
 
 }

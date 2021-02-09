@@ -1,6 +1,7 @@
 package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -33,6 +34,7 @@ public class Tag implements Serializable {
 
     private String name;
 
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<GiftCertificate> giftCertificateList;
 
     @Id

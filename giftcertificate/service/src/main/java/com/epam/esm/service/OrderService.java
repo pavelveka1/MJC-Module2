@@ -12,4 +12,6 @@ public interface OrderService {
 
     List<OrderDto> getOrdersByUserId(long userId) throws IdNotExistServiceException;
 
+    OrderDto getOrder(long id);
+
 }

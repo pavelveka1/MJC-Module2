@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
@@ -15,6 +16,9 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 import java.util.List;
+
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
+import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 
 /**
  * Class GiftCertificateController - Rest controller for process of request to GiftCertificates
@@ -50,9 +54,13 @@ public class GiftCertificateController {
      * @throws RequestParamServiceException if params don't correlate with name of field in DB
      */
     @GetMapping("/certificates")
-    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search, @RequestParam(required = false) String value, @RequestParam(required = false) String sortType, @RequestParam(required = false) String orderType) throws RequestParamServiceException {
+    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search, @RequestParam(required = false) String value, @RequestParam(required = false) String sortType, @RequestParam(required = false) String orderType) throws RequestParamServiceException, IdNotExistServiceException {
         logger.info("read all giftCertificates");
-        return service.findAll(search, value, sortType, orderType);
+        List<GiftCertificateDto> giftCertificateDtoList=service.findAll(search, value, sortType, orderType);
+        for (GiftCertificateDto giftCertificateDto: giftCertificateDtoList) {
+            giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDto.getId())).withSelfRel());
+        }
+        return  giftCertificateDtoList;
     }
 
     /**
@@ -63,8 +71,10 @@ public class GiftCertificateController {
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
      */
     @GetMapping("/certificates/{id}")
-    public GiftCertificateDto read(@PathVariable @Min(5) int id) throws IdNotExistServiceException {
-        return service.read(id);
+    public GiftCertificateDto read(@PathVariable long id) throws IdNotExistServiceException {
+        GiftCertificateDto giftCertificateDto= service.read(id);
+        giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(id)).withSelfRel());
+        return giftCertificateDto;
     }
 
     /**
@@ -78,11 +88,13 @@ public class GiftCertificateController {
      */
     @PostMapping("/certificates")
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, TagNotExistServiceException {
+    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, TagNotExistServiceException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto is not valid for create operation");
         }
-        return service.create(giftCertificateDto);
+        GiftCertificateDto giftCertificateDtoResult=service.create(giftCertificateDto);
+        giftCertificateDtoResult.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDtoResult.getId())).withSelfRel());
+        return giftCertificateDtoResult;
     }
 
     /**
@@ -121,7 +133,9 @@ public class GiftCertificateController {
             giftCertificateDtoRead.setTags(giftCertificateDto.getTags());
         }
         service.update(giftCertificateDtoRead);
-        return service.read(id);
+        GiftCertificateDto giftCertificateDtoResult=service.read(id);
+        giftCertificateDtoResult.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDtoResult.getId())).withSelfRel());
+        return giftCertificateDtoResult;
     }
 
     /**
