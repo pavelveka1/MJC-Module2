@@ -60,6 +60,12 @@ public class GlobalExceptionHandler {
                 HttpStatus.NOT_FOUND);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> handleCertificateNameNotExistException(PaginationException exception) {
+        return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
+    }
+
     /*
     @ExceptionHandler
     public ResponseEntity<ErrorTO> unknownException(Exception exception) {

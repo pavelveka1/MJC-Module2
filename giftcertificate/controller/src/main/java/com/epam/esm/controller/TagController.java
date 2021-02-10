@@ -5,6 +5,7 @@ import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
@@ -26,6 +27,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/controller/api")
 public class TagController {
 
+    private static final String DEFAULT_PAGE_SIZE="1000";
+    private static final String DEFAULT_PAGE_NUMBER="1";
     /**
      * service is used for operations with TagDto
      */
@@ -49,8 +52,9 @@ public class TagController {
      * @return List<TagDto>
      */
     @GetMapping("/tags")
-    public List<TagDto> readAllTags() throws IdNotExistServiceException {
-        List<TagDto> tagDtoList = service.findAll();
+    public List<TagDto> readAllTags( @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                     @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws IdNotExistServiceException, PaginationException {
+        List<TagDto> tagDtoList = service.findAll(page, size);
         for (TagDto tagDto : tagDtoList) {
             tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
         }

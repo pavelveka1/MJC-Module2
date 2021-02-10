@@ -3,12 +3,10 @@ package com.epam.esm.controller;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.jws.soap.SOAPBinding;
 import javax.validation.constraints.Min;
@@ -21,7 +19,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/controller/api")
 public class UserController {
 
-
+    private static final String DEFAULT_PAGE_SIZE="1000";
+    private static final String DEFAULT_PAGE_NUMBER="1";
     private static final Logger logger = Logger.getLogger(UserController.class);
     /**
      * OrderService is used for work with Orders
@@ -37,8 +36,9 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> getUsers() throws IdNotExistServiceException {
-        List<User> users=userService.getUsers();
+    public List<User> getUsers(  @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                 @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws IdNotExistServiceException, PaginationException {
+        List<User> users=userService.getUsers(page, size);
         for(User user:users){
             user.add(linkTo(methodOn(UserController.class).getUser(user.getId())).withSelfRel());
         }

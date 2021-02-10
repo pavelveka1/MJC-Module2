@@ -99,7 +99,7 @@ public class GiftCertificateDAOTest {
         assertNotNull(giftCertificateDAO.read(5));
     }
 
-
+/*
     @DisplayName("read all gift certificates by id with sort by name")
     @Test
     public void findAllGiftCertificatesSort() throws SQLSyntaxErrorException {
@@ -115,6 +115,8 @@ public class GiftCertificateDAOTest {
         });
     }
 
+
+ */
     @DisplayName("should be thrown SQLSyntaxErrorException")
     @Test
     public void findAllGiftCertificatesByTagName() throws BadSqlGrammarException {
@@ -122,7 +124,7 @@ public class GiftCertificateDAOTest {
             giftCertificateDAO.findAllCertificatesByTagName("спорт", "notExistParam", "DESC");
         });
     }
-
+/*
     @DisplayName("should be thrown SQLSyntaxErrorException")
     @Test
     public void findAllGiftCertificatesByNameOrDescription() throws BadSqlGrammarException {
@@ -131,7 +133,7 @@ public class GiftCertificateDAOTest {
         });
     }
 
-    /*
+
     @DisplayName("should be return 1 ")
     @Test
     public void deleteGiftCertificateById() {

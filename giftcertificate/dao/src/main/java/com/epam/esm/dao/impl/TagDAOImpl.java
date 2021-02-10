@@ -2,14 +2,20 @@ package com.epam.esm.dao.impl;
 
 import java.util.List;
 
+import com.epam.esm.entity.GiftCertificate;
 import org.hibernate.Session;
 import org.hibernate.exception.ConstraintViolationException;
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.entity.Tag;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 
 /**
  * TagJDBCTemplate - class for work with Tag
@@ -23,6 +29,7 @@ public class TagDAOImpl implements TagDAO {
     private static final String GET_TAG_BY_NAME = "Tag.getTagByName";
     private static final String ID = "id";
     public static final String NAME_TAG="name";
+    private static final int ONE=1;
 
     /**
      * Instance of SessionFactory for work with DB
@@ -71,8 +78,15 @@ public class TagDAOImpl implements TagDAO {
      * @return list of Tags
      */
     @Override
-    public List<Tag> findAll() {
-        return getSession().getNamedQuery(GET_ALL_TAGS).list();
+    public List<Tag> findAll(Integer pageNumber, Integer pageSize) {
+        CriteriaBuilder cb = getSession().getCriteriaBuilder();
+        CriteriaQuery<Tag> cr = cb.createQuery(Tag.class);
+        Root<Tag> tagRoot = cr.from(Tag.class);
+        cr.select(tagRoot).orderBy(cb.asc(tagRoot.get(ID)));
+        Query<Tag> query = getSession().createQuery(cr);
+        query.setFirstResult((pageNumber - ONE) * pageSize);
+        query.setMaxResults(pageSize);
+        return query.getResultList();
     }
 
     /**

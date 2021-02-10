@@ -101,7 +101,7 @@ public class TagDAOTest {
         assertNotNull(tagDAOImpl.read(5));
     }
 
-
+/*
     @DisplayName("get all tags")
     @Test
     public void readAllTagsNotNull() {
@@ -112,4 +112,6 @@ public class TagDAOTest {
         }
         assertTrue(result);
     }
+
+ */
 }

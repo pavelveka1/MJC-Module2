@@ -16,7 +16,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class GiftCertificateDto extends RepresentationModel<GiftCertificateDto> {
-    private int id;
+    private long id;
     private String name;
     private String description;
     private Integer price;

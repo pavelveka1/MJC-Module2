@@ -30,7 +30,6 @@ public interface GiftCertificateService {
     GiftCertificateDto read(long id) throws IdNotExistServiceException;
 
 
-
     /**
      * Update GiftCertificate as GiftCertificateDto
      *
@@ -55,7 +54,8 @@ public interface GiftCertificateService {
      * @return list og GiftCertificates
      * @throws RequestParamServiceException if parameters don't right
      */
-    List<GiftCertificateDto> findAll(String search, String value, String sortType, String orderType)
-            throws RequestParamServiceException;
+    List<GiftCertificateDto> findAll(String search, String[] values, String sortType,
+                                     String orderType, Integer page, Integer size)
+            throws RequestParamServiceException, PaginationException;
 
 }

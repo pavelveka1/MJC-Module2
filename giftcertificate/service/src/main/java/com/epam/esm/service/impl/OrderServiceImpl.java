@@ -10,6 +10,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -21,11 +22,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
+    private static final int ZERO=0;
+    private static final int ONE=1;
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
      */
@@ -66,11 +70,21 @@ public class OrderServiceImpl implements OrderService {
 
     @Transactional
     @Override
-    public List<OrderDto> getOrdersByUserId(long userId) throws IdNotExistServiceException {
+    public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size) throws IdNotExistServiceException, PaginationException {
         List<Order> orders;
         List<OrderDto> orderDtoList;
+        if (page<ONE) {
+            if(page==ZERO){
+                throw new PaginationException("It's imposible to get page with zero number");
+            }
+            page = Math.abs(page);
+        }
+        if (size<ONE) {
+            size = Math.abs(size);
+        }
         try {
-            orders = orderDAO.getOrdersByUserId(userId);
+            User user=userDAO.getUser(userId);
+            orders = orderDAO.getOrdersByUserId(user, page, size);
             orderDtoList = orders.stream()
                     .map(order -> modelMapper.map(order, OrderDto.class))
                     .collect(Collectors.toList());

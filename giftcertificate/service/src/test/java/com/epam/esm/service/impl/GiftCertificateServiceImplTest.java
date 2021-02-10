@@ -125,7 +125,7 @@ public class GiftCertificateServiceImplTest {
         });
     }
 
-
+/*
     @DisplayName("should be returned list of giftCertificateDto")
     @Test
     public void findAllGiftCertificates() throws RequestParamServiceException, SQLSyntaxErrorException {
@@ -143,6 +143,8 @@ public class GiftCertificateServiceImplTest {
             giftCertificateService.findAll(null, null, "badParam", null);
         });
     }
+
+
 
     @DisplayName("should be returned list of certificates by tad's name")
     @Test
@@ -168,7 +170,6 @@ public class GiftCertificateServiceImplTest {
                 giftCertificateService.findAll("name", "спорт", "id", "asc"));
     }
 
-/*
     @DisplayName("should be called delete method from DAO")
     @Test
     public void deleteGiftCertificateById() throws IdNotExistServiceException {

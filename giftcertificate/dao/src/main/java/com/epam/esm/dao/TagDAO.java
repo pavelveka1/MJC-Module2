@@ -41,7 +41,7 @@ public interface TagDAO {
      *
      * @return list of Tags
      */
-    List<Tag> findAll();
+    List<Tag> findAll(Integer pageNumber, Integer pageSize);
 
     /**
      * Get list of GiftCertificate by tag id

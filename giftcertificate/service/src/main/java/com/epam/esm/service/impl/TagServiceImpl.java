@@ -1,6 +1,7 @@
 package com.epam.esm.service.impl;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import com.epam.esm.dao.GiftCertificateDAO;
@@ -10,6 +11,7 @@ import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TagServiceImpl implements TagService {
 
+    private static final int ZERO=0;
+    private static final int ONE=1;
     /**
      * TagDAO is used for operations with Tag
      */
@@ -128,8 +132,17 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional
     @Override
-    public List<TagDto> findAll() {
-        List<Tag> tags = tagDAO.findAll();
+    public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
+        if (page<ONE) {
+            if(page==ZERO){
+                throw new PaginationException("It's imposible to get page with zero number");
+            }
+            page = Math.abs(page);
+        }
+        if (size<ONE) {
+            size = Math.abs(size);
+        }
+        List<Tag> tags = tagDAO.findAll(page, size);
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
 

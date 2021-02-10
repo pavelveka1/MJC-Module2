@@ -5,6 +5,9 @@ import java.util.List;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
+
+import javax.persistence.criteria.CriteriaBuilder;
 
 /**
  * Interface TagService.
@@ -43,5 +46,5 @@ public interface TagService {
      *
      * @return list of TagDto
      */
-    List<TagDto> findAll();
+    List<TagDto> findAll(Integer page, Integer size) throws PaginationException;
 }

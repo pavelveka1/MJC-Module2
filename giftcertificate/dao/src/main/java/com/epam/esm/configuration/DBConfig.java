@@ -12,6 +12,7 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
+import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
@@ -115,7 +116,7 @@ public class DBConfig {
     @Bean
     @Profile("prod")
     public PlatformTransactionManager transactionManagerProd() throws IOException {
-        return new HibernateTransactionManager(sessionFactory());
+        return new JpaTransactionManager(sessionFactory());
     }
 
     @Bean

@@ -111,6 +111,7 @@ public class TagServiceImplTest {
         });
     }
 
+    /*
     @DisplayName("should be returned list of TagDto")
     @Test
     public void findAllTags() {
@@ -127,6 +128,8 @@ public class TagServiceImplTest {
         assertEquals(1, tagService.findAll().size());
     }
 
+
+     */
     @DisplayName("should be called method delete from DAO")
     @Test
     public void deleteTagById() throws IdNotExistServiceException {

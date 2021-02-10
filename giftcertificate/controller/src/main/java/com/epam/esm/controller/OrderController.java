@@ -6,7 +6,9 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
 import com.epam.esm.validator.OrderValidator;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -24,6 +26,8 @@ import java.util.List;
 public class OrderController {
 
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
+    private static final String DEFAULT_PAGE_SIZE="1000";
+    private static final String DEFAULT_PAGE_NUMBER="1";
     /**
      * OrderService is used for work with Orders
      */
@@ -53,8 +57,9 @@ public class OrderController {
     }
 
     @GetMapping("/users/{userId}/orders")
-    public List<OrderDto> getOrdersByUserId(@PathVariable long userId) throws IdNotExistServiceException {
-        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId);
+    public List<OrderDto> getOrdersByUserId(@PathVariable long userId,  @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size ) throws IdNotExistServiceException, PaginationException {
+        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size);
         for (OrderDto orderDto : orderDtoList) {
             orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrders_id())).withSelfRel());
         }

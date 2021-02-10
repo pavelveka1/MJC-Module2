@@ -43,6 +43,7 @@
         <json-tool.version>1.12</json-tool.version>
         <hibernate.version>5.4.10.Final</hibernate.version>
         <spring-orm.version>5.3.3</spring-orm.version>
+        <commons-lang.version>3.11</commons-lang.version>
 
     </properties>
     <build>
@@ -165,6 +166,12 @@
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-orm</artifactId>
                 <version>${spring-orm.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang.version}</version>
             </dependency>
 
         </dependencies>

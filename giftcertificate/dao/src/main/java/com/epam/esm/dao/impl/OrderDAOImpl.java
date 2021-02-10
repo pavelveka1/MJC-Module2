@@ -2,11 +2,18 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.OrderDAO;
 import com.epam.esm.entity.Order;
+import com.epam.esm.entity.Tag;
+import com.epam.esm.entity.User;
 import org.apache.log4j.Logger;
+import org.hibernate.Session;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Root;
 import java.util.List;
 
 @Repository
@@ -18,9 +25,11 @@ public class OrderDAOImpl implements OrderDAO {
     @Autowired
     private SessionFactory sessionFactory;
 
-    private static final String ID = "id";
+    private static final String ID = "orders_id";
     private static final String SELECT_ORDER_BY_ID = "Order.findById";
     private static final String GET_ORDERS_BY_USER_ID = "Order.findOrdersByUserId";
+    private static final int ONE=1;
+    private static final String USER="user";
     private static final Logger logger = Logger.getLogger(OrderDAOImpl.class);
 
     @Override
@@ -31,8 +40,15 @@ public class OrderDAOImpl implements OrderDAO {
 
 
     @Override
-    public List<Order> getOrdersByUserId(long userId) {
-        return sessionFactory.getCurrentSession().getNamedQuery(GET_ORDERS_BY_USER_ID).setParameter(ID, userId).list();
+    public List<Order> getOrdersByUserId(User user, Integer page, Integer size) {
+        CriteriaBuilder cb = getSession().getCriteriaBuilder();
+        CriteriaQuery<Order> cr = cb.createQuery(Order.class);
+        Root<Order> orderRoot = cr.from(Order.class);
+        cr.select(orderRoot).where(cb.equal(orderRoot.get(USER), user)).orderBy(cb.asc(orderRoot.get(ID)));
+        Query<Order> query = getSession().createQuery(cr);
+        query.setFirstResult((page - ONE) * size);
+        query.setMaxResults(size);
+        return query.getResultList();
     }
 
 
@@ -42,4 +58,7 @@ public class OrderDAOImpl implements OrderDAO {
 
     }
 
+    private Session getSession() {
+        return sessionFactory.getCurrentSession();
+    }
 }

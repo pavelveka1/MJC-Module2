@@ -8,6 +8,6 @@ public interface UserDAO {
 
     User getUser(long id);
 
-    List<User> getUsers();
+    List<User> getUsers(Integer page, Integer size);
 
 }

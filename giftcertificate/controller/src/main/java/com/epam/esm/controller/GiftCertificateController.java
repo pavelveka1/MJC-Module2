@@ -1,6 +1,5 @@
 package com.epam.esm.controller;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
@@ -14,7 +13,6 @@ import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import javax.validation.constraints.Min;
 import java.util.List;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
@@ -27,6 +25,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping("/controller/api")
 public class GiftCertificateController {
 
+    private static final String DEFAULT_PAGE_SIZE="1000";
+    private static final String DEFAULT_PAGE_NUMBER="1";
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
     /**
      * GiftCertificateService is used for work with GiftCertificateDto
@@ -54,13 +54,18 @@ public class GiftCertificateController {
      * @throws RequestParamServiceException if params don't correlate with name of field in DB
      */
     @GetMapping("/certificates")
-    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search, @RequestParam(required = false) String value, @RequestParam(required = false) String sortType, @RequestParam(required = false) String orderType) throws RequestParamServiceException, IdNotExistServiceException {
+    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search,
+                                            @RequestParam(required = false) String[] values,
+                                            @RequestParam(required = false) String sortType,
+                                            @RequestParam(required = false) String orderType,
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE ) Integer size) throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");
-        List<GiftCertificateDto> giftCertificateDtoList=service.findAll(search, value, sortType, orderType);
-        for (GiftCertificateDto giftCertificateDto: giftCertificateDtoList) {
+        List<GiftCertificateDto> giftCertificateDtoList = service.findAll(search, values, sortType, orderType, page, size);
+        for (GiftCertificateDto giftCertificateDto : giftCertificateDtoList) {
             giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDto.getId())).withSelfRel());
         }
-        return  giftCertificateDtoList;
+        return giftCertificateDtoList;
     }
 
     /**
@@ -72,7 +77,7 @@ public class GiftCertificateController {
      */
     @GetMapping("/certificates/{id}")
     public GiftCertificateDto read(@PathVariable long id) throws IdNotExistServiceException {
-        GiftCertificateDto giftCertificateDto= service.read(id);
+        GiftCertificateDto giftCertificateDto = service.read(id);
         giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(id)).withSelfRel());
         return giftCertificateDto;
     }
@@ -92,7 +97,7 @@ public class GiftCertificateController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto is not valid for create operation");
         }
-        GiftCertificateDto giftCertificateDtoResult=service.create(giftCertificateDto);
+        GiftCertificateDto giftCertificateDtoResult = service.create(giftCertificateDto);
         giftCertificateDtoResult.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDtoResult.getId())).withSelfRel());
         return giftCertificateDtoResult;
     }
@@ -114,26 +119,9 @@ public class GiftCertificateController {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto has fields, that is not valid for update operation!");
         }
-        GiftCertificateDto giftCertificateDtoRead = service.read(id);
-
-        if (giftCertificateDto.getName() != null) {
-
-            giftCertificateDtoRead.setName(giftCertificateDto.getName());
-        }
-        if (giftCertificateDto.getDescription() != null) {
-            giftCertificateDtoRead.setDescription(giftCertificateDto.getDescription());
-        }
-        if (giftCertificateDto.getPrice() != null) {
-            giftCertificateDtoRead.setPrice(giftCertificateDto.getPrice());
-        }
-        if (giftCertificateDto.getDuration() != null) {
-            giftCertificateDtoRead.setDuration(giftCertificateDto.getDuration());
-        }
-        if (!giftCertificateDto.getTags().isEmpty()) {
-            giftCertificateDtoRead.setTags(giftCertificateDto.getTags());
-        }
-        service.update(giftCertificateDtoRead);
-        GiftCertificateDto giftCertificateDtoResult=service.read(id);
+        giftCertificateDto.setId(id);
+        service.update(giftCertificateDto);
+        GiftCertificateDto giftCertificateDtoResult = service.read(id);
         giftCertificateDtoResult.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDtoResult.getId())).withSelfRel());
         return giftCertificateDtoResult;
     }
