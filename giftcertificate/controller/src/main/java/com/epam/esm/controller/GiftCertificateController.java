@@ -25,8 +25,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 @RequestMapping("/controller/api")
 public class GiftCertificateController {
 
-    private static final String DEFAULT_PAGE_SIZE="1000";
-    private static final String DEFAULT_PAGE_NUMBER="1";
+    private static final String DEFAULT_PAGE_SIZE = "1000";
+    private static final String DEFAULT_PAGE_NUMBER = "1";
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
     /**
      * GiftCertificateService is used for work with GiftCertificateDto
@@ -59,7 +59,7 @@ public class GiftCertificateController {
                                             @RequestParam(required = false) String sortType,
                                             @RequestParam(required = false) String orderType,
                                             @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE ) Integer size) throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");
         List<GiftCertificateDto> giftCertificateDtoList = service.findAll(search, values, sortType, orderType, page, size);
         for (GiftCertificateDto giftCertificateDto : giftCertificateDtoList) {

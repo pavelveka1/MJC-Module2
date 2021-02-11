@@ -7,8 +7,6 @@ import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
 
-import javax.persistence.criteria.CriteriaBuilder;
-
 /**
  * Interface TagService.
  * Contains methods for work with Tag class

@@ -10,7 +10,6 @@ import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.orm.hibernate5.HibernateTransactionManager;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
@@ -121,7 +120,7 @@ public class DBConfig {
 
     @Bean
     public SessionFactory sessionFactory() throws IOException {
-        LocalSessionFactoryBean sessionFactoryBean=new LocalSessionFactoryBean();
+        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSourceProd());
         sessionFactoryBean.setPackagesToScan("com.epam.esm.entity");
         sessionFactoryBean.setHibernateProperties(hibernateProperties());

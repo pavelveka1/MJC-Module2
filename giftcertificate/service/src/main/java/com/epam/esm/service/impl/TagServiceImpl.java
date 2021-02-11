@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TagServiceImpl implements TagService {
 
-    private static final int ZERO=0;
-    private static final int ONE=1;
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
     /**
      * TagDAO is used for operations with Tag
      */
@@ -116,12 +116,10 @@ public class TagServiceImpl implements TagService {
     @Override
     public void delete(long id) throws IdNotExistServiceException {
         Tag tag = tagDAO.read(id);
-        try {
-            tagDAO.delete(tag);
-        } catch (IllegalArgumentException e) {
+        if (Objects.isNull(tag)) {
             throw new IdNotExistServiceException("There is no Tag with id = " + id + " in DB");
         }
-
+        tagDAO.delete(tag);
     }
 
 
@@ -133,13 +131,13 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
-        if (page<ONE) {
-            if(page==ZERO){
+        if (page < ONE) {
+            if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
-        if (size<ONE) {
+        if (size < ONE) {
             size = Math.abs(size);
         }
         List<Tag> tags = tagDAO.findAll(page, size);

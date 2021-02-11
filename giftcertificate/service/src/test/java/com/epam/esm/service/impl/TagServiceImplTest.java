@@ -8,6 +8,8 @@ import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.PaginationException;
+import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -46,7 +48,7 @@ public class TagServiceImplTest {
     private TagServiceImpl tagService = new TagServiceImpl();
 
     private static GiftCertificateDto giftCertificateDto = new GiftCertificateDto(1,"Test name","Test description",10,20,null,null,null);
-    private static GiftCertificate giftCertificate = new GiftCertificate(1,"Test name","Test description",10,20,null,null, null,null);
+    private static GiftCertificate giftCertificate = new GiftCertificate(1,"Test name","Test description",10,20,null,null, null,null, false);
     private static Tag tag = new Tag(1,"test tag",null);
     private static Tag tag2 = new Tag(2,"test tag 2", null);
     private static TagDto tagDto = new TagDto((long)1,"test tag");
@@ -87,7 +89,7 @@ public class TagServiceImplTest {
     @DisplayName("should be thrown DuplicateEntryServiceException")
     @Test
     public void createTagDuplicateKeyException() throws DuplicateEntryServiceException {
-        when(modelMapper.map(tagDto, Tag.class)).thenThrow(DuplicateKeyException.class);
+        when(modelMapper.map(tagDto, Tag.class)).thenThrow(ConstraintViolationException.class);
         assertThrows(DuplicateEntryServiceException.class, () -> {
             tagService.create(tagDto);
         });
@@ -105,16 +107,16 @@ public class TagServiceImplTest {
     @DisplayName("should be thrown idNotExistServiceException")
     @Test
     public void readTagByNotExistId() {
-        when(tagDAOImpl.read(1)).thenThrow(EmptyResultDataAccessException.class);
+        when(tagDAOImpl.read(1)).thenThrow(IllegalArgumentException.class);
         assertThrows(IdNotExistServiceException.class, () -> {
             tagService.read(1);
         });
     }
 
-    /*
+
     @DisplayName("should be returned list of TagDto")
     @Test
-    public void findAllTags() {
+    public void findAllTags() throws PaginationException {
         Tag testTag = new Tag();
         TagDto testTagDto = new TagDto();
         testTag.setId(1);
@@ -124,26 +126,33 @@ public class TagServiceImplTest {
         List<Tag> tags = new ArrayList<>();
         tags.add(testTag);
         when(modelMapper.map(testTag, TagDto.class)).thenReturn(testTagDto);
-        when(tagDAOImpl.findAll()).thenReturn(tags);
-        assertEquals(1, tagService.findAll().size());
+        when(tagDAOImpl.findAll(1,1)).thenReturn(tags);
+        assertEquals(1, tagService.findAll(1,1).size());
+    }
+
+    @DisplayName("should be thrown PaginationException")
+    @Test
+    public void findAllTagsPaginationException() throws PaginationException {
+        assertThrows(PaginationException.class, () -> {
+            tagService.findAll(0,1).size();
+        });
     }
 
 
-     */
     @DisplayName("should be called method delete from DAO")
     @Test
     public void deleteTagById() throws IdNotExistServiceException {
-      //  when(tagDAOImpl.delete(5)).thenReturn(1);
-        tagService.delete(5);
-       // verify(tagDAOImpl).delete(5);
+        when(tagDAOImpl.read(6)).thenReturn(tag);
+        tagService.delete(6);
+        verify(tagDAOImpl).delete(tag);
     }
 
     @DisplayName("should be called method delete from DAO")
     @Test
     public void deleteTagByNotExistId() throws IdNotExistServiceException {
-      //  when(tagDAOImpl.delete(6)).thenReturn(0);
+        when(tagDAOImpl.read(3)).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
-            tagService.delete(6);
+            tagService.delete(3);
         });
     }
 

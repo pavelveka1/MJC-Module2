@@ -2,7 +2,6 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.OrderDAO;
 import com.epam.esm.entity.Order;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import org.apache.log4j.Logger;
 import org.hibernate.Session;
@@ -29,8 +28,8 @@ public class OrderDAOImpl implements OrderDAO {
     private static final String ID_PARAM = "id";
     private static final String SELECT_ORDER_BY_ID = "Order.findById";
     private static final String GET_ORDERS_BY_USER_ID = "Order.findOrdersByUserId";
-    private static final int ONE=1;
-    private static final String USER="user";
+    private static final int ONE = 1;
+    private static final String USER = "user";
     private static final Logger logger = Logger.getLogger(OrderDAOImpl.class);
 
     @Override

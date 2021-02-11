@@ -10,13 +10,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final int ZERO=0;
-    private static final int ONE=1;
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
     /**
      * TagJDBCTemplate is used for operations with User
      */
@@ -37,15 +36,15 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
-        if (page<ONE) {
-            if(page==ZERO){
+        if (page < ONE) {
+            if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
-        if (size<ONE) {
+        if (size < ONE) {
             size = Math.abs(size);
         }
-        return userDAO.getUsers( page,  size);
+        return userDAO.getUsers(page, size);
     }
 }

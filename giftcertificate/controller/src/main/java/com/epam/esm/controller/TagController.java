@@ -7,7 +7,6 @@ import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.hateoas.Link;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Validator;
@@ -53,7 +52,8 @@ public class TagController {
      */
     @GetMapping("/tags")
     public List<TagDto> readAllTags(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws IdNotExistServiceException, PaginationException {
+                                    @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+            throws IdNotExistServiceException, PaginationException {
         List<TagDto> tagDtoList = service.findAll(page, size);
         for (TagDto tagDto : tagDtoList) {
             tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
@@ -71,7 +71,8 @@ public class TagController {
      */
     @PostMapping("/tags")
     @ResponseStatus(HttpStatus.CREATED)
-    public TagDto createTag(@Valid @RequestBody TagDto tagDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
+    public TagDto createTag(@Valid @RequestBody TagDto tagDto, BindingResult bindingResult)
+            throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("TagDto is not valid for create operation");
         }

@@ -41,6 +41,12 @@ public interface GiftCertificateDAO {
     GiftCertificate readByName(String certificateName);
 
     /**
+     * @param certificateName Name of certificate
+     * @return GiftCertificate by name
+     */
+    GiftCertificate readByNotDeletedName(String certificateName);
+
+    /**
      * Update GiftCertificate
      *
      * @param giftCertificate we wont update
@@ -63,16 +69,5 @@ public interface GiftCertificateDAO {
      * @throws BadSqlGrammarException if parameters don't right
      */
     List<GiftCertificate> findAll(String search, List<Tag> tags, String nameOrDescription, String sortType, String orderType, Integer page, Integer size);
-
-    /**
-     * Method finds all certificates where name of tag equals tagName
-     *
-     * @param tagName   name of Tag
-     * @param sortType  type of sort equals name of field in DB
-     * @param orderType ASC or DESC
-     * @return List of GiftCertificate
-     * @throws BadSqlGrammarException if passed not correct parameters
-     */
-    List<GiftCertificate> findAllCertificatesByTagName(String tagName, String sortType, String orderType);
 
 }

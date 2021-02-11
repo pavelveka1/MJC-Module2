@@ -8,7 +8,6 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import javax.jws.soap.SOAPBinding;
 import javax.validation.constraints.Min;
 import java.util.List;
 
@@ -19,8 +18,8 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 @RequestMapping("/controller/api")
 public class UserController {
 
-    private static final String DEFAULT_PAGE_SIZE="1000";
-    private static final String DEFAULT_PAGE_NUMBER="1";
+    private static final String DEFAULT_PAGE_SIZE = "1000";
+    private static final String DEFAULT_PAGE_NUMBER = "1";
     private static final Logger logger = Logger.getLogger(UserController.class);
     /**
      * OrderService is used for work with Orders
@@ -36,10 +35,11 @@ public class UserController {
     }
 
     @GetMapping("/users")
-    public List<User> getUsers(  @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                 @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws IdNotExistServiceException, PaginationException {
-        List<User> users=userService.getUsers(page, size);
-        for(User user:users){
+    public List<User> getUsers(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                               @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+            throws IdNotExistServiceException, PaginationException {
+        List<User> users = userService.getUsers(page, size);
+        for (User user : users) {
             user.add(linkTo(methodOn(UserController.class).getUser(user.getId())).withSelfRel());
         }
         return users;

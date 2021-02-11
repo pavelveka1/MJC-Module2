@@ -16,11 +16,9 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.NonUniqueObjectException;
 import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,16 +34,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private static final String DEFAULT_SORT_TYPE = "id";
     private static final String DEFAULT_SEARCH_TYPE = "name";
     private static final String DEFAULT_VALUES = "";
-    private static final String SEARCH_BY_TAG = "tag";
-    private static final String SEARCH_BY_NAME = "name";
-    private static final String SEARCH_BY_DESCRIPTION = "description";
     private static final String UNDERSCORE = "_";
     private static final String WHITESPACE = " ";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
     private static final String TAG = "tag";
-    private static final int ZERO=0;
-    private static final int ONE=1;
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
 
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -195,13 +190,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         List<GiftCertificateDto> giftCertificateDtoList;
         String nameOrDescription = null;
         List<Tag> tags = new ArrayList<>();
-        if (page<ONE) {
-            if(page==ZERO){
+        if (page < ONE) {
+            if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
-        if (size<ONE) {
+        if (size < ONE) {
             size = Math.abs(size);
         }
         if (StringUtils.isEmpty(sortType)) {
@@ -233,46 +228,9 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDtoList;
     }
 
-    /*
-    private void setTags(List<GiftCertificateDto> giftCertificateDtoList) {
-        for (GiftCertificateDto giftCertificateDto : giftCertificateDtoList) {
-            List<Tag> tags = tagDAO.getTagsByGiftCertificateId(giftCertificateDto.getId());
-            List<TagDto> tagsDto = tags.stream()
-                    .map(tag -> modelMapper.map(tag, TagDto.class))
-                    .collect(Collectors.toList());
-            giftCertificateDto.setTags(tagsDto);
-        }
-    }
-
-    private List<GiftCertificateDto> searchCertificates(String search, String value, String sortType, String orderType, Integer page, Integer size)
-            throws RequestParamServiceException {
-        List<GiftCertificate> giftCertificateList = new ArrayList<>();
-        if (sortType == null) {
-            sortType = DEFAULT_SORT_TYPE;
-        }
-        if (orderType == null) {
-            orderType = DEFAULT_SORT_ORDER;
-        }
-        if (search != null & value != null) {
-            if (search.equals(SEARCH_BY_TAG)) {
-                giftCertificateList = giftCertificateDAO.findAllCertificatesByTagName(formatTagName(value), sortType, orderType);
-            } else if (search.equals(SEARCH_BY_NAME) || search.equals(SEARCH_BY_DESCRIPTION)) {
-                giftCertificateList = giftCertificateDAO.findAllCertificatesByNameOrDescription(value, sortType, orderType);
-            } else {
-                throw new RequestParamServiceException("Passed parameters don't match with allowable");
-            }
-        }
-        return giftCertificateList.stream()
-                .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
-                .collect(Collectors.toList());
-    }
-
-
-     */
     private String formatTagName(String tagName) {
         return tagName.replace(UNDERSCORE, WHITESPACE);
     }
-
 
 
     private List<Tag> getListTagsByNames(String[] names) {

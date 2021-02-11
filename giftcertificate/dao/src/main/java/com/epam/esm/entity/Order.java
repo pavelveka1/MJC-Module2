@@ -21,14 +21,7 @@ import java.util.List;
 @Table(name = "orders")
 @NamedQueries({
         @NamedQuery(name = "Order.findById",
-                query = "select distinct o from Order o where o.id = :id"),
-        @NamedQuery(name = "Order.findOrdersByCertificateId",
-                query = "select distinct o from Order o " +
-                        "inner join fetch o.certificates as c where c.id = :id"),
-        @NamedQuery(name = "Order.findOrdersByUserId",
-                query = "select distinct o from Order o " +
-                        "left join fetch o.certificates s " +
-                        "left join fetch o.user as u where u.id = :id")
+                query = "select distinct o from Order o where o.id = :id")
 })
 public class Order implements Serializable {
 

@@ -22,9 +22,7 @@ import java.util.List;
 @Table(name = "users")
 @NamedQueries({
         @NamedQuery(name = "User.findById",
-                query = "select distinct u from User u where u.id = :id"),
-        @NamedQuery(name = "User.findAll",
-                query = "select distinct u from User u")
+                query = "select distinct u from User u where u.id = :id")
 })
 public class User extends RepresentationModel<User> implements Serializable {
 

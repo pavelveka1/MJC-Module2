@@ -20,16 +20,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
 
-    private static final int ZERO=0;
-    private static final int ONE=1;
+    private static final int ZERO = 0;
+    private static final int ONE = 1;
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
      */
@@ -58,11 +56,13 @@ public class OrderServiceImpl implements OrderService {
         User user = userDAO.getUser(orderDto.getUser().getId());
         orderDto.setUser(user);
         Order order = modelMapper.map(orderDto, Order.class);
-        List<GiftCertificate> giftCertificateList = orderDto.getCertificates();
-        int cost = calculateOrderCost(giftCertificateList);
-        order.setCost(cost);
+        List<GiftCertificate> giftCertificateList = orderDto.getCertificates().stream()
+                .map(giftCertificateDto -> (modelMapper.map(giftCertificateDto, GiftCertificate.class))).collect(Collectors.toList());
+
         giftCertificateList = getFilledCertificates(giftCertificateList);
         order.setCertificates(giftCertificateList);
+        int cost = calculateOrderCost(giftCertificateList);
+        order.setCost(cost);
         order.setDate(LocalDateTime.now(ZoneId.systemDefault()).toString());
         long idOrder = orderDAO.makeOrder(order);
         return modelMapper.map(order, OrderDto.class);
@@ -73,17 +73,17 @@ public class OrderServiceImpl implements OrderService {
     public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size) throws IdNotExistServiceException, PaginationException {
         List<Order> orders;
         List<OrderDto> orderDtoList;
-        if (page<ONE) {
-            if(page==ZERO){
+        if (page < ONE) {
+            if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
-        if (size<ONE) {
+        if (size < ONE) {
             size = Math.abs(size);
         }
         try {
-            User user=userDAO.getUser(userId);
+            User user = userDAO.getUser(userId);
             orders = orderDAO.getOrdersByUserId(user, page, size);
             orderDtoList = orders.stream()
                     .map(order -> modelMapper.map(order, OrderDto.class))
@@ -102,21 +102,19 @@ public class OrderServiceImpl implements OrderService {
     private int calculateOrderCost(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
         int cost = 0;
         for (GiftCertificate giftCertificate : giftCertificateList) {
-            GiftCertificate giftCertificate1 = giftCertificateDAO.readByName(giftCertificate.getName());
-            if (giftCertificate1 == null) {
-                throw new CertificateNameNotExistServiceException("Certificate with name = " + giftCertificate.getName() + " is not exist in DB");
-            }
-            cost = cost + giftCertificate1.getPrice();
+            cost = cost + giftCertificate.getPrice();
         }
         return cost;
     }
 
-    private List<GiftCertificate> getFilledCertificates(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
+    private List<GiftCertificate> getFilledCertificates(List<GiftCertificate> giftCertificateList)
+            throws CertificateNameNotExistServiceException {
         List<GiftCertificate> certificates = new ArrayList<>();
         for (GiftCertificate giftCertificate : giftCertificateList) {
-            GiftCertificate giftCertificate1 = giftCertificateDAO.readByName(giftCertificate.getName());
+            GiftCertificate giftCertificate1 = giftCertificateDAO.readByNotDeletedName(giftCertificate.getName());
             if (giftCertificate1 == null) {
-                throw new CertificateNameNotExistServiceException("Certificate with name = " + giftCertificate.getName() + " is not exist in DB");
+                throw new CertificateNameNotExistServiceException("Certificate with name = " + giftCertificate.getName()
+                        + " is not exist in DB");
             }
             certificates.add(giftCertificate1);
         }

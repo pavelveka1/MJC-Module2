@@ -8,12 +8,17 @@ import static org.junit.jupiter.api.Assertions.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.support.AnnotationConfigContextLoader;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.sql.SQLSyntaxErrorException;
@@ -21,7 +26,7 @@ import java.util.List;
 
 @SpringJUnitConfig(classes = DBConfig.class)
 @ActiveProfiles("dev")
-@WebAppConfiguration
+@SpringBootTest(classes = {GiftCertificateDAOTest.class}) @ExtendWith(SpringExtension.class)
 public class GiftCertificateDAOTest {
 
     @Autowired
@@ -36,12 +41,15 @@ public class GiftCertificateDAOTest {
 
     }
 
-    /*
+
     @DisplayName("should create gift certificate in DB and return this one")
     @Test
-    public void createGiftCertificates() throws SQLIntegrityConstraintViolationException {
-        GiftCertificate giftCertificate = new GiftCertificate(1, "New gift certificate", " new description",
-                1000, 30, null, null);
+    public void createGiftCertificates()  {
+        GiftCertificate giftCertificate = new GiftCertificate();
+        giftCertificate.setName("New gift certificate");
+        giftCertificate.setDescription( "new description");
+        giftCertificate.setPrice(1000);
+        giftCertificate.setDuration(30);
         long id = giftCertificateDAO.create(giftCertificate);
         GiftCertificate createdGiftCertificate=giftCertificateDAO.read(id);
         assertEquals(giftCertificate.getName(), createdGiftCertificate.getName());
@@ -50,6 +58,7 @@ public class GiftCertificateDAOTest {
         assertEquals(giftCertificate.getDuration(), createdGiftCertificate.getDuration());
     }
 
+    /*
     @DisplayName("should be thrown DuplicateKeyException ")
     @Test
     public void createGiftCertificatesDuplicateKeyException() throws DuplicateKeyException {
@@ -75,7 +84,6 @@ public class GiftCertificateDAOTest {
     }
 
 
-     */
     @DisplayName("read gift certificate by id ")
     @Test
     public void readGiftCertificateById() {
@@ -116,15 +124,7 @@ public class GiftCertificateDAOTest {
     }
 
 
- */
-    @DisplayName("should be thrown SQLSyntaxErrorException")
-    @Test
-    public void findAllGiftCertificatesByTagName() throws BadSqlGrammarException {
-        assertThrows(BadSqlGrammarException.class, () -> {
-            giftCertificateDAO.findAllCertificatesByTagName("спорт", "notExistParam", "DESC");
-        });
-    }
-/*
+
     @DisplayName("should be thrown SQLSyntaxErrorException")
     @Test
     public void findAllGiftCertificatesByNameOrDescription() throws BadSqlGrammarException {

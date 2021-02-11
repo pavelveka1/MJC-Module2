@@ -2,20 +2,15 @@ package com.epam.esm.dao.impl;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
-import java.util.ArrayList;
 import java.util.List;
 
 import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import com.epam.esm.entity.User;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-import org.hibernate.Criteria;
 import org.hibernate.NonUniqueObjectException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
-import org.hibernate.criterion.Restrictions;
 import org.hibernate.exception.ConstraintViolationException;
 import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,22 +28,15 @@ import javax.persistence.criteria.*;
 public class GiftCertificateDAOImpl implements GiftCertificateDAO {
 
     private static final Logger logger = Logger.getLogger(GiftCertificateDAOImpl.class);
-    private static final String SELECT_GIFT_CERTIFICATES_BY_ID = "GiftCertificate.findById";
     private static final String SELECT_GIFT_CERTIFICATES_BY_NAME = "GiftCertificate.findByName";
-    private static final String SELECT_ALL_CERTIFICATES_BY_TAG_NAME = "select gc.id, gc.name, gc.description, gc.price, " +
-            "gc.duration, gc.create_date, gc.last_update_date from gift_certificates as gc\n" +
-            "\t join gift_certificates_has_tags on gc.id=gift_certificates_has_tags.gift_certificates_id\n" +
-            "     join tags on tags.tag_id=gift_certificates_has_tags.tags_id\n" +
-            "     where tags.name=%s order by %s %s";
     private static final String ID = "id";
     private static final String NAME = "name";
     private static final String DESCRIPTION = "description";
     private static final String TAG = "tag";
     private static final String ANY_CHARACTERS = "%";
-    private static final String QUOTES = "\"";
-    private static final String ORDER_TYPE_DEFAULT = "asc";
     private static final String TAGS = "tags";
-    private static final int ONE=1;
+    private static final int ONE = 1;
+    private static final String DELETED = "deleted";
 
 
     /**
@@ -82,7 +70,14 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      */
     @Override
     public GiftCertificate read(long id) throws EmptyResultDataAccessException {
-        return (GiftCertificate) getSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_ID).setParameter(ID, id).uniqueResult();
+        CriteriaBuilder cb = getSession().getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> giftCertificateRoot = cr.from(GiftCertificate.class);
+        Predicate predicateId = cb.equal(giftCertificateRoot.get(ID), id);
+        Predicate predicateDeleted = cb.equal(giftCertificateRoot.get(DELETED), false);
+        cr.select(giftCertificateRoot).where(cb.and(predicateId, predicateDeleted));
+        Query<GiftCertificate> query = getSession().createQuery(cr);
+        return query.uniqueResult();
     }
 
     /**
@@ -96,6 +91,20 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     public GiftCertificate readByName(String certificateName) throws EmptyResultDataAccessException {
         return (GiftCertificate) getSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_NAME).setParameter(NAME, certificateName).uniqueResult();
     }
+
+
+    @Override
+    public GiftCertificate readByNotDeletedName(String certificateName) {
+        CriteriaBuilder cb = getSession().getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> giftCertificateRoot = cr.from(GiftCertificate.class);
+        Predicate predicateId = cb.equal(giftCertificateRoot.get(NAME), certificateName);
+        Predicate predicateDeleted = cb.equal(giftCertificateRoot.get(DELETED), false);
+        cr.select(giftCertificateRoot).where(cb.and(predicateId, predicateDeleted));
+        Query<GiftCertificate> query = getSession().createQuery(cr);
+        return query.uniqueResult();
+    }
+
 
     /**
      * Update GiftCertificate
@@ -115,7 +124,8 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      */
     @Override
     public void delete(GiftCertificate giftCertificate) throws ConstraintViolationException {
-        getSession().delete(giftCertificate);
+        giftCertificate.setDeleted(true);
+        getSession().save(giftCertificate);
     }
 
     /**
@@ -143,22 +153,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         query.setFirstResult((page - ONE) * size);
         query.setMaxResults(size);
         return query.getResultList();
-    }
-
-    /**
-     * Find all giftCertificates by name of tad passed by parameters
-     *
-     * @param tagName   name of Tag
-     * @param sortType  type of sort equals name of field in DB
-     * @param orderType ASC or DESC
-     * @return List of GiftCertificates
-     * @throws BadSqlGrammarException if passed name not exist
-     */
-    @Override
-    public List<GiftCertificate> findAllCertificatesByTagName(String tagName, String sortType, String orderType)
-            throws BadSqlGrammarException {
-        tagName = QUOTES + tagName + QUOTES;
-        return getSession().createSQLQuery(String.format(SELECT_ALL_CERTIFICATES_BY_TAG_NAME, tagName, sortType, orderType)).list();
     }
 
     private Session getSession() {

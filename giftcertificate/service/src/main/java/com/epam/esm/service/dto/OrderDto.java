@@ -1,6 +1,5 @@
 package com.epam.esm.service.dto;
 
-import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +17,6 @@ public class OrderDto extends RepresentationModel<OrderDto> {
     private User user;
     private int cost;
     private String date;
-    private List<GiftCertificate> certificates;
+    private List<GiftCertificateDto> certificates;
 
 }

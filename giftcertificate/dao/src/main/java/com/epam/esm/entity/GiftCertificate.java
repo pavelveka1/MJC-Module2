@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.hibernate.annotations.DynamicUpdate;
-import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -19,17 +18,8 @@ import java.util.List;
 @Table(name = "gift_certificates")
 @DynamicUpdate(true)
 @NamedQueries({
-        @NamedQuery(name = "GiftCertificate.findById",
-                query = "select distinct c from GiftCertificate c where c.id = :id"),
-        @NamedQuery(name = "GiftCertificate.findAll",
-                query = "select distinct c from GiftCertificate c"),
         @NamedQuery(name = "GiftCertificate.findByName",
-                query = "select distinct c from GiftCertificate c where c.name = :name"),
-        @NamedQuery(name = "GiftCertificate.findByTagName",
-                query = "select distinct c from GiftCertificate c " +
-                        "inner join fetch c.tags as t where t.name = :name"),
-        @NamedQuery(name = "GiftCertificate.findByNameOrDescription",
-                query = "select distinct c from GiftCertificate c where c.name like :nameOrDescription")
+                query = "select distinct c from GiftCertificate c where c.name = :name")
 })
 public class GiftCertificate implements Serializable {
 
@@ -52,6 +42,8 @@ public class GiftCertificate implements Serializable {
     private List<Order> orders;
 
     private List<Tag> tags;
+
+    private boolean deleted;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -88,6 +80,11 @@ public class GiftCertificate implements Serializable {
     @Column(name = "last_update_date")
     public LocalDateTime getLastUpdateDate() {
         return lastUpdateDate;
+    }
+
+    @Column(name = "deleted")
+    public boolean getDeleted() {
+        return deleted;
     }
 
     @JsonIgnore

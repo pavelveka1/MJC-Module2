@@ -1,7 +1,6 @@
 package com.epam.esm.dao.impl;
 
 import com.epam.esm.dao.UserDAO;
-import com.epam.esm.entity.Tag;
 import com.epam.esm.entity.User;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
@@ -25,9 +24,8 @@ public class UserDAOImpl implements UserDAO {
     private SessionFactory sessionFactory;
 
     private static final String SELECT_USER_BY_ID = "User.findById";
-    private static final String SELECT_ALL_USERS = "User.findAll";
     private static final String ID = "id";
-    private static final int ONE=1;
+    private static final int ONE = 1;
 
     @Override
     public User getUser(long id) throws EmptyResultDataAccessException {
