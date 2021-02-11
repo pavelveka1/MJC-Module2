@@ -1,6 +1,5 @@
 package com.epam.esm.dao;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.epam.esm.entity.Tag;
@@ -10,7 +9,7 @@ import org.springframework.dao.EmptyResultDataAccessException;
  * Interface TagDAO.
  * Contains methods for work with Tag class
  */
-public interface TagDAO {
+public interface TagDAO  {
 
     /**
      * Create new tag in DB

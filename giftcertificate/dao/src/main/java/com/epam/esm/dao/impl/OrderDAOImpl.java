@@ -26,6 +26,7 @@ public class OrderDAOImpl implements OrderDAO {
     private SessionFactory sessionFactory;
 
     private static final String ID = "orders_id";
+    private static final String ID_PARAM = "id";
     private static final String SELECT_ORDER_BY_ID = "Order.findById";
     private static final String GET_ORDERS_BY_USER_ID = "Order.findOrdersByUserId";
     private static final int ONE=1;
@@ -54,7 +55,7 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public Order getOrder(long id) {
-        return (Order) sessionFactory.getCurrentSession().getNamedQuery(SELECT_ORDER_BY_ID).setParameter(ID, id).uniqueResult();
+        return (Order) sessionFactory.getCurrentSession().getNamedQuery(SELECT_ORDER_BY_ID).setParameter(ID_PARAM, id).uniqueResult();
 
     }
 

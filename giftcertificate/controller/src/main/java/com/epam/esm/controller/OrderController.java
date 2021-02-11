@@ -67,8 +67,8 @@ public class OrderController {
     }
 
     @GetMapping("/orders/{id}")
-    public OrderDto getOrdersById(@PathVariable long orderId) throws IdNotExistServiceException {
-        OrderDto orderDtoResult = orderService.getOrder(orderId);
+    public OrderDto getOrdersById(@PathVariable long id) throws IdNotExistServiceException {
+        OrderDto orderDtoResult = orderService.getOrder(id);
         orderDtoResult.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDtoResult.getOrders_id())).withSelfRel());
         return orderDtoResult;
     }
