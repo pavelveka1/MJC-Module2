@@ -195,7 +195,26 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         String nameOrDescription = null;
         List<Tag> tags = new ArrayList<>();
         checkPageAndSize(page, size);
-        checkSearchParameters(search, nameOrDescription, values, tags, sortType, orderType);
+        if (StringUtils.isEmpty(sortType)) {
+            sortType = DEFAULT_SORT_TYPE;
+        }
+        if (StringUtils.isEmpty(orderType)) {
+            orderType = DEFAULT_SORT_ORDER;
+        }
+        if (StringUtils.isEmpty(search)) {
+            search = DEFAULT_SEARCH_TYPE;
+            nameOrDescription = DEFAULT_VALUES;
+        } else if (search.equals(NAME) || search.equals(DESCRIPTION)) {
+            if (StringUtils.isEmpty(values[ZERO])) {
+                nameOrDescription = "";
+            } else {
+                nameOrDescription = values[ZERO];
+            }
+        } else if (search.equals(TAG)) {
+            tags = getListTagsByNames(values);
+        } else {
+            throw new RequestParamServiceException("Value of search parameter = " + search + " is not matching with allowable values");
+        }
         try {
             giftCertificates = giftCertificateDAO.findAll(search, tags, nameOrDescription, sortType, orderType, page, size);
         } catch (IllegalArgumentException e) {
@@ -237,25 +256,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
 
     private void checkSearchParameters(String search, String nameOrDescription, String[] values, List<Tag> tags,
                                        String sortType, String orderType) throws RequestParamServiceException {
-        if (StringUtils.isEmpty(sortType)) {
-            sortType = DEFAULT_SORT_TYPE;
-        }
-        if (StringUtils.isEmpty(orderType)) {
-            orderType = DEFAULT_SORT_ORDER;
-        }
-        if (StringUtils.isEmpty(search)) {
-            search = DEFAULT_SEARCH_TYPE;
-            nameOrDescription = DEFAULT_VALUES;
-        } else if (search.equals(NAME) || search.equals(DESCRIPTION)) {
-            if (StringUtils.isEmpty(values[ZERO])) {
-                nameOrDescription = "";
-            } else {
-                nameOrDescription = values[ZERO];
-            }
-        } else if (search.equals(TAG)) {
-            tags = getListTagsByNames(values);
-        } else {
-            throw new RequestParamServiceException("Value of search parameter = " + search + " is not matching with allowable values");
-        }
+
     }
 }
