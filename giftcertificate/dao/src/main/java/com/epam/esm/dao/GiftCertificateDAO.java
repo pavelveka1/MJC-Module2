@@ -19,7 +19,6 @@ public interface GiftCertificateDAO {
      *
      * @param giftCertificate we wont create in DB
      * @return id of created gift certificate
-     * @throws DataIntegrityViolationException if this GiftCertificate already exists in the DB
      */
     long create(GiftCertificate giftCertificate);
 
@@ -28,7 +27,6 @@ public interface GiftCertificateDAO {
      *
      * @param id long type parameter
      * @return Optional<GiftCertificate>
-     * @throws EmptyResultDataAccessException if records with such id not exist in DB
      */
     GiftCertificate read(long id);
 
@@ -41,6 +39,7 @@ public interface GiftCertificateDAO {
     GiftCertificate readByName(String certificateName);
 
     /**
+     * Read only certificates which are not deleted
      * @param certificateName Name of certificate
      * @return GiftCertificate by name
      */
@@ -66,7 +65,6 @@ public interface GiftCertificateDAO {
      * @param sortType  name of field of table in DB
      * @param orderType ASC or DESC
      * @return list og GiftCertificates
-     * @throws BadSqlGrammarException if parameters don't right
      */
     List<GiftCertificate> findAll(String search, List<Tag> tags, String nameOrDescription, String sortType, String orderType, Integer page, Integer size);
 

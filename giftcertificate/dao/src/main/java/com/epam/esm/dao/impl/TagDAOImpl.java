@@ -7,13 +7,13 @@ import org.hibernate.exception.ConstraintViolationException;
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.entity.Tag;
 import org.hibernate.SessionFactory;
+import org.hibernate.query.NativeQuery;
 import org.hibernate.query.Query;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 
 /**
  * TagJDBCTemplate - class for work with Tag
@@ -27,6 +27,12 @@ public class TagDAOImpl implements TagDAO {
     private static final String ID = "id";
     public static final String NAME_TAG = "name";
     private static final int ONE = 1;
+    private static final String GET_WIDELY_USED_TAG_BY_USER_WITH_MAX_COST = " select tag_id from (\n" +
+            "   select tags.tag_id, tags.name,  count(*) as quantity, sum(cost) as sum_cost, users_id from orders\n" +
+            "          join gift_certificates_has_orders on orders.id=gift_certificates_has_orders.orders_id\n" +
+            "          join gift_certificates on gift_certificates.id=gift_certificates_has_orders.gift_certificates_id\n" +
+            "          join gift_certificates_has_tags on gift_certificates.id=gift_certificates_has_tags.gift_certificates_id\n" +
+            "          join tags on tags.tag_id=gift_certificates_has_tags.tags_id where users_id=:id group by name order by quantity desc, sum_cost desc limit 1) as T";
 
     /**
      * Instance of SessionFactory for work with DB
@@ -116,10 +122,11 @@ public class TagDAOImpl implements TagDAO {
      * @return Tag
      */
     @Override
-    public Tag getWidelyUsedByUserTagWithHighestCost(long userId) {
-        return null;
+    public Long getIdWidelyUsedByUserTagWithHighestCost(long userId) {
+        NativeQuery nativeQuery = getSession().createSQLQuery(GET_WIDELY_USED_TAG_BY_USER_WITH_MAX_COST)
+                .addScalar("tag_id", LongType.INSTANCE).setParameter(ID, userId);
+        return (Long) nativeQuery.uniqueResult();
     }
-
 
     private Session getSession() {
         return sessionFactory.getCurrentSession();

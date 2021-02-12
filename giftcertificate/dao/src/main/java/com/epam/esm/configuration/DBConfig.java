@@ -21,10 +21,6 @@ import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Properties;
 
-
-/**
- * DBConfig class for configure data source and jdbcTemplate as beans of Spring
- */
 @Configuration
 @ComponentScan(basePackages = "com.epam.esm")
 @PropertySource("classpath:db.properties")
@@ -33,35 +29,19 @@ import java.util.Properties;
 public class DBConfig {
 
     private Logger logger = Logger.getLogger(DBConfig.class);
-    /**
-     * String field for driver class of DB
-     */
+
     @Value("${db.driver}")
     private String DRIVER_CLASS;
 
-    /**
-     * String field for url DB
-     */
     @Value("${db.url}")
     private String URL;
 
-    /**
-     * String field for user name of DB
-     */
     @Value("${db.user}")
     private String USER_NAME;
 
-    /**
-     * String field for password for DB
-     */
     @Value("${db.password}")
     private String PASSWORD;
 
-    /**
-     * Configure DataSource bean
-     *
-     * @return DataSource
-     */
     @Bean
     @Profile("prod")
     public DataSource dataSourceProd() {
@@ -77,11 +57,6 @@ public class DBConfig {
         return dataSource;
     }
 
-    /**
-     * Configure JdbcTemplate bean for 'prod' profile
-     *
-     * @return JdbcTemplate
-     */
     @Bean
     @Profile("prod")
     public JdbcTemplate jdbcTemplateProd() {
@@ -101,16 +76,13 @@ public class DBConfig {
                 .build();
     }
 
-    /**
-     * Configure JdbcTemplate bean for 'dev' profile
-     *
-     * @return JdbcTemplate
-     */
+
     @Bean
     @Profile("dev")
     public JdbcTemplate testJdbcTemplate() {
         return new JdbcTemplate(testDataSource());
     }
+
 
     @Bean
     @Profile("prod")
@@ -119,9 +91,21 @@ public class DBConfig {
     }
 
     @Bean
+    @Profile("prod")
     public SessionFactory sessionFactory() throws IOException {
         LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
         sessionFactoryBean.setDataSource(dataSourceProd());
+        sessionFactoryBean.setPackagesToScan("com.epam.esm.entity");
+        sessionFactoryBean.setHibernateProperties(hibernateProperties());
+        sessionFactoryBean.afterPropertiesSet();
+        return sessionFactoryBean.getObject();
+    }
+
+    @Bean
+    @Profile("dev")
+    public SessionFactory sessionFactoryTest() throws IOException {
+        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
+        sessionFactoryBean.setDataSource(testDataSource());
         sessionFactoryBean.setPackagesToScan("com.epam.esm.entity");
         sessionFactoryBean.setHibernateProperties(hibernateProperties());
         sessionFactoryBean.afterPropertiesSet();
@@ -141,11 +125,7 @@ public class DBConfig {
 
     }
 
-    /**
-     * Method is used for getting bean ModelMapper.
-     *
-     * @return ModelMapper what is used for convert dto class to entity class
-     */
+
     @Bean
     @Profile("prod")
     public ModelMapper modelMapperProd() {

@@ -50,6 +50,13 @@ public class OrderServiceImpl implements OrderService {
     private ModelMapper modelMapper;
 
 
+    /**
+     * Create new order
+     *
+     * @param orderDto will be created
+     * @return OrderDto
+     * @throws CertificateNameNotExistServiceException if certificate is not exist in DB
+     */
     @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = CertificateNameNotExistServiceException.class)
     @Override
     public OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException {
@@ -58,30 +65,32 @@ public class OrderServiceImpl implements OrderService {
         Order order = modelMapper.map(orderDto, Order.class);
         List<GiftCertificate> giftCertificateList = orderDto.getCertificates().stream()
                 .map(giftCertificateDto -> (modelMapper.map(giftCertificateDto, GiftCertificate.class))).collect(Collectors.toList());
-
         giftCertificateList = getFilledCertificates(giftCertificateList);
         order.setCertificates(giftCertificateList);
         int cost = calculateOrderCost(giftCertificateList);
         order.setCost(cost);
         order.setDate(LocalDateTime.now(ZoneId.systemDefault()).toString());
-        long idOrder = orderDAO.makeOrder(order);
+        orderDAO.makeOrder(order);
         return modelMapper.map(order, OrderDto.class);
     }
 
+    /**
+     * Read orders by id of user
+     *
+     * @param userId id of user
+     * @param page   number of page
+     * @param size   zise of page
+     * @return List of orders
+     * @throws IdNotExistServiceException if user with passed id is not exist
+     * @throws PaginationException        if page equals zero
+     */
     @Transactional
     @Override
-    public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size) throws IdNotExistServiceException, PaginationException {
+    public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size)
+            throws IdNotExistServiceException, PaginationException {
         List<Order> orders;
         List<OrderDto> orderDtoList;
-        if (page < ONE) {
-            if (page == ZERO) {
-                throw new PaginationException("It's imposible to get page with zero number");
-            }
-            page = Math.abs(page);
-        }
-        if (size < ONE) {
-            size = Math.abs(size);
-        }
+        checkPageAndSize(page, size);
         try {
             User user = userDAO.getUser(userId);
             orders = orderDAO.getOrdersByUserId(user, page, size);
@@ -94,9 +103,20 @@ public class OrderServiceImpl implements OrderService {
         return orderDtoList;
     }
 
+    /**
+     * Rear order by id
+     *
+     * @param id of order
+     * @return OrderDto
+     * @throws IdNotExistServiceException if order with passed id is not exist
+     */
     @Override
-    public OrderDto getOrder(long id) {
-        return modelMapper.map(orderDAO.getOrder(id), OrderDto.class);
+    public OrderDto getOrder(long id) throws IdNotExistServiceException {
+        try {
+            return modelMapper.map(orderDAO.getOrder(id), OrderDto.class);
+        } catch (IllegalArgumentException e) {
+            throw new IdNotExistServiceException("Order with id = " + id + " is not exist in DB");
+        }
     }
 
     private int calculateOrderCost(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
@@ -119,5 +139,17 @@ public class OrderServiceImpl implements OrderService {
             certificates.add(giftCertificate1);
         }
         return certificates;
+    }
+
+    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
+        if (page < ONE) {
+            if (page == ZERO) {
+                throw new PaginationException("It's imposible to get page with zero number");
+            }
+            page = Math.abs(page);
+        }
+        if (size < ONE) {
+            size = Math.abs(size);
+        }
     }
 }

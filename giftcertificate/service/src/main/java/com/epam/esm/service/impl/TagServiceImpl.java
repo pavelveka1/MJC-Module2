@@ -131,6 +131,24 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
+        checkPageAndSize(page, size);
+        List<Tag> tags = tagDAO.findAll(page, size);
+        return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
+    }
+
+    @Override
+    public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
+        long idTag;
+        try {
+            idTag = tagDAO.getIdWidelyUsedByUserTagWithHighestCost(userId);
+        } catch (NullPointerException e) {
+            throw new IdNotExistServiceException("User with id = " + userId + " is not exist in DB or has not any orders");
+        }
+        TagDto tagDto = modelMapper.map(tagDAO.read(idTag), TagDto.class);
+        return tagDto;
+    }
+
+    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
@@ -140,8 +158,5 @@ public class TagServiceImpl implements TagService {
         if (size < ONE) {
             size = Math.abs(size);
         }
-        List<Tag> tags = tagDAO.findAll(page, size);
-        return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
-
 }

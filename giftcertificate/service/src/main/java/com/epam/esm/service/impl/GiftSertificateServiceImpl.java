@@ -1,5 +1,7 @@
 package com.epam.esm.service.impl;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -87,10 +89,12 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @return created GiftCertificate as GiftCertificateDto
      * @throws DuplicateEntryServiceException if this GiftCertificate already exists in the DB
      */
-    @Override
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
+    @Override
     public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException {
         GiftCertificate createdGiftCertificate;
+        giftCertificateDto.setCreateDate(LocalDateTime.now(ZoneId.systemDefault()));
+        giftCertificateDto.setLastUpdateDate(giftCertificateDto.getCreateDate());
         long id;
         try {
             id = giftCertificateDAO.create(modelMapper.map(giftCertificateDto, GiftCertificate.class));
@@ -127,7 +131,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * Update GiftCertificate as GiftCertificateDto
      *
      * @param modifiedGiftCertificateDto modified GiftCertificate
-     * @return updated GiftCertificateDto
      */
     @Override
     @Transactional
@@ -181,47 +184,23 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @param orderType ASC or DESC
      * @return list og GiftCertificates
      * @throws RequestParamServiceException if parameters don't right
+     * @throws PaginationException          if page equals zero
      */
     @Override
     @Transactional
     public List<GiftCertificateDto> findAll(String search, String[] values, String sortType, String orderType, Integer page, Integer size)
-            throws RequestParamServiceException, PaginationException {
+            throws PaginationException, RequestParamServiceException {
         List<GiftCertificate> giftCertificates;
         List<GiftCertificateDto> giftCertificateDtoList;
         String nameOrDescription = null;
         List<Tag> tags = new ArrayList<>();
-        if (page < ONE) {
-            if (page == ZERO) {
-                throw new PaginationException("It's imposible to get page with zero number");
-            }
-            page = Math.abs(page);
+        checkPageAndSize(page, size);
+        checkSearchParameters(search, nameOrDescription, values, tags, sortType, orderType);
+        try {
+            giftCertificates = giftCertificateDAO.findAll(search, tags, nameOrDescription, sortType, orderType, page, size);
+        } catch (IllegalArgumentException e) {
+            throw new RequestParamServiceException("Passed parameter = " + sortType + " is not matching with any field in DB");
         }
-        if (size < ONE) {
-            size = Math.abs(size);
-        }
-        if (StringUtils.isEmpty(sortType)) {
-            sortType = DEFAULT_SORT_TYPE;
-        }
-        if (StringUtils.isEmpty(orderType)) {
-            orderType = DEFAULT_SORT_ORDER;
-        }
-        if (StringUtils.isEmpty(search)) {
-            search = DEFAULT_SEARCH_TYPE;
-            nameOrDescription = DEFAULT_VALUES;
-        } else if (search.equals(NAME) || search.equals(DESCRIPTION)) {
-            if (StringUtils.isEmpty(values[0])) {
-                nameOrDescription = "";
-            } else {
-                nameOrDescription = values[0];
-            }
-
-        } else if (search.equals(TAG)) {
-            tags = getListTagsByNames(values);
-        }
-
-        giftCertificates = giftCertificateDAO.findAll(search, tags, nameOrDescription, sortType, orderType, page, size);
-        int i = giftCertificates.size();
-
         giftCertificateDtoList = giftCertificates.stream()
                 .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
                 .collect(Collectors.toList());
@@ -242,5 +221,41 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             }
         }
         return tags;
+    }
+
+    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
+        if (page < ONE) {
+            if (page == ZERO) {
+                throw new PaginationException("It's imposible to get page with zero number");
+            }
+            page = Math.abs(page);
+        }
+        if (size < ONE) {
+            size = Math.abs(size);
+        }
+    }
+
+    private void checkSearchParameters(String search, String nameOrDescription, String[] values, List<Tag> tags,
+                                       String sortType, String orderType) throws RequestParamServiceException {
+        if (StringUtils.isEmpty(sortType)) {
+            sortType = DEFAULT_SORT_TYPE;
+        }
+        if (StringUtils.isEmpty(orderType)) {
+            orderType = DEFAULT_SORT_ORDER;
+        }
+        if (StringUtils.isEmpty(search)) {
+            search = DEFAULT_SEARCH_TYPE;
+            nameOrDescription = DEFAULT_VALUES;
+        } else if (search.equals(NAME) || search.equals(DESCRIPTION)) {
+            if (StringUtils.isEmpty(values[ZERO])) {
+                nameOrDescription = "";
+            } else {
+                nameOrDescription = values[ZERO];
+            }
+        } else if (search.equals(TAG)) {
+            tags = getListTagsByNames(values);
+        } else {
+            throw new RequestParamServiceException("Value of search parameter = " + search + " is not matching with allowable values");
+        }
     }
 }

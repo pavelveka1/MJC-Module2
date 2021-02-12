@@ -43,6 +43,16 @@ public interface TagService {
      * Find all Tags
      *
      * @return list of TagDto
+     * @throws PaginationException if page equals zero
      */
     List<TagDto> findAll(Integer page, Integer size) throws PaginationException;
+
+    /**
+     * Get widely used by user tag with max sun cost
+     *
+     * @param userId id of user
+     * @return TagDto
+     * @throws IdNotExistServiceException if user with passed is not exist in DB
+     */
+    TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException;
 }

@@ -22,6 +22,13 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private UserDAO userDAO;
 
+    /**
+     * Read user by id
+     *
+     * @param id id of user
+     * @return User
+     * @throws IdNotExistServiceException if user with passed id is not exist
+     */
     @Transactional
     @Override
     public User getUser(long id) throws IdNotExistServiceException {
@@ -36,6 +43,11 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
+        checkPageAndSize(page, size);
+        return userDAO.getUsers(page, size);
+    }
+
+    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
@@ -45,6 +57,5 @@ public class UserServiceImpl implements UserService {
         if (size < ONE) {
             size = Math.abs(size);
         }
-        return userDAO.getUsers(page, size);
     }
 }

@@ -33,6 +33,9 @@ public class OrderController {
     @Autowired
     private OrderService orderService;
 
+    /**
+     * OrderValidator is used to validate passed orderDto
+     */
     @Autowired
     private OrderValidator orderValidator;
 
@@ -41,7 +44,17 @@ public class OrderController {
         binder.setValidator(orderValidator);
     }
 
-
+    /**
+     * Method create new order
+     *
+     * @param userId        id of user
+     * @param orderDto      passed OrderDto
+     * @param bindingResult result of validation
+     * @return OrderDto
+     * @throws ValidationException                     if passed OdredDto is not valid
+     * @throws CertificateNameNotExistServiceException if passed name of certificate is not exist in DB
+     * @throws IdNotExistServiceException              if user with such id is not exist in DB
+     */
     @PostMapping("/users/{userId}/orders")
     public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto, BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
@@ -55,22 +68,37 @@ public class OrderController {
         return orderDtoResult;
     }
 
+    /**
+     * Method gets orders by user id
+     *
+     * @param userId id of user
+     * @param page   number of page
+     * @param size   number of entity on page
+     * @return List of OrderDto
+     * @throws IdNotExistServiceException if user with such id is not exist in DB
+     * @throws PaginationException        if page number equals zero
+     */
     @GetMapping("/users/{userId}/orders")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId,
                                             @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                             @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size);
-        for (OrderDto orderDto : orderDtoList) {
-            orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrders_id())).withSelfRel());
-        }
+        HATEOASBuilder.addLinksToOrders(orderDtoList);
         return orderDtoList;
     }
 
+    /**
+     * Method gets order by id
+     *
+     * @param id id of order
+     * @return OrderDto
+     * @throws IdNotExistServiceException if order with such id is not exist in DB
+     */
     @GetMapping("/orders/{id}")
     public OrderDto getOrdersById(@PathVariable long id) throws IdNotExistServiceException {
         OrderDto orderDtoResult = orderService.getOrder(id);
-        orderDtoResult.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDtoResult.getOrders_id())).withSelfRel());
+        HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;
     }
 }

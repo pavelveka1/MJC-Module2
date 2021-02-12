@@ -27,11 +27,25 @@ public class UserDAOImpl implements UserDAO {
     private static final String ID = "id";
     private static final int ONE = 1;
 
+    /**
+     * Get User by id
+     *
+     * @param id id of user
+     * @return User
+     * @throws EmptyResultDataAccessException if user with such id is not exist
+     */
     @Override
     public User getUser(long id) throws EmptyResultDataAccessException {
         return (User) sessionFactory.getCurrentSession().getNamedQuery(SELECT_USER_BY_ID).setParameter(ID, id).uniqueResult();
     }
 
+    /**
+     * Get users
+     *
+     * @param page number of page
+     * @param size size of page
+     * @return List of User
+     */
     @Override
     public List<User> getUsers(Integer page, Integer size) {
         CriteriaBuilder cb = getSession().getCriteriaBuilder();

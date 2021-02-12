@@ -3,13 +3,12 @@ package com.epam.esm.dao;
 import java.util.List;
 
 import com.epam.esm.entity.Tag;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 /**
  * Interface TagDAO.
  * Contains methods for work with Tag class
  */
-public interface TagDAO  {
+public interface TagDAO {
 
     /**
      * Create new tag in DB
@@ -24,7 +23,6 @@ public interface TagDAO  {
      *
      * @param id Tag with this id will be read from DB
      * @return Tag
-     * @throws EmptyResultDataAccessException if records with such id not exist in DB
      */
     Tag read(long id);
 
@@ -58,7 +56,13 @@ public interface TagDAO  {
      */
     Tag getTagByName(String tagName);
 
-    Tag getWidelyUsedByUserTagWithHighestCost(long userId);
+    /**
+     * Get widely used by user tag with max sun cost
+     *
+     * @param userId id of user
+     * @return id of widely used by user tag
+     */
+    Long getIdWidelyUsedByUserTagWithHighestCost(long userId);
 
 
 }

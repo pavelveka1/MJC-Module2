@@ -8,7 +8,6 @@ import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import org.apache.log4j.Logger;
-import org.hibernate.NonUniqueObjectException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
@@ -36,7 +35,10 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     private static final String ANY_CHARACTERS = "%";
     private static final String TAGS = "tags";
     private static final int ONE = 1;
+    private static final int ZERO = 0;
     private static final String DELETED = "deleted";
+    private static final String ASC = "asc";
+    private static final String DESC = "desc";
 
 
     /**
@@ -54,9 +56,6 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      */
     @Override
     public long create(GiftCertificate giftCertificate) throws ConstraintViolationException {
-        giftCertificate.setCreateDate(LocalDateTime.now(ZoneId.systemDefault()));
-        giftCertificate.setLastUpdateDate(giftCertificate.getCreateDate());
-        getSession().merge(giftCertificate);
         getSession().saveOrUpdate(giftCertificate);
         return giftCertificate.getId();
     }
@@ -92,15 +91,20 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
         return (GiftCertificate) getSession().getNamedQuery(SELECT_GIFT_CERTIFICATES_BY_NAME).setParameter(NAME, certificateName).uniqueResult();
     }
 
-
+    /**
+     * Read by name which is not deleted
+     *
+     * @param certificateName Name of certificate
+     * @return GiftCertificate
+     */
     @Override
     public GiftCertificate readByNotDeletedName(String certificateName) {
         CriteriaBuilder cb = getSession().getCriteriaBuilder();
         CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificateRoot = cr.from(GiftCertificate.class);
         Predicate predicateId = cb.equal(giftCertificateRoot.get(NAME), certificateName);
-        Predicate predicateDeleted = cb.equal(giftCertificateRoot.get(DELETED), false);
-        cr.select(giftCertificateRoot).where(cb.and(predicateId, predicateDeleted));
+        Predicate predicateNotDeleted = cb.equal(giftCertificateRoot.get(DELETED), false);
+        cr.select(giftCertificateRoot).where(cb.and(predicateId, predicateNotDeleted));
         Query<GiftCertificate> query = getSession().createQuery(cr);
         return query.uniqueResult();
     }
@@ -112,7 +116,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      * @param giftCertificate we wont update
      */
     @Override
-    public void update(GiftCertificate giftCertificate) throws NonUniqueObjectException {
+    public void update(GiftCertificate giftCertificate) {
         giftCertificate.setLastUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
         getSession().save(giftCertificate);
     }
@@ -123,7 +127,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      * @param giftCertificate - GiftCertificate with id will be deleted from DB
      */
     @Override
-    public void delete(GiftCertificate giftCertificate) throws ConstraintViolationException {
+    public void delete(GiftCertificate giftCertificate) {
         giftCertificate.setDeleted(true);
         getSession().save(giftCertificate);
     }
@@ -137,19 +141,14 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      * @throws BadSqlGrammarException if parameters don't right
      */
     @Override
-    public List<GiftCertificate> findAll(String search, List<Tag> tags, String nameOrDescription, String sortType, String orderType, Integer page, Integer size) throws BadSqlGrammarException {
-        CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
-        Root<GiftCertificate> giftCertificateRoot = cr.from(GiftCertificate.class);
-        if (search.equals(NAME)) {
-            cr.select(giftCertificateRoot).where(cb.like(giftCertificateRoot.get(NAME), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS));
-        } else if (search.equals(DESCRIPTION)) {
-            cr.select(giftCertificateRoot).where(cb.like(giftCertificateRoot.get(DESCRIPTION), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS));
-        } else if (search.equals(TAG)) {
-            Predicate[] predicates = getPredicatesForTags(tags, cb, giftCertificateRoot);
-            cr.select(giftCertificateRoot).where(cb.and(predicates));
-        }
-        Query<GiftCertificate> query = getSession().createQuery(cr);
+    public List<GiftCertificate> findAll(String search, List<Tag> tags, String nameOrDescription, String sortType,
+                                         String orderType, Integer page, Integer size) throws BadSqlGrammarException {
+        CriteriaBuilder criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> criteriaQuery = criteriaBuilder.createQuery(GiftCertificate.class);
+        Root<GiftCertificate> giftCertificateRoot = criteriaQuery.from(GiftCertificate.class);
+        Predicate[] predicates = getSuitablePredicates(search, tags, nameOrDescription, criteriaBuilder, giftCertificateRoot);
+        setOrderingAndPredicates(sortType, orderType, criteriaBuilder, giftCertificateRoot, predicates, criteriaQuery);
+        Query<GiftCertificate> query = getSession().createQuery(criteriaQuery);
         query.setFirstResult((page - ONE) * size);
         query.setMaxResults(size);
         return query.getResultList();
@@ -160,11 +159,40 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     private Predicate[] getPredicatesForTags(List<Tag> tags, CriteriaBuilder cb, Root<GiftCertificate> giftCertificateRoot) {
-        Predicate[] predicates = new Predicate[tags.size()];
-        for (int i = 0; i < tags.size(); i++) {
+        Predicate predicateNotDeleted = cb.notEqual(giftCertificateRoot.get("deleted"), true);
+        Predicate[] predicates = new Predicate[tags.size() + ONE];
+        for (int i = ZERO; i < tags.size(); i++) {
             Predicate predicate = cb.isMember(tags.get(i), giftCertificateRoot.get(TAGS));
             predicates[i] = predicate;
         }
+        predicates[tags.size()] = predicateNotDeleted;
         return predicates;
+    }
+
+    private Predicate[] getSuitablePredicates(String search, List<Tag> tags, String nameOrDescription,
+                                              CriteriaBuilder cb, Root<GiftCertificate> giftCertificateRoot) {
+        Predicate predicateNotDeleted = cb.notEqual(giftCertificateRoot.get("deleted"), true);
+        Predicate predicate;
+        Predicate[] predicates = new Predicate[]{};
+        if (search.equals(NAME)) {
+            predicate = cb.like(giftCertificateRoot.get(NAME), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS);
+            predicates = new Predicate[]{predicateNotDeleted, predicate};
+        } else if (search.equals(DESCRIPTION)) {
+            predicate = cb.like(giftCertificateRoot.get(DESCRIPTION), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS);
+            predicates = new Predicate[]{predicateNotDeleted, predicate};
+        } else if (search.equals(TAG)) {
+            predicates = getPredicatesForTags(tags, cb, giftCertificateRoot);
+        }
+        return predicates;
+    }
+
+    private void setOrderingAndPredicates(String sortType, String orderType, CriteriaBuilder cb,
+                                          Root<GiftCertificate> giftCertificateRoot, Predicate[] predicates,
+                                          CriteriaQuery<GiftCertificate> criteriaQuery) {
+        if (orderType.equals(DESC)) {
+            criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates)).orderBy(cb.desc(giftCertificateRoot.get(sortType)));
+        } else {
+            criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates)).orderBy(cb.asc(giftCertificateRoot.get(sortType)));
+        }
     }
 }

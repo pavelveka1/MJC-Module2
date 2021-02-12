@@ -27,7 +27,6 @@ public class OrderDAOImpl implements OrderDAO {
     private static final String ID = "orders_id";
     private static final String ID_PARAM = "id";
     private static final String SELECT_ORDER_BY_ID = "Order.findById";
-    private static final String GET_ORDERS_BY_USER_ID = "Order.findOrdersByUserId";
     private static final int ONE = 1;
     private static final String USER = "user";
     private static final Logger logger = Logger.getLogger(OrderDAOImpl.class);
@@ -38,7 +37,13 @@ public class OrderDAOImpl implements OrderDAO {
         return order.getOrders_id();
     }
 
-
+    /**
+     *  Ger order by id of user
+     * @param user orders of this user will be returned
+     * @param page number of page
+     * @param size size of page
+     * @return List of Orders
+     */
     @Override
     public List<Order> getOrdersByUserId(User user, Integer page, Integer size) {
         CriteriaBuilder cb = getSession().getCriteriaBuilder();

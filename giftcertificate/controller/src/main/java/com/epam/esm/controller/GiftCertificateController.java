@@ -15,9 +15,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-
 /**
  * Class GiftCertificateController - Rest controller for process of request to GiftCertificates
  */
@@ -46,12 +43,18 @@ public class GiftCertificateController {
     }
 
     /**
-     * method readAll - reads all GiftCertificates from DB
+     * Method readAll - reads all GiftCertificates from DB
      *
-     * @param sortType  - it is name of field in table gitf_certificates of DB
+     * @param search    type of search
+     * @param values    name of value
+     * @param sortType  it is name of field in table gitf_certificates of DB
      * @param orderType ASC or DESC
-     * @return List<GiftCertificateDto>
+     * @param page      number of page
+     * @param size      number of entity on page
+     * @return List of GiftCertificateDto
      * @throws RequestParamServiceException if params don't correlate with name of field in DB
+     * @throws IdNotExistServiceException   can be thrown by HATEOASBuilder while reading by id
+     * @throws PaginationException          if page number equals zero
      */
     @GetMapping("/certificates")
     public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search,
@@ -59,12 +62,11 @@ public class GiftCertificateController {
                                             @RequestParam(required = false) String sortType,
                                             @RequestParam(required = false) String orderType,
                                             @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size) throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+            throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");
         List<GiftCertificateDto> giftCertificateDtoList = service.findAll(search, values, sortType, orderType, page, size);
-        for (GiftCertificateDto giftCertificateDto : giftCertificateDtoList) {
-            giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDto.getId())).withSelfRel());
-        }
+        HATEOASBuilder.addLinksToGiftCertificates(giftCertificateDtoList);
         return giftCertificateDtoList;
     }
 
@@ -78,7 +80,7 @@ public class GiftCertificateController {
     @GetMapping("/certificates/{id}")
     public GiftCertificateDto read(@PathVariable long id) throws IdNotExistServiceException {
         GiftCertificateDto giftCertificateDto = service.read(id);
-        giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(id)).withSelfRel());
+        HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDto);
         return giftCertificateDto;
     }
 
@@ -87,18 +89,17 @@ public class GiftCertificateController {
      *
      * @param giftCertificateDto contains data for creation of GiftCertificate
      * @return created GiftCertificate as GiftCertificateDto
-     * @throws DuplicateEntryServiceException  if such giftCertificate alredy exist in DB
-     * @throws TagNameNotExistServiceException if Tag with such name is not found
-     * @throws ValidationException             if passed GiftCertificateDto is not valid
+     * @throws DuplicateEntryServiceException if such giftCertificate alredy exist in DB
+     * @throws ValidationException            if passed GiftCertificateDto is not valid
      */
     @PostMapping("/certificates")
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, TagNotExistServiceException, IdNotExistServiceException {
+    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto is not valid for create operation");
         }
         GiftCertificateDto giftCertificateDtoResult = service.create(giftCertificateDto);
-        giftCertificateDtoResult.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDtoResult.getId())).withSelfRel());
+        HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDtoResult);
         return giftCertificateDtoResult;
     }
 
@@ -115,19 +116,20 @@ public class GiftCertificateController {
      */
     @PatchMapping("/certificates/{id}")
     public GiftCertificateDto updateGiftCertificate(@PathVariable("id") long id,
-                                                    @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws IdNotExistServiceException, UpdateServiceException, ValidationException {
+                                                    @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult)
+            throws IdNotExistServiceException, UpdateServiceException, ValidationException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto has fields, that is not valid for update operation!");
         }
         giftCertificateDto.setId(id);
         service.update(giftCertificateDto);
         GiftCertificateDto giftCertificateDtoResult = service.read(id);
-        giftCertificateDtoResult.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDtoResult.getId())).withSelfRel());
+        HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDtoResult);
         return giftCertificateDtoResult;
     }
 
     /**
-     * method delete - delete GiftCertificate from DB by id
+     * Method delete - delete GiftCertificate from DB by id
      *
      * @param id of GiftCertificate
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB

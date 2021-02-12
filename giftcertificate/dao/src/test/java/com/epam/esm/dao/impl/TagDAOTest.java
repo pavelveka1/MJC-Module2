@@ -2,14 +2,18 @@ package com.epam.esm.dao.impl;
 
 import com.epam.esm.configuration.DBConfig;
 import com.epam.esm.entity.Tag;
+import org.hibernate.HibernateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.sql.SQLIntegrityConstraintViolationException;
@@ -17,9 +21,10 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
+
 @SpringJUnitConfig(classes = DBConfig.class)
+@SpringBootTest
 @ActiveProfiles("dev")
-@WebAppConfiguration
 public class TagDAOTest {
 
     @Autowired
@@ -43,7 +48,7 @@ public class TagDAOTest {
     public void createTagDuplicateKeyException() {
         Tag tag = new Tag();
         tag.setName("Активный отдых");
-        assertThrows(DuplicateKeyException.class, () -> {
+        assertThrows(HibernateException.class, () -> {
             tagDAOImpl.create(tag);
         });
 
@@ -90,7 +95,7 @@ public class TagDAOTest {
     @DisplayName("should be thrown EmptyResultDataAccessException ")
     @Test
     public void readTagByNotExistId() {
-        assertThrows(EmptyResultDataAccessException.class, () -> {
+        assertThrows(HibernateException.class, () -> {
             tagDAOImpl.read(Integer.MAX_VALUE);
         });
     }

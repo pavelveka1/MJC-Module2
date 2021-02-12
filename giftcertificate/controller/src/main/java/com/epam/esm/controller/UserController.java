@@ -11,9 +11,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.constraints.Min;
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 @RestController
 @RequestMapping("/controller/api")
 public class UserController {
@@ -27,22 +24,35 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+    /**
+     * Method gets user by id
+     *
+     * @param id id of user
+     * @return User
+     * @throws IdNotExistServiceException if user with such id is not exist in DB
+     */
     @GetMapping("/users/{id}")
     public User getUser(@PathVariable @Min(1) long id) throws IdNotExistServiceException {
         User user = userService.getUser(id);
-        user.add(linkTo(methodOn(UserController.class).getUser(id)).withSelfRel());
+        HATEOASBuilder.addLinksToUser(user);
         return user;
     }
 
+    /**
+     * Method gets users
+     *
+     * @param page number of page
+     * @param size number of entity on page
+     * @return List of User
+     * @throws IdNotExistServiceException can be thrown by HATEOASBuilder while reading by id
+     * @throws PaginationException        if page number equals zero
+     */
     @GetMapping("/users")
     public List<User> getUsers(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<User> users = userService.getUsers(page, size);
-        for (User user : users) {
-            user.add(linkTo(methodOn(UserController.class).getUser(user.getId())).withSelfRel());
-        }
+        HATEOASBuilder.addLinksToUsers(users);
         return users;
     }
-
 }

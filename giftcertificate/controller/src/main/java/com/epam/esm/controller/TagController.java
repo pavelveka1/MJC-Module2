@@ -16,8 +16,6 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 /**
  * Class TagController is Rest controller for Tag
@@ -46,18 +44,20 @@ public class TagController {
     }
 
     /**
-     * method readAllTags reads all tags
+     * Method readAllTags reads all tags
      *
-     * @return List<TagDto>
+     * @param page number of page
+     * @param size number of entity on page
+     * @return List of TagDto
+     * @throws IdNotExistServiceException can be thrown by HATEOASBuilder while reading by id
+     * @throws PaginationException        if page number equals zero
      */
     @GetMapping("/tags")
     public List<TagDto> readAllTags(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<TagDto> tagDtoList = service.findAll(page, size);
-        for (TagDto tagDto : tagDtoList) {
-            tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
-        }
+        HATEOASBuilder.addLinksToTags(tagDtoList);
         return tagDtoList;
     }
 
@@ -77,26 +77,26 @@ public class TagController {
             throw new ValidationException("TagDto is not valid for create operation");
         }
         TagDto tagDtoResult = service.create(tagDto);
-        tagDtoResult.add(linkTo(methodOn(TagController.class).readTagById(tagDtoResult.getId())).withSelfRel());
+        HATEOASBuilder.addLinksToTag(tagDtoResult);
         return tagDtoResult;
     }
 
     /**
-     * method readTagById - read tag by id
+     * Method readTagById - read tag by id
      *
      * @param id - id of Tag which will be read
-     * @return Tag with passed is as TagDto
+     * @return TagDto with passed is as TagDto
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
      */
     @GetMapping("/tags/{id}")
     public TagDto readTagById(@PathVariable long id) throws IdNotExistServiceException {
         TagDto tagDto = service.read(id);
-        tagDto.add(linkTo(methodOn(TagController.class).readTagById(id)).withSelfRel());
+        HATEOASBuilder.addLinksToTag(tagDto);
         return tagDto;
     }
 
     /**
-     * method deleteTagById - delete tag by passed id
+     * Method deleteTagById - delete tag by passed id
      *
      * @param id id of Tag which will be deleted
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
@@ -107,4 +107,17 @@ public class TagController {
         service.delete(id);
     }
 
+    /**
+     * Method gets widely used by user tag with max sum of cost in orders
+     *
+     * @param id id of user
+     * @return TagDto
+     * @throws IdNotExistServiceException if user with such id is not exist in DB
+     */
+    @GetMapping("user/{id}/orders/certificates/tags")
+    public TagDto readWIdelyUsedTagByUserWithMaxCost(@PathVariable long id) throws IdNotExistServiceException {
+        TagDto tagDto = service.getWidelyUsedByUserTagWithHighestCost(id);
+        HATEOASBuilder.addLinksToTag(tagDto);
+        return tagDto;
+    }
 }
