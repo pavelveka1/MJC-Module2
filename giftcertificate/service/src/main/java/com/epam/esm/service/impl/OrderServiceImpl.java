@@ -90,7 +90,8 @@ public class OrderServiceImpl implements OrderService {
             throws IdNotExistServiceException, PaginationException {
         List<Order> orders;
         List<OrderDto> orderDtoList;
-        checkPageAndSize(page, size);
+        page = checkPage(page);
+        size = checkSizePage(size);
         try {
             User user = userDAO.getUser(userId);
             orders = orderDAO.getOrdersByUserId(user, page, size);
@@ -141,15 +142,20 @@ public class OrderServiceImpl implements OrderService {
         return certificates;
     }
 
-    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
+    private Integer checkPage(Integer page) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
+        return page;
+    }
+
+    private Integer checkSizePage(Integer size) throws PaginationException {
         if (size < ONE) {
             size = Math.abs(size);
         }
+        return size;
     }
 }

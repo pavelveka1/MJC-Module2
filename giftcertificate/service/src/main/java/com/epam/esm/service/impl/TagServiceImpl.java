@@ -131,7 +131,8 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
-        checkPageAndSize(page, size);
+        page = checkPage(page);
+        size = checkSizePage(size);
         List<Tag> tags = tagDAO.findAll(page, size);
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
@@ -148,15 +149,20 @@ public class TagServiceImpl implements TagService {
         return tagDto;
     }
 
-    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
+    private Integer checkPage(Integer page) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
+        return page;
+    }
+
+    private Integer checkSizePage(Integer size) throws PaginationException {
         if (size < ONE) {
             size = Math.abs(size);
         }
+        return size;
     }
 }

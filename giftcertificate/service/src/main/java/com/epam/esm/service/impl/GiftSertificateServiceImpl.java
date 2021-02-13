@@ -134,7 +134,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public void update(GiftCertificateDto modifiedGiftCertificateDto) {
+    public void update(GiftCertificateDto modifiedGiftCertificateDto) throws DuplicateEntryServiceException {
         GiftCertificate modifiedGiftCertificate = modelMapper.map(modifiedGiftCertificateDto, GiftCertificate.class);
         GiftCertificate giftCertificateRead = giftCertificateDAO.read(modifiedGiftCertificateDto.getId());
 
@@ -194,7 +194,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         List<GiftCertificateDto> giftCertificateDtoList;
         String nameOrDescription = null;
         List<Tag> tags = new ArrayList<>();
-        checkPageAndSize(page, size);
+        page = checkPage(page);
+        size = checkSizePage(size);
         if (StringUtils.isEmpty(sortType)) {
             sortType = DEFAULT_SORT_TYPE;
         }
@@ -205,8 +206,9 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             search = DEFAULT_SEARCH_TYPE;
             nameOrDescription = DEFAULT_VALUES;
         } else if (search.equals(NAME) || search.equals(DESCRIPTION)) {
-            if (StringUtils.isEmpty(values[ZERO])) {
-                nameOrDescription = "";
+            if (Objects.isNull(values)) {
+                //nameOrDescription = "";
+                throw new RequestParamServiceException("You should pass some values to find result ");
             } else {
                 nameOrDescription = values[ZERO];
             }
@@ -233,29 +235,32 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
 
     private List<Tag> getListTagsByNames(String[] names) {
         List<Tag> tags = new ArrayList<>();
-        for (int i = 0; i < names.length; i++) {
-            Tag tag = tagDAO.getTagByName(formatTagName(names[i]));
-            if (Objects.nonNull(tag)) {
-                tags.add(tag);
+        if (!Objects.isNull(names)) {
+            for (int i = 0; i < names.length; i++) {
+                Tag tag = tagDAO.getTagByName(formatTagName(names[i]));
+                if (Objects.nonNull(tag)) {
+                    tags.add(tag);
+                }
             }
         }
         return tags;
     }
 
-    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
+    private Integer checkPage(Integer page) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
+        return page;
+    }
+
+    private Integer checkSizePage(Integer size) throws PaginationException {
         if (size < ONE) {
             size = Math.abs(size);
         }
+        return size;
     }
 
-    private void checkSearchParameters(String search, String nameOrDescription, String[] values, List<Tag> tags,
-                                       String sortType, String orderType) throws RequestParamServiceException {
-
-    }
 }

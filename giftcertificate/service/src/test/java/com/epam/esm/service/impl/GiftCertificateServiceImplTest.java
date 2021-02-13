@@ -28,6 +28,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.BadSqlGrammarException;
 
+import java.sql.BatchUpdateException;
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.sql.SQLSyntaxErrorException;
 import java.util.ArrayList;
@@ -112,7 +113,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be returned updated giftCertificateDto")
     @Test
-    public void updateGiftCertificate() throws IdNotExistServiceException, UpdateServiceException {
+    public void updateGiftCertificate() throws IdNotExistServiceException, UpdateServiceException, DuplicateEntryServiceException, BatchUpdateException {
         when(modelMapper.map(giftCertificateDto3, GiftCertificate.class)).thenReturn(giftCertificate3);
         when(giftCertificateDAOImpl.read(3)).thenReturn(giftCertificate3);
         giftCertificateService.update(giftCertificateDto3);

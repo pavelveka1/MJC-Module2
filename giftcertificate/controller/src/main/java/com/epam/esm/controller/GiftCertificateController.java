@@ -117,7 +117,7 @@ public class GiftCertificateController {
     @PatchMapping("/certificates/{id}")
     public GiftCertificateDto updateGiftCertificate(@PathVariable("id") long id,
                                                     @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult)
-            throws IdNotExistServiceException, UpdateServiceException, ValidationException {
+            throws IdNotExistServiceException, UpdateServiceException, ValidationException, DuplicateEntryServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto has fields, that is not valid for update operation!");
         }

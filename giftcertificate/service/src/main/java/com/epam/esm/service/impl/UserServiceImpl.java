@@ -43,19 +43,25 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
-        checkPageAndSize(page, size);
+        page = checkPage(page);
+        size = checkSizePage(size);
         return userDAO.getUsers(page, size);
     }
 
-    private void checkPageAndSize(Integer page, Integer size) throws PaginationException {
+    private Integer checkPage(Integer page) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
                 throw new PaginationException("It's imposible to get page with zero number");
             }
             page = Math.abs(page);
         }
+        return page;
+    }
+
+    private Integer checkSizePage(Integer size) throws PaginationException {
         if (size < ONE) {
             size = Math.abs(size);
         }
+        return size;
     }
 }

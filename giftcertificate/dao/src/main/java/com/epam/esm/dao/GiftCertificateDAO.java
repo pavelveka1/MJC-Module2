@@ -1,5 +1,7 @@
 package com.epam.esm.dao;
 
+import java.sql.BatchUpdateException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.epam.esm.entity.GiftCertificate;

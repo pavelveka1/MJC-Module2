@@ -1,5 +1,6 @@
 package com.epam.esm.service;
 
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
@@ -34,7 +35,7 @@ public interface GiftCertificateService {
      *
      * @param giftCertificateDto modified GiftCertificate
      */
-    void update(GiftCertificateDto giftCertificateDto);
+    void update(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException;
 
     /**
      * Delete GiftCertificate from DB by id

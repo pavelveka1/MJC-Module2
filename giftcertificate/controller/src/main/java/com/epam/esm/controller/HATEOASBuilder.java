@@ -14,15 +14,12 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class HATEOASBuilder {
 
-
-    private static List<GiftCertificateDto> certificatesHaveLink = new ArrayList<>();
-
     public static void addLinksToGiftCertificates(List<GiftCertificateDto> giftCertificateDtoList) throws IdNotExistServiceException {
-        List<TagDto> tagsHaveLink = new ArrayList<>();
+        List<GiftCertificateDto> certificatesHaveLink = new ArrayList<>();
         for (GiftCertificateDto giftCertificateDto : giftCertificateDtoList) {
             if (!certificatesHaveLink.contains(giftCertificateDto)) {
                 giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDto.getId())).withSelfRel());
-                addLinksToTagsInCertificate(giftCertificateDto.getTags(), tagsHaveLink);
+                addLinksToTagsInCertificate(giftCertificateDto.getTags());
                 certificatesHaveLink.add(giftCertificateDto);
             }
         }
@@ -34,12 +31,9 @@ public class HATEOASBuilder {
     }
 
 
-    public static void addLinksToTagsInCertificate(List<TagDto> tagDtoList, List<TagDto> tagsHaveLink) throws IdNotExistServiceException {
+    public static void addLinksToTagsInCertificate(List<TagDto> tagDtoList) throws IdNotExistServiceException {
         for (TagDto tagDto : tagDtoList) {
-            if (!tagsHaveLink.contains(tagDto)) {
-                tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
-                tagsHaveLink.add(tagDto);
-            }
+            tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
         }
     }
 
@@ -64,15 +58,42 @@ public class HATEOASBuilder {
     }
 
     public static void addLinksToOrders(List<OrderDto> orderDtoList) throws IdNotExistServiceException {
+        orderDtoList.get(0).getUser().add(linkTo(methodOn(UserController.class).getUser(orderDtoList.get(0).getUser().getId())).withSelfRel());
         for (OrderDto orderDto : orderDtoList) {
             orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrders_id())).withSelfRel());
-            addLinksToGiftCertificates(orderDto.getCertificates());
+            List<GiftCertificateDto> certificatesHaveLink = new ArrayList<>();
+            List<TagDto> tagsHaveLink = new ArrayList<>();
+            for (GiftCertificateDto giftCertificateDto : orderDto.getCertificates()) {
+                if (!certificatesHaveLink.contains(giftCertificateDto)) {
+                    giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDto.getId())).withSelfRel());
+                    for (TagDto tagDto : giftCertificateDto.getTags()) {
+                        if (!tagsHaveLink.contains(tagDto)) {
+                            tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
+                            tagsHaveLink.add(tagDto);
+                        }
+                    }
+                    certificatesHaveLink.add(giftCertificateDto);
+                }
+            }
         }
     }
 
     public static void addLinksToOrder(OrderDto orderDto) throws IdNotExistServiceException {
         orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrders_id())).withSelfRel());
-        addLinksToGiftCertificates(orderDto.getCertificates());
-
+        orderDto.getUser().add(linkTo(methodOn(UserController.class).getUser(orderDto.getUser().getId())).withSelfRel());
+        List<GiftCertificateDto> certificatesHaveLink = new ArrayList<>();
+        List<TagDto> tagsHaveLink = new ArrayList<>();
+        for (GiftCertificateDto giftCertificateDto : orderDto.getCertificates()) {
+            if (!certificatesHaveLink.contains(giftCertificateDto)) {
+                giftCertificateDto.add(linkTo(methodOn(GiftCertificateController.class).read(giftCertificateDto.getId())).withSelfRel());
+                for (TagDto tagDto : giftCertificateDto.getTags()) {
+                    if (!tagsHaveLink.contains(tagDto)) {
+                        tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
+                        tagsHaveLink.add(tagDto);
+                    }
+                }
+                certificatesHaveLink.add(giftCertificateDto);
+            }
+        }
     }
 }

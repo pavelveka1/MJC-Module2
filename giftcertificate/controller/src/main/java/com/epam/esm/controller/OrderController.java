@@ -14,9 +14,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.*;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
-
 import javax.validation.Valid;
 import java.util.List;
 
@@ -64,7 +61,7 @@ public class OrderController {
         user.setId(userId);
         orderDto.setUser(user);
         OrderDto orderDtoResult = orderService.makeOrder(orderDto);
-        orderDtoResult.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDtoResult.getOrders_id())).withSelfRel());
+        HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;
     }
 
