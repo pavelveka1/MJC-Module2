@@ -5,19 +5,15 @@ import com.epam.esm.entity.Tag;
 import org.hibernate.HibernateException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
-import org.springframework.test.context.junit4.SpringRunner;
-import org.springframework.test.context.web.WebAppConfiguration;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -39,7 +35,7 @@ public class TagDAOTest {
         Tag tag = new Tag();
         tag.setName("Test new tag");
         long id = tagDAOImpl.create(tag);
-        Tag createdTag=tagDAOImpl.read(id);
+        Tag createdTag = tagDAOImpl.read(id);
         assertEquals(tag.getName(), createdTag.getName());
     }
 
@@ -60,29 +56,23 @@ public class TagDAOTest {
         Tag tag = new Tag();
         tag.setName("New Test tag");
         long id = tagDAOImpl.create(tag);
-        Tag createdTag=tagDAOImpl.read(id);
+        Tag createdTag = tagDAOImpl.read(id);
         assertNotNull(createdTag);
         assertEquals(tag.getName(), createdTag.getName());
     }
 
-    /*
-    @DisplayName("should be return 0 ")
+
+    @DisplayName("should be return null after deletion ")
     @Test
     public void deleteTagByNotExistId() {
-        int i = tagDAOImpl.delete(Integer.MAX_VALUE);
-        assertEquals(0, i);
-    }
-
-    @DisplayName("should be return 1 ")
-    @Test
-    public void deleteTagById() {
-        int i = tagDAOImpl.delete(1);
-        assertEquals(1, i);
+        Tag tag = new Tag();
+        tag.setId(2);
+        tag.setName("Test tag 2");
+        tagDAOImpl.delete(tag);
+        assertEquals(null, tagDAOImpl.read(2));
     }
 
 
-
-     */
     @DisplayName("read tag by id ")
     @Test
     public void readTagById() {
@@ -106,11 +96,11 @@ public class TagDAOTest {
         assertNotNull(tagDAOImpl.read(5));
     }
 
-/*
+
     @DisplayName("get all tags")
     @Test
     public void readAllTagsNotNull() {
-        List<Tag> actual = tagDAOImpl.findAll();
+        List<Tag> actual = tagDAOImpl.findAll(1,10);
         boolean result = false;
         if (actual.size() > 13 && actual.size() < 17) {
             result = true;
@@ -118,5 +108,4 @@ public class TagDAOTest {
         assertTrue(result);
     }
 
- */
 }

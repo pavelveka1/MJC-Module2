@@ -22,8 +22,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
-import org.springframework.dao.DuplicateKeyException;
-import org.springframework.dao.EmptyResultDataAccessException;
 
 import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
@@ -56,6 +54,7 @@ public class TagServiceImplTest {
     private static List<GiftCertificate> giftCertificateList = new ArrayList<>();
     private static List<Tag> tagList = new ArrayList<>();
     private static List<TagDto> tagDtoList = new ArrayList<>();
+    private static final Long ONE=(long)1;
 
     @BeforeAll
     public static void init() {
@@ -156,4 +155,21 @@ public class TagServiceImplTest {
         });
     }
 
+    @DisplayName("should be returned widely used tag")
+    @Test
+    public void getWidelyUsedByUserTagWithHighestCost() throws IdNotExistServiceException {
+        when(tagDAOImpl.getIdWidelyUsedByUserTagWithHighestCost(1)).thenReturn(ONE);
+        when(tagDAOImpl.read(1)).thenReturn(tag);
+        when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
+        assertEquals(tagDto, tagService.getWidelyUsedByUserTagWithHighestCost(1));
+    }
+
+    @DisplayName("should be thrown IdNotExistServiceException")
+    @Test
+    public void getWidelyUsedByUserTagWithHighestCostUserIdNotExist() throws IdNotExistServiceException {
+        when(tagDAOImpl.getIdWidelyUsedByUserTagWithHighestCost(2)).thenThrow(NullPointerException.class);
+        assertThrows(IdNotExistServiceException.class, () -> {
+            tagService.getWidelyUsedByUserTagWithHighestCost(2);
+        });
+    }
 }

@@ -5,6 +5,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -90,6 +91,7 @@ public class DBConfig {
         return new JpaTransactionManager(sessionFactory());
     }
 
+
     @Bean
     @Profile("prod")
     public SessionFactory sessionFactory() throws IOException {
@@ -101,16 +103,7 @@ public class DBConfig {
         return sessionFactoryBean.getObject();
     }
 
-    @Bean
-    @Profile("dev")
-    public SessionFactory sessionFactoryTest() throws IOException {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(testDataSource());
-        sessionFactoryBean.setPackagesToScan("com.epam.esm.entity");
-        sessionFactoryBean.setHibernateProperties(hibernateProperties());
-        sessionFactoryBean.afterPropertiesSet();
-        return sessionFactoryBean.getObject();
-    }
+
 
     private Properties hibernateProperties() {
         Properties hibernateProp = new Properties();
@@ -122,8 +115,20 @@ public class DBConfig {
         hibernateProp.put("hibernate.jdbc.batch_size", 10);
         hibernateProp.put("hibernate.jdbc.fetch_size", 50);
         return hibernateProp;
-
     }
+
+    private Properties hibernatePropertiesTest() {
+        Properties hibernateProp = new Properties();
+        hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.H2Dialect");
+        hibernateProp.put("hibernate.format_sql", true);
+        hibernateProp.put("hibernate.use_sql_comments", true);
+        hibernateProp.put("hibernate.show_sql", true);
+        hibernateProp.put("hibernate.max_fetch_depth", 3);
+        hibernateProp.put("hibernate.jdbc.batch_size", 10);
+        hibernateProp.put("hibernate.jdbc.fetch_size", 50);
+        return hibernateProp;
+    }
+
 
 
     @Bean
