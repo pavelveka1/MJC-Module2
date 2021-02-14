@@ -5,7 +5,6 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -27,9 +26,9 @@ import java.util.Properties;
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 @EnableWebMvc
-public class DBConfig {
+public class ApplicationConfig {
 
-    private Logger logger = Logger.getLogger(DBConfig.class);
+    private Logger logger = Logger.getLogger(ApplicationConfig.class);
 
     @Value("${db.driver}")
     private String DRIVER_CLASS;

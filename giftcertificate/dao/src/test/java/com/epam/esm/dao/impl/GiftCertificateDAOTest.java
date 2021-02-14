@@ -1,6 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.configuration.DBConfig;
+import com.epam.esm.configuration.ApplicationConfig;
 import com.epam.esm.entity.GiftCertificate;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -21,7 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@SpringJUnitConfig(classes = DBConfig.class)
+@SpringJUnitConfig(classes = ApplicationConfig.class)
 @ActiveProfiles("dev")
 @SpringBootTest(classes = {GiftCertificateDAOTest.class})
 public class GiftCertificateDAOTest {
