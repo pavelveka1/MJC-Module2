@@ -1,6 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.configuration.DBConfig;
+import com.epam.esm.configuration.ApplicationConfig;
 import com.epam.esm.entity.Tag;
 import org.hibernate.HibernateException;
 import org.junit.jupiter.api.DisplayName;
@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
 
-@SpringJUnitConfig(classes = DBConfig.class)
+@SpringJUnitConfig(classes = ApplicationConfig.class)
 @SpringBootTest
 @ActiveProfiles("dev")
 public class TagDAOTest {
