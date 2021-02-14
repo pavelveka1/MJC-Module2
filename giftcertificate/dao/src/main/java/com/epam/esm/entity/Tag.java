@@ -13,6 +13,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(AuditListener.class)
 @Entity
 @Table(name = "tags")
 @NamedQueries({
@@ -62,4 +63,5 @@ public class Tag implements Serializable {
                 "id=" + id +
                 ", name='" + name + '}';
     }
+
 }
