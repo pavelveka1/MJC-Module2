@@ -1,0 +1,595 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="85bd0115-1ca8-4276-a401-4f5cedc2469a" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/.idea/codeStyles/Project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__antlr_antlr_2_7_7.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_classic_1_2_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__ch_qos_logback_logback_core_1_2_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_classmate_1_5_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_annotations_2_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_core_2_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_core_jackson_databind_2_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jdk8_2_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_datatype_jackson_datatype_jsr310_2_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_fasterxml_jackson_module_jackson_module_parameter_names_2_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_google_protobuf_protobuf_java_3_11_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_h2database_h2_1_4_200.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_jayway_jsonpath_json_path_2_4_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_mchange_c3p0_0_9_5_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_mchange_mchange_commons_java_0_2_11.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_activation_jakarta_activation_1_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_sun_istack_istack_commons_runtime_3_0_11.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_vaadin_external_google_android_json_0_0_20131108_vaadin1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__com_zaxxer_HikariCP_3_4_5.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_activation_jakarta_activation_api_1_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_annotation_jakarta_annotation_api_1_3_5.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__jakarta_xml_bind_jakarta_xml_bind_api_2_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_activation_javax_activation_api_1_2_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_persistence_javax_persistence_api_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_validation_validation_api_2_0_1_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__javax_xml_bind_jaxb_api_2_3_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__junit_junit_4_13_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__mysql_mysql_connector_java_8_0_22.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_1_10_19.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_bytebuddy_byte_buddy_agent_1_10_19.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_accessors_smart_1_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__net_minidev_json_smart_2_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_commons_commons_lang3_3_11.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_api_2_13_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_logging_log4j_log4j_to_slf4j_2_13_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_core_9_0_41.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apache_tomcat_embed_tomcat_embed_websocket_9_0_41.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_apiguardian_apiguardian_api_1_1_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_assertj_assertj_core_3_18_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_dom4j_dom4j_2_1_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jakarta_el_3_0_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jaxb_jaxb_runtime_2_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_glassfish_jaxb_txw2_2_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hamcrest_hamcrest_core_2_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_common_hibernate_commons_annotations_5_1_0_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_hibernate_core_5_4_10_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_hibernate_hibernate_entitymanager_5_4_10_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_javassist_javassist_3_24_0_GA.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_jandex_2_1_1_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_logging_jboss_logging_3_4_1_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_jboss_spec_javax_transaction_jboss_transaction_api_1_2_spec_1_1_1_Final.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_5_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_api_5_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_engine_5_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_jupiter_junit_jupiter_params_5_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_commons_1_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_engine_1_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_launcher_1_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_runner_1_2_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_platform_junit_platform_suite_api_1_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_junit_vintage_junit_vintage_engine_5_2_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_core_3_7_7.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mockito_mockito_junit_jupiter_3_7_7.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_modelmapper_modelmapper_2_3_8.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_objenesis_objenesis_3_1.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_opentest4j_opentest4j_1_2_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_ow2_asm_asm_5_0_4.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_projectlombok_lombok_1_18_16.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_skyscreamer_jsonassert_1_5_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_jul_to_slf4j_1_7_30.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_30.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_autoconfigure_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_hateoas_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_jdbc_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_json_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_logging_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_test_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_tomcat_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_starter_web_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_boot_spring_boot_test_autoconfigure_2_4_2.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_hateoas_spring_hateoas_1_2_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_plugin_spring_plugin_core_2_0_0_RELEASE.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_aop_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_beans_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_context_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_core_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_expression_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jcl_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_jdbc_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_orm_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_test_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_tx_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_web_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_springframework_spring_webmvc_5_3_3.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_xmlunit_xmlunit_core_2_7_0.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_yaml_snakeyaml_1_27.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/uiDesigner.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/controller.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/META-INF/controller.kotlin_module" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/configuration/Application.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/controller/GiftCertificateController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/controller/HATEOASBuilder.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/controller/OrderController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/controller/TagController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/controller/UserController.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/exceptionhandler/ErrorCode.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/exceptionhandler/ErrorTO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/exceptionhandler/GlobalExceptionHandler.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/exceptionhandler/ValidationException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/validator/GiftCertificateDtoPatchValidator.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/validator/GiftCertificateDtoValidator.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/validator/OrderValidator.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/com/epam/esm/validator/TagDtoValidator.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/log4j.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/controller/target/classes/validation.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/dao.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/META-INF/dao.kotlin_module" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/configuration/ApplicationConfig.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/GiftCertificateDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/OrderDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/TagDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/UserDAO.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/impl/GiftCertificateDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/impl/OrderDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/impl/TagDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/dao/impl/UserDAOImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/entity/AuditListener.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/entity/GiftCertificate.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/entity/Order.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/entity/Tag.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/com/epam/esm/entity/User.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/classes/db.properties" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/test-classes/clean-up.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/test-classes/com/epam/esm/dao/impl/GiftCertificateDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/test-classes/com/epam/esm/dao/impl/TagDAOTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/test-classes/test-data.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dao/target/test-classes/test-schema.sql" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/giftcertificate.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/service.iml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/META-INF/service.kotlin_module" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/GiftCertificateService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/OrderService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/TagService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/UserService.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/dto/GiftCertificateDto.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/dto/OrderDto.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/dto/TagDto.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/CertificateNameNotExistServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/DuplicateEntryServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/IdNotExistServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/PaginationException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/ParameterServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/RequestParamServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/TagNameNotExistServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/TagNotExistServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/exception/UpdateServiceException.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/impl/GiftSertificateServiceImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/impl/OrderServiceImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/impl/TagServiceImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/classes/com/epam/esm/service/impl/UserServiceImpl.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/test-classes/com/epam/esm/service/impl/GiftCertificateServiceImplTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/test-classes/com/epam/esm/service/impl/OrderServiceImplTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/test-classes/com/epam/esm/service/impl/TagServiceImplTest.class" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/service/target/test-classes/com/epam/esm/service/impl/UserServiceImplTest.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../.idea/.gitignore" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" />
+    </list>
+    <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Interface" />
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MavenImportPreferences">
+    <option name="importingSettings">
+      <MavenImportingSettings>
+        <option name="importAutomatically" value="true" />
+      </MavenImportingSettings>
+    </option>
+  </component>
+  <component name="ProjectId" id="1o0kG67RF2WcGphsJ8sgEJiny6C" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="PropertiesComponent">
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../untitled" />
+    <property name="project.structure.last.edited" value="Modules" />
+    <property name="project.structure.proportion" value="0.0" />
+    <property name="project.structure.side.proportion" value="0.0" />
+    <property name="settings.editor.selected.configurable" value="com.poratu.idea.plugins.tomcat.setting.TomcatSettingConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveClassesOrPackagesDialog.RECENTS_KEY">
+      <recent name="com.epam.esm.service" />
+    </key>
+  </component>
+  <component name="RunDashboard">
+    <option name="ruleStates">
+      <list>
+        <RuleState>
+          <option name="name" value="ConfigurationTypeDashboardGroupingRule" />
+        </RuleState>
+        <RuleState>
+          <option name="name" value="StatusDashboardGroupingRule" />
+        </RuleState>
+      </list>
+    </option>
+  </component>
+  <component name="RunManager" selected="Application.Application">
+    <configuration name="Application" type="Application" factoryName="Application" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.epam.esm.configuration.Application" />
+      <module name="controller" />
+      <option name="VM_PARAMETERS" value="-Dspring.profiles.active=prod" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.epam.esm.configuration.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GiftCertificateDAOTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dao" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.epam.esm.dao.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.epam.esm.dao.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.epam.esm.dao.impl.GiftCertificateDAOTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="GiftCertificateDAOTest.createGiftCertificates" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="dao" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.epam.esm.dao.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.epam.esm.dao.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.epam.esm.dao.impl.GiftCertificateDAOTest" />
+      <option name="METHOD_NAME" value="createGiftCertificates" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OrderServiceImplTest" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.epam.esm.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.epam.esm.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.epam.esm.service.impl.OrderServiceImplTest" />
+      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="OrderServiceImplTest.makeOrder" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="service" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.epam.esm.service.impl.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <option name="PACKAGE_NAME" value="com.epam.esm.service.impl" />
+      <option name="MAIN_CLASS_NAME" value="com.epam.esm.service.impl.OrderServiceImplTest" />
+      <option name="METHOD_NAME" value="makeOrder" />
+      <option name="TEST_OBJECT" value="method" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="Tomcat" type="com.poratu.idea.plugins.tomcat" factoryName="SMART_TOMCAT_FACTORY" show_console_on_std_err="false" show_console_on_std_out="false">
+      <option name="adminPort" value="8005" />
+      <option name="allowRunningInParallel" value="false" />
+      <option name="contextPath" value="/controller" />
+      <option name="docBase" value="C:\Users\HP\IdeaProjects\MJCmodule3\giftcertificate\controller" />
+      <option name="envOptions" />
+      <option name="moduleName" />
+      <option name="passParentEnvironmentVariables" value="true" />
+      <option name="port" value="8080" />
+      <option name="tomcatInfo">
+        <TomcatInfo>
+          <option name="name" value="Apache Tomcat 9.0.38" />
+          <option name="number" value="0" />
+          <option name="path" value="C:\Users\HP\Tomcat" />
+          <option name="version" value="9.0.38.0" />
+        </TomcatInfo>
+      </option>
+      <option name="vmOptions" value="-Dspring.profiles.active=prod" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <list>
+      <item itemvalue="Application.Application" />
+      <item itemvalue="JUnit.OrderServiceImplTest" />
+      <item itemvalue="JUnit.OrderServiceImplTest.makeOrder" />
+      <item itemvalue="JUnit.GiftCertificateDAOTest.createGiftCertificates" />
+      <item itemvalue="JUnit.GiftCertificateDAOTest" />
+      <item itemvalue="Smart Tomcat.Tomcat" />
+    </list>
+    <recent_temporary>
+      <list>
+        <item itemvalue="JUnit.GiftCertificateDAOTest" />
+        <item itemvalue="JUnit.GiftCertificateDAOTest.createGiftCertificates" />
+        <item itemvalue="JUnit.OrderServiceImplTest" />
+        <item itemvalue="JUnit.OrderServiceImplTest.makeOrder" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="85bd0115-1ca8-4276-a401-4f5cedc2469a" name="Default Changelist" comment="" />
+      <created>1612430796141</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1612430796141</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State>
+              <option name="COLUMN_ORDER" />
+            </State>
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/validator/GiftCertificateDtoPatchValidator.java</url>
+          <line>29</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/validator/GiftCertificateDtoValidator.java</url>
+          <line>30</line>
+          <option name="timeStamp" value="5" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/OrderDAOImpl.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="7" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>137</line>
+          <option name="timeStamp" value="18" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/TagServiceImpl.java</url>
+          <line>117</line>
+          <option name="timeStamp" value="22" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/TagDAOImpl.java</url>
+          <line>73</line>
+          <option name="timeStamp" value="23" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/OrderServiceImpl.java</url>
+          <line>96</line>
+          <option name="timeStamp" value="27" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>170</line>
+          <option name="timeStamp" value="32" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>121</line>
+          <option name="timeStamp" value="34" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>99</line>
+          <option name="timeStamp" value="41" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/GiftCertificateController.java</url>
+          <line>120</line>
+          <option name="timeStamp" value="50" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/GiftCertificateDAOImpl.java</url>
+          <line>119</line>
+          <option name="timeStamp" value="51" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>236</line>
+          <option name="timeStamp" value="64" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/TagServiceImpl.java</url>
+          <line>135</line>
+          <option name="timeStamp" value="67" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/OrderDAOImpl.java</url>
+          <line>48</line>
+          <option name="timeStamp" value="69" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/OrderServiceImpl.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="70" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/OrderController.java</url>
+          <line>62</line>
+          <option name="timeStamp" value="72" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/test/java/com/epam/esm/dao/impl/GiftCertificateDAOTest.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="73" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/GiftCertificateDAOImpl.java</url>
+          <line>173</line>
+          <option name="timeStamp" value="75" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/GiftCertificateDAOImpl.java</url>
+          <line>148</line>
+          <option name="timeStamp" value="76" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/TagDAOImpl.java</url>
+          <line>125</line>
+          <option name="timeStamp" value="77" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/TagServiceImpl.java</url>
+          <line>78</line>
+          <option name="timeStamp" value="79" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/TagDAOImpl.java</url>
+          <line>50</line>
+          <option name="timeStamp" value="80" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/OrderController.java</url>
+          <line>97</line>
+          <option name="timeStamp" value="81" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/HATEOASBuilder.java</url>
+          <line>61</line>
+          <option name="timeStamp" value="82" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/dao/impl/GiftCertificateDAOImpl.java</url>
+          <line>58</line>
+          <option name="timeStamp" value="85" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>95</line>
+          <option name="timeStamp" value="86" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>100</line>
+          <option name="timeStamp" value="87" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/GiftSertificateServiceImpl.java</url>
+          <line>105</line>
+          <option name="timeStamp" value="88" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/HATEOASBuilder.java</url>
+          <line>81</line>
+          <option name="timeStamp" value="89" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/GiftCertificateController.java</url>
+          <line>67</line>
+          <option name="timeStamp" value="90" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/OrderController.java</url>
+          <line>83</line>
+          <option name="timeStamp" value="91" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/HATEOASBuilder.java</url>
+          <line>19</line>
+          <option name="timeStamp" value="96" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/HATEOASBuilder.java</url>
+          <line>41</line>
+          <option name="timeStamp" value="98" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/HATEOASBuilder.java</url>
+          <line>46</line>
+          <option name="timeStamp" value="99" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/controller/src/main/java/com/epam/esm/controller/GiftCertificateController.java</url>
+          <line>124</line>
+          <option name="timeStamp" value="102" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/main/java/com/epam/esm/service/impl/OrderServiceImpl.java</url>
+          <line>132</line>
+          <option name="timeStamp" value="103" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/service/src/test/java/com/epam/esm/service/impl/OrderServiceImplTest.java</url>
+          <line>102</line>
+          <option name="timeStamp" value="104" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-line">
+          <url>file://$PROJECT_DIR$/dao/src/test/java/com/epam/esm/dao/impl/GiftCertificateDAOTest.java</url>
+          <line>45</line>
+          <option name="timeStamp" value="106" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-field">
+          <url>file://$PROJECT_DIR$/dao/src/main/java/com/epam/esm/configuration/ApplicationConfig.java</url>
+          <line>39</line>
+          <properties field="USER_NAME" class="com.epam.esm.configuration.ApplicationConfig" />
+          <option name="timeStamp" value="12" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="java-field">
+          <url>file://$PROJECT_DIR$/dao/src/test/java/com/epam/esm/dao/impl/GiftCertificateDAOTest.java</url>
+          <line>33</line>
+          <properties field="giftCertificateDAO" class="com.epam.esm.dao.impl.GiftCertificateDAOTest" />
+          <option name="timeStamp" value="107" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+    <watches-manager>
+      <configuration name="Application">
+        <watch expression="modifiedGiftCertificate.tags" language="JAVA" />
+      </configuration>
+    </watches-manager>
+  </component>
+</project>
