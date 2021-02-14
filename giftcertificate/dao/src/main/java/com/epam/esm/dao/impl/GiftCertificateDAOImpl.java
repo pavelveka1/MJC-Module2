@@ -1,5 +1,7 @@
 package com.epam.esm.dao.impl;
 
+import java.sql.BatchUpdateException;
+import java.sql.SQLIntegrityConstraintViolationException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.List;
