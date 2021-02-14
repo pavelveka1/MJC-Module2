@@ -18,6 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
+@EntityListeners(AuditListener.class)
 @Table(name = "orders")
 @NamedQueries({
         @NamedQuery(name = "Order.findById",

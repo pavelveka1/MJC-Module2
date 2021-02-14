@@ -16,6 +16,7 @@ import java.util.List;
 @AllArgsConstructor
 @Entity
 @Table(name = "gift_certificates")
+@EntityListeners(AuditListener.class)
 @DynamicUpdate(true)
 @NamedQueries({
         @NamedQuery(name = "GiftCertificate.findByName",
