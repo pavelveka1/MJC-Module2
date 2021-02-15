@@ -24,6 +24,7 @@ public class OrderController {
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
+    private static final String LOCALE_EN = "en";
     /**
      * OrderService is used for work with Orders
      */
@@ -53,14 +54,15 @@ public class OrderController {
      * @throws IdNotExistServiceException              if user with such id is not exist in DB
      */
     @PostMapping("/users/{userId}/orders")
-    public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto, BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException, IdNotExistServiceException {
+    public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto,
+                              @RequestParam(required = false, defaultValue = LOCALE_EN) String language, BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("Name of certificate is not valid!");
         }
         User user = new User();
         user.setId(userId);
         orderDto.setUser(user);
-        OrderDto orderDtoResult = orderService.makeOrder(orderDto);
+        OrderDto orderDtoResult = orderService.makeOrder(orderDto, language);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;
     }
@@ -78,9 +80,10 @@ public class OrderController {
     @GetMapping("/users/{userId}/orders")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId,
                                             @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+                                            @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws IdNotExistServiceException, PaginationException {
-        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size);
+        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size, language);
         HATEOASBuilder.addLinksToOrders(orderDtoList);
         return orderDtoList;
     }
@@ -93,8 +96,9 @@ public class OrderController {
      * @throws IdNotExistServiceException if order with such id is not exist in DB
      */
     @GetMapping("/orders/{id}")
-    public OrderDto getOrdersById(@PathVariable long id) throws IdNotExistServiceException {
-        OrderDto orderDtoResult = orderService.getOrder(id);
+    public OrderDto getOrdersById(@PathVariable long id, @RequestParam(required = false, defaultValue = LOCALE_EN)
+            String language) throws IdNotExistServiceException {
+        OrderDto orderDtoResult = orderService.getOrder(id, language);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;
     }

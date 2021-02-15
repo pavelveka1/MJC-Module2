@@ -25,6 +25,10 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class TagServiceImpl implements TagService {
 
+    private static final String KEY_TAG_DUPLICATE = "tag_duplicate";
+    private static final String KEY_TAG_ID_NOT_FOUND = "tag_id_not_found";
+    private static final String KEY_USER_NOT_FOUND_OR_NOR_ORDERS = "user_not_found_or_not_orders";
+    private static final String KEY_PAGINATION = "pagination";
     private static final int ZERO = 0;
     private static final int ONE = 1;
     /**
@@ -72,14 +76,14 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
     @Override
-    public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
+    public TagDto create(TagDto tagDto, String language) throws DuplicateEntryServiceException {
         Tag addedTag;
         long id;
         try {
             id = tagDAO.create(modelMapper.map(tagDto, Tag.class));
             addedTag = tagDAO.read(id);
         } catch (ConstraintViolationException e) {
-            throw new DuplicateEntryServiceException("Tag with name = " + tagDto.getName() + " alredy exist in DB");
+            throw new DuplicateEntryServiceException(KEY_TAG_DUPLICATE, language);
         }
         return modelMapper.map(addedTag, TagDto.class);
     }
@@ -93,14 +97,14 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional
     @Override
-    public TagDto read(long id) throws IdNotExistServiceException {
+    public TagDto read(long id, String language) throws IdNotExistServiceException {
         Tag readTag;
         TagDto tagDto;
         try {
             readTag = tagDAO.read(id);
             tagDto = modelMapper.map(readTag, TagDto.class);
         } catch (IllegalArgumentException e) {
-            throw new IdNotExistServiceException("Tag with id = " + id + " not found");
+            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND, language);
         }
 
         return tagDto;
@@ -114,10 +118,10 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional
     @Override
-    public void delete(long id) throws IdNotExistServiceException {
+    public void delete(long id, String language) throws IdNotExistServiceException {
         Tag tag = tagDAO.read(id);
         if (Objects.isNull(tag)) {
-            throw new IdNotExistServiceException("There is no Tag with id = " + id + " in DB");
+            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND, language);
         }
         tagDAO.delete(tag);
     }
@@ -130,29 +134,29 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional
     @Override
-    public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
-        page = checkPage(page);
+    public List<TagDto> findAll(Integer page, Integer size, String language) throws PaginationException {
+        page = checkPage(page, language);
         size = checkSizePage(size);
         List<Tag> tags = tagDAO.findAll(page, size);
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
+    public TagDto getWidelyUsedByUserTagWithHighestCost(long userId, String language) throws IdNotExistServiceException {
         long idTag;
         try {
             idTag = tagDAO.getIdWidelyUsedByUserTagWithHighestCost(userId);
         } catch (NullPointerException e) {
-            throw new IdNotExistServiceException("User with id = " + userId + " is not exist in DB or has not any orders");
+            throw new IdNotExistServiceException(KEY_USER_NOT_FOUND_OR_NOR_ORDERS, language);
         }
         TagDto tagDto = modelMapper.map(tagDAO.read(idTag), TagDto.class);
         return tagDto;
     }
 
-    private Integer checkPage(Integer page) throws PaginationException {
+    private Integer checkPage(Integer page, String language) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
-                throw new PaginationException("It's imposible to get page with zero number");
+                throw new PaginationException(KEY_PAGINATION, language);
             }
             page = Math.abs(page);
         }

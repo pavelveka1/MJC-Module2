@@ -14,6 +14,8 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
 
+    private static final String KEY_PAGINATION = "pagination";
+    private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
     private static final int ONE = 1;
     /**
@@ -31,27 +33,27 @@ public class UserServiceImpl implements UserService {
      */
     @Transactional
     @Override
-    public User getUser(long id) throws IdNotExistServiceException {
+    public User getUser(long id, String language) throws IdNotExistServiceException {
         User user;
         user = userDAO.getUser(id);
         if (user == null) {
-            throw new IdNotExistServiceException("User with id = " + id + " is not exist in DB");
+            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST, language);
         }
         return user;
     }
 
     @Transactional
     @Override
-    public List<User> getUsers(Integer page, Integer size) throws PaginationException {
-        page = checkPage(page);
+    public List<User> getUsers(Integer page, Integer size, String language) throws PaginationException {
+        page = checkPage(page, language);
         size = checkSizePage(size);
         return userDAO.getUsers(page, size);
     }
 
-    private Integer checkPage(Integer page) throws PaginationException {
+    private Integer checkPage(Integer page, String language) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
-                throw new PaginationException("It's imposible to get page with zero number");
+                throw new PaginationException(KEY_PAGINATION, language);
             }
             page = Math.abs(page);
         }

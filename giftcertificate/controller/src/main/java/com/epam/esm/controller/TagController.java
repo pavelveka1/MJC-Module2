@@ -26,6 +26,7 @@ public class TagController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
+    private static final String LOCALE_EN = "en";
     /**
      * service is used for operations with TagDto
      */
@@ -54,9 +55,10 @@ public class TagController {
      */
     @GetMapping("/tags")
     public List<TagDto> readAllTags(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+                                    @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+                                    @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws IdNotExistServiceException, PaginationException {
-        List<TagDto> tagDtoList = service.findAll(page, size);
+        List<TagDto> tagDtoList = service.findAll(page, size, language);
         HATEOASBuilder.addLinksToTags(tagDtoList);
         return tagDtoList;
     }
@@ -71,12 +73,13 @@ public class TagController {
      */
     @PostMapping("/tags")
     @ResponseStatus(HttpStatus.CREATED)
-    public TagDto createTag(@Valid @RequestBody TagDto tagDto, BindingResult bindingResult)
+    public TagDto createTag(@Valid @RequestBody TagDto tagDto, @RequestParam(required = false, defaultValue = LOCALE_EN)
+            String language, BindingResult bindingResult)
             throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("TagDto is not valid for create operation");
         }
-        TagDto tagDtoResult = service.create(tagDto);
+        TagDto tagDtoResult = service.create(tagDto, language);
         HATEOASBuilder.addLinksToTag(tagDtoResult);
         return tagDtoResult;
     }
@@ -89,8 +92,9 @@ public class TagController {
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
      */
     @GetMapping("/tags/{id}")
-    public TagDto readTagById(@PathVariable long id) throws IdNotExistServiceException {
-        TagDto tagDto = service.read(id);
+    public TagDto readTagById(@PathVariable long id, @RequestParam(required = false, defaultValue = LOCALE_EN)
+            String language) throws IdNotExistServiceException {
+        TagDto tagDto = service.read(id, language);
         HATEOASBuilder.addLinksToTag(tagDto);
         return tagDto;
     }
@@ -103,8 +107,9 @@ public class TagController {
      */
     @DeleteMapping("/tags/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void deleteTagById(@PathVariable long id) throws IdNotExistServiceException {
-        service.delete(id);
+    public void deleteTagById(@PathVariable long id, @RequestParam(required = false, defaultValue = LOCALE_EN)
+            String language) throws IdNotExistServiceException {
+        service.delete(id, language);
     }
 
     /**
@@ -115,8 +120,9 @@ public class TagController {
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      */
     @GetMapping("user/{id}/orders/certificates/tags")
-    public TagDto readWIdelyUsedTagByUserWithMaxCost(@PathVariable long id) throws IdNotExistServiceException {
-        TagDto tagDto = service.getWidelyUsedByUserTagWithHighestCost(id);
+    public TagDto readWIdelyUsedTagByUserWithMaxCost(@PathVariable long id, @RequestParam(required = false,
+            defaultValue = LOCALE_EN) String language) throws IdNotExistServiceException {
+        TagDto tagDto = service.getWidelyUsedByUserTagWithHighestCost(id, language);
         HATEOASBuilder.addLinksToTag(tagDto);
         return tagDto;
     }

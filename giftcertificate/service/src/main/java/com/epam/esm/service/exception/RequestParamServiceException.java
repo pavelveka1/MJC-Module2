@@ -6,6 +6,8 @@ package com.epam.esm.service.exception;
  */
 public class RequestParamServiceException extends Exception {
 
+    private String language;
+
     /**
      * Constructor without parameters
      */
@@ -29,5 +31,14 @@ public class RequestParamServiceException extends Exception {
      */
     public RequestParamServiceException(String message, Throwable cause) {
         super(message, cause);
+    }
+
+    public RequestParamServiceException(String message, String language) {
+        super(message);
+        this.language = language;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

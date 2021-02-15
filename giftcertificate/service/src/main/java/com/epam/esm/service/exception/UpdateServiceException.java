@@ -2,6 +2,8 @@ package com.epam.esm.service.exception;
 
 public class UpdateServiceException extends Exception {
 
+    private String language;
+
     public UpdateServiceException() {
     }
 
@@ -15,5 +17,14 @@ public class UpdateServiceException extends Exception {
 
     public UpdateServiceException(Throwable cause) {
         super(cause);
+    }
+
+    public UpdateServiceException(String message, String language) {
+        super(message);
+        this.language = language;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -45,6 +46,18 @@ public class GiftCertificate implements Serializable {
     private List<Tag> tags;
 
     private boolean deleted;
+
+    public GiftCertificate(long id, String name, String description, int price, int duration, LocalDateTime createDate,
+                           LocalDateTime lastUpdateDate, boolean deleted) {
+        this.id = id;
+        this.name = name;
+        this.description = description;
+        this.price = price;
+        this.duration = duration;
+        this.createDate = createDate;
+        this.lastUpdateDate = lastUpdateDate;
+        deleted = deleted;
+    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -117,5 +130,26 @@ public class GiftCertificate implements Serializable {
                 ", lastUpdateDate=" + lastUpdateDate +
                 ", tags=" + tags +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof GiftCertificate)) return false;
+        GiftCertificate that = (GiftCertificate) o;
+        return id == that.id &&
+                deleted == that.deleted &&
+                name.equals(that.name) &&
+                description.equals(that.description) &&
+                Objects.equals(price, that.price) &&
+                Objects.equals(duration, that.duration) &&
+                Objects.equals(createDate, that.createDate) &&
+                Objects.equals(lastUpdateDate, that.lastUpdateDate) &&
+                Objects.equals(tags, that.tags);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description, price, duration, createDate, lastUpdateDate, tags);
     }
 }

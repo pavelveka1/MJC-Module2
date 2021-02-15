@@ -32,7 +32,7 @@ public class TagDAOImpl implements TagDAO {
             "          join gift_certificates_has_orders on orders.id=gift_certificates_has_orders.orders_id\n" +
             "          join gift_certificates on gift_certificates.id=gift_certificates_has_orders.gift_certificates_id\n" +
             "          join gift_certificates_has_tags on gift_certificates.id=gift_certificates_has_tags.gift_certificates_id\n" +
-            "          join tags on tags.tag_id=gift_certificates_has_tags.tags_id where users_id=:id group by name order by quantity desc, sum_cost desc limit 1) as T";
+            "          join tags on tags.tag_id=gift_certificates_has_tags.tags_id where users_id=:id group by tags.name order by quantity desc, sum_cost desc limit 1) as T";
 
     /**
      * Instance of SessionFactory for work with DB

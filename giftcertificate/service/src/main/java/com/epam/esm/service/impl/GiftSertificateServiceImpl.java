@@ -43,6 +43,12 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private static final String TAG = "tag";
     private static final int ZERO = 0;
     private static final int ONE = 1;
+    private static final String KEY_NO_SUCH_FIELD="certificate_no_such_field";
+    private static final String KEY_DUPLICATE_CERTIFICATE="certificate_duplicate";
+    private static final String KEY_PAGINATION="pagination";
+    private static final String KEY_ID_NOT_EXIST="certificate_no_id";
+    private static final String KEY_NO_PASSED_VALUE="certificate_no_value";
+    private static final String KEY_SEARCH_VALUE_INVALID="certificate_search_param";
 
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -91,7 +97,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
     @Override
-    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException {
+    public GiftCertificateDto create(GiftCertificateDto giftCertificateDto, String language) throws DuplicateEntryServiceException {
         GiftCertificate createdGiftCertificate;
         giftCertificateDto.setCreateDate(LocalDateTime.now(ZoneId.systemDefault()));
         giftCertificateDto.setLastUpdateDate(giftCertificateDto.getCreateDate());
@@ -101,7 +107,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             createdGiftCertificate = giftCertificateDAO.read(id);
             giftCertificateDto = modelMapper.map(createdGiftCertificate, GiftCertificateDto.class);
         } catch (ConstraintViolationException e) {
-            throw new DuplicateEntryServiceException("Gift certificate with same name alredy exist");
+            throw new DuplicateEntryServiceException(KEY_DUPLICATE_CERTIFICATE, language);
         }
         return giftCertificateDto;
     }
@@ -115,13 +121,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Transactional
     @Override
-    public GiftCertificateDto read(long id) throws IdNotExistServiceException {
+    public GiftCertificateDto read(long id, String language) throws IdNotExistServiceException {
         GiftCertificate foundCertificate;
         GiftCertificateDto giftCertificateDto;
         List<TagDto> tagsDto;
         foundCertificate = giftCertificateDAO.read(id);
         if (foundCertificate == null) {
-            throw new IdNotExistServiceException("There is no GiftCertificate with id = " + id + " in DB");
+            throw new IdNotExistServiceException(KEY_ID_NOT_EXIST, language);
         }
         giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
         return giftCertificateDto;
@@ -134,7 +140,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public void update(GiftCertificateDto modifiedGiftCertificateDto) throws DuplicateEntryServiceException {
+    public void update(GiftCertificateDto modifiedGiftCertificateDto, String language) throws DuplicateEntryServiceException {
         GiftCertificate modifiedGiftCertificate = modelMapper.map(modifiedGiftCertificateDto, GiftCertificate.class);
         GiftCertificate giftCertificateRead = giftCertificateDAO.read(modifiedGiftCertificateDto.getId());
 
@@ -166,13 +172,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional(rollbackFor = IdNotExistServiceException.class)
-    public void delete(long id) throws IdNotExistServiceException {
+    public void delete(long id, String language) throws IdNotExistServiceException {
         GiftCertificate giftCertificate;
         giftCertificate = giftCertificateDAO.read(id);
         if (giftCertificate != null) {
             giftCertificateDAO.delete(giftCertificate);
         } else {
-            throw new IdNotExistServiceException("There is no GiftCertificate with id = " + id + " in DB");
+            throw new IdNotExistServiceException(KEY_ID_NOT_EXIST, language);
         }
         logger.info("GiftCertificate is deleted from DB");
     }
@@ -188,13 +194,14 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      */
     @Override
     @Transactional
-    public List<GiftCertificateDto> findAll(String search, String[] values, String sortType, String orderType, Integer page, Integer size)
+    public List<GiftCertificateDto> findAll(String search, String[] values, String sortType, String orderType,
+                                            Integer page, Integer size, String language)
             throws PaginationException, RequestParamServiceException {
         List<GiftCertificate> giftCertificates;
         List<GiftCertificateDto> giftCertificateDtoList;
         String nameOrDescription = null;
         List<Tag> tags = new ArrayList<>();
-        page = checkPage(page);
+        page = checkPage(page, language);
         size = checkSizePage(size);
         if (StringUtils.isEmpty(sortType)) {
             sortType = DEFAULT_SORT_TYPE;
@@ -208,19 +215,19 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         } else if (search.equals(NAME) || search.equals(DESCRIPTION)) {
             if (Objects.isNull(values)) {
                 //nameOrDescription = "";
-                throw new RequestParamServiceException("You should pass some values to find result ");
+                throw new RequestParamServiceException(KEY_NO_PASSED_VALUE, language);
             } else {
                 nameOrDescription = values[ZERO];
             }
         } else if (search.equals(TAG)) {
             tags = getListTagsByNames(values);
         } else {
-            throw new RequestParamServiceException("Value of search parameter = " + search + " is not matching with allowable values");
+            throw new RequestParamServiceException(KEY_SEARCH_VALUE_INVALID, language);
         }
         try {
             giftCertificates = giftCertificateDAO.findAll(search, tags, nameOrDescription, sortType, orderType, page, size);
         } catch (IllegalArgumentException e) {
-            throw new RequestParamServiceException("Passed parameter = " + sortType + " is not matching with any field in DB");
+            throw new RequestParamServiceException(KEY_NO_SUCH_FIELD, language);
         }
         giftCertificateDtoList = giftCertificates.stream()
                 .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))
@@ -228,16 +235,12 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDtoList;
     }
 
-    private String formatTagName(String tagName) {
-        return tagName.replace(UNDERSCORE, WHITESPACE);
-    }
-
 
     private List<Tag> getListTagsByNames(String[] names) {
         List<Tag> tags = new ArrayList<>();
         if (!Objects.isNull(names)) {
             for (int i = 0; i < names.length; i++) {
-                Tag tag = tagDAO.getTagByName(formatTagName(names[i]));
+                Tag tag = tagDAO.getTagByName((names[i]));
                 if (Objects.nonNull(tag)) {
                     tags.add(tag);
                 }
@@ -246,10 +249,10 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return tags;
     }
 
-    private Integer checkPage(Integer page) throws PaginationException {
+    private Integer checkPage(Integer page, String language) throws PaginationException {
         if (page < ONE) {
             if (page == ZERO) {
-                throw new PaginationException("It's imposible to get page with zero number");
+                throw new PaginationException(KEY_PAGINATION, language);
             }
             page = Math.abs(page);
         }

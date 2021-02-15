@@ -6,6 +6,8 @@ package com.epam.esm.service.exception;
  */
 public class IdNotExistServiceException extends Exception {
 
+    private String language;
+
     /**
      * Constructor without parameters
      */
@@ -38,5 +40,14 @@ public class IdNotExistServiceException extends Exception {
      */
     public IdNotExistServiceException(Throwable cause) {
         super(cause);
+    }
+
+    public IdNotExistServiceException(String message, String language) {
+        super(message);
+        this.language = language;
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }

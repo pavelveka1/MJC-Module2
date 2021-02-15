@@ -8,6 +8,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Class entity Order
@@ -76,5 +77,22 @@ public class Order implements Serializable {
                 ", date='" + date + '\'' +
                 ", certificates=" + certificates +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Order)) return false;
+        Order order = (Order) o;
+        return orders_id == order.orders_id &&
+                cost == order.cost &&
+                user.equals(order.user) &&
+                date.equals(order.date) &&
+                certificates.equals(order.certificates);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(orders_id, user, cost, date, certificates);
     }
 }

@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import javax.persistence.*;
 import java.io.Serializable;
 import java.util.List;
+import java.util.Objects;
 
 @Data
 @NoArgsConstructor
@@ -32,6 +33,11 @@ public class Tag implements Serializable {
     private long id;
 
     private String name;
+
+    public Tag(long id, String name){
+        this.id=id;
+        this.name=name;
+    }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private List<GiftCertificate> giftCertificateList;
@@ -62,5 +68,19 @@ public class Tag implements Serializable {
         return "Tag{" +
                 "id=" + id +
                 ", name='" + name + '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Tag)) return false;
+        Tag tag = (Tag) o;
+        return id == tag.id &&
+                name.equals(tag.name) ;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name);
     }
 }

@@ -25,6 +25,8 @@ public class GiftCertificateController {
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
+    private static final String CERTIFICATE_DTO_NOT_VALID = "GiftCertificateDto_not_valid";
+    private static final String LOCALE_EN = "en";
     /**
      * GiftCertificateService is used for work with GiftCertificateDto
      */
@@ -62,10 +64,11 @@ public class GiftCertificateController {
                                             @RequestParam(required = false) String sortType,
                                             @RequestParam(required = false) String orderType,
                                             @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+                                            @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");
-        List<GiftCertificateDto> giftCertificateDtoList = service.findAll(search, values, sortType, orderType, page, size);
+        List<GiftCertificateDto> giftCertificateDtoList = service.findAll(search, values, sortType, orderType, page, size, language);
         HATEOASBuilder.addLinksToGiftCertificates(giftCertificateDtoList);
         return giftCertificateDtoList;
     }
@@ -78,8 +81,9 @@ public class GiftCertificateController {
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
      */
     @GetMapping("/certificates/{id}")
-    public GiftCertificateDto read(@PathVariable long id) throws IdNotExistServiceException {
-        GiftCertificateDto giftCertificateDto = service.read(id);
+    public GiftCertificateDto read(@PathVariable long id, @RequestParam(required = false, defaultValue = LOCALE_EN)
+            String language) throws IdNotExistServiceException {
+        GiftCertificateDto giftCertificateDto = service.read(id, language);
         HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDto);
         return giftCertificateDto;
     }
@@ -94,11 +98,14 @@ public class GiftCertificateController {
      */
     @PostMapping("/certificates")
     @ResponseStatus(HttpStatus.CREATED)
-    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult) throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
+    public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult,
+                                     @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
+            throws DuplicateEntryServiceException,
+            ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("GiftCertificateDto is not valid for create operation");
+            throw new ValidationException(CERTIFICATE_DTO_NOT_VALID, language);
         }
-        GiftCertificateDto giftCertificateDtoResult = service.create(giftCertificateDto);
+        GiftCertificateDto giftCertificateDtoResult = service.create(giftCertificateDto, language);
         HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDtoResult);
         return giftCertificateDtoResult;
     }
@@ -116,14 +123,16 @@ public class GiftCertificateController {
      */
     @PatchMapping("/certificates/{id}")
     public GiftCertificateDto updateGiftCertificate(@PathVariable("id") long id,
-                                                    @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult)
+                                                    @RequestBody GiftCertificateDto giftCertificateDto,
+                                                    @RequestParam(required = false, defaultValue = LOCALE_EN) String language,
+                                                    BindingResult bindingResult)
             throws IdNotExistServiceException, UpdateServiceException, ValidationException, DuplicateEntryServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("GiftCertificateDto has fields, that is not valid for update operation!");
         }
         giftCertificateDto.setId(id);
-        service.update(giftCertificateDto);
-        GiftCertificateDto giftCertificateDtoResult = service.read(id);
+        service.update(giftCertificateDto, language);
+        GiftCertificateDto giftCertificateDtoResult = service.read(id, language);
         HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDtoResult);
         return giftCertificateDtoResult;
     }
@@ -136,8 +145,9 @@ public class GiftCertificateController {
      */
     @DeleteMapping("/certificates/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void delete(@PathVariable int id) throws IdNotExistServiceException {
-        service.delete(id);
+    public void delete(@PathVariable int id, @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
+            throws IdNotExistServiceException {
+        service.delete(id, language);
     }
 
 }

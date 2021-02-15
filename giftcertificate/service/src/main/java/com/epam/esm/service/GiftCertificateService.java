@@ -19,7 +19,7 @@ public interface GiftCertificateService {
      * @return created GiftCertificate as GiftCertificateDto
      * @throws DuplicateEntryServiceException if this GiftCertificate already exists in the DB
      */
-    GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException;
+    GiftCertificateDto create(GiftCertificateDto giftCertificateDto, String language) throws DuplicateEntryServiceException;
 
     /**
      * Read GiftCertificateDto from DB by id
@@ -28,14 +28,14 @@ public interface GiftCertificateService {
      * @return GiftCertificateDto
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
-    GiftCertificateDto read(long id) throws IdNotExistServiceException;
+    GiftCertificateDto read(long id, String language) throws IdNotExistServiceException;
 
     /**
      * Update GiftCertificate as GiftCertificateDto
      *
      * @param giftCertificateDto modified GiftCertificate
      */
-    void update(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException;
+    void update(GiftCertificateDto giftCertificateDto, String language) throws DuplicateEntryServiceException;
 
     /**
      * Delete GiftCertificate from DB by id
@@ -43,7 +43,7 @@ public interface GiftCertificateService {
      * @param id id of GiftCertificate
      * @throws IdNotExistServiceException if record with such id not exist in DB
      */
-    void delete(long id) throws IdNotExistServiceException;
+    void delete(long id, String language) throws IdNotExistServiceException;
 
     /**
      * Find all giftCertificates with condition determined by parameters
@@ -54,7 +54,7 @@ public interface GiftCertificateService {
      * @throws RequestParamServiceException if parameters don't right
      */
     List<GiftCertificateDto> findAll(String search, String[] values, String sortType,
-                                     String orderType, Integer page, Integer size)
+                                     String orderType, Integer page, Integer size, String language)
             throws RequestParamServiceException, PaginationException;
 
 }
