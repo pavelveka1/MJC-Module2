@@ -77,7 +77,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorTO> handleCertificateNameNotExistException(CertificateNameNotExistServiceException exception) {
         Locale locale = new Locale(exception.getLanguage());
         ResourceBundle bundle = ResourceBundle.getBundle(MESSAGES, locale);
-        return new ResponseEntity<>(new ErrorTO(bundle.getString(exception.getMessage() + exception.getCertificateName()),
+        return new ResponseEntity<>(new ErrorTO(bundle.getString(exception.getMessage())+" "+ exception.getCertificateName(),
                 ErrorCode.NOT_FOUND.getErrorCode()),
                 HttpStatus.NOT_FOUND);
     }

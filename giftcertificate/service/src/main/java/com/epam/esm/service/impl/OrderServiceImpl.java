@@ -124,7 +124,7 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private int calculateOrderCost(List<GiftCertificate> giftCertificateList) throws CertificateNameNotExistServiceException {
+    private int calculateOrderCost(List<GiftCertificate> giftCertificateList)  {
         int cost = 0;
         for (GiftCertificate giftCertificate : giftCertificateList) {
             cost = cost + giftCertificate.getPrice();
@@ -138,7 +138,7 @@ public class OrderServiceImpl implements OrderService {
         for (GiftCertificate giftCertificate : giftCertificateList) {
             GiftCertificate giftCertificate1 = giftCertificateDAO.readByNotDeletedName(giftCertificate.getName());
             if (giftCertificate1 == null) {
-                throw new CertificateNameNotExistServiceException(KEY_CERTIFICATE_NAME_NOT_EXIST, language, giftCertificate1.getName());
+                throw new CertificateNameNotExistServiceException(KEY_CERTIFICATE_NAME_NOT_EXIST, language, giftCertificate.getName());
             }
             certificates.add(giftCertificate1);
         }

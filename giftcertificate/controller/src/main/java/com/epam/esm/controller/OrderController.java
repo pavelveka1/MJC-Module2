@@ -55,7 +55,9 @@ public class OrderController {
      */
     @PostMapping("/users/{userId}/orders")
     public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto,
-                              @RequestParam(required = false, defaultValue = LOCALE_EN) String language, BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException, IdNotExistServiceException {
+                              @RequestParam(required = false, defaultValue = LOCALE_EN) String language,
+                              BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException,
+            IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException("Name of certificate is not valid!");
         }
