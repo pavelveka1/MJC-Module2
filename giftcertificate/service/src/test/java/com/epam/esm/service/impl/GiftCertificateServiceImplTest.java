@@ -48,7 +48,6 @@ public class GiftCertificateServiceImplTest {
     @InjectMocks
     private GiftSertificateServiceImpl giftCertificateService = new GiftSertificateServiceImpl();
 
-    private static final String DEFAULT_LOCALE="en";
     private static GiftCertificateDto giftCertificateDto = new GiftCertificateDto(1, "Test name", "Test description", 10, 20, null, null, new ArrayList<>());
     private static GiftCertificateDto giftCertificateDto2 = new GiftCertificateDto(2, "Test name 2", "Test description 2", 10, 20, null, null, null);
     private static GiftCertificateDto giftCertificateDto3 = new GiftCertificateDto(3, "Test name 3", "Test description 3", 10, 20, null, null, null);
@@ -80,7 +79,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAOImpl.read(100)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
-        assertEquals(giftCertificateDto, giftCertificateService.create(giftCertificateDto, DEFAULT_LOCALE));
+        assertEquals(giftCertificateDto, giftCertificateService.create(giftCertificateDto));
     }
 
     @DisplayName("should be thrown duplicateEntryServiceException")
@@ -89,7 +88,7 @@ public class GiftCertificateServiceImplTest {
         when(giftCertificateDAOImpl.create(giftCertificate)).thenThrow(ConstraintViolationException.class);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         assertThrows(DuplicateEntryServiceException.class, () -> {
-            giftCertificateService.create(giftCertificateDto, DEFAULT_LOCALE);
+            giftCertificateService.create(giftCertificateDto);
         });
     }
 
@@ -100,7 +99,7 @@ public class GiftCertificateServiceImplTest {
         GiftCertificate giftCertificate = giftCertificateList.get(0);
         when(giftCertificateDAOImpl.read(2)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
-        assertEquals(giftCertificateDto, giftCertificateService.read(2, DEFAULT_LOCALE));
+        assertEquals(giftCertificateDto, giftCertificateService.read(2));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
@@ -108,25 +107,25 @@ public class GiftCertificateServiceImplTest {
     public void readGiftCertificateByNotExistId() {
         when(giftCertificateDAOImpl.read(10)).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
-            giftCertificateService.read(10, DEFAULT_LOCALE);
+            giftCertificateService.read(10);
         });
     }
 
     @DisplayName("should be returned updated giftCertificateDto")
     @Test
-    public void updateGiftCertificate() throws IdNotExistServiceException, UpdateServiceException, DuplicateEntryServiceException, BatchUpdateException {
+    public void updateGiftCertificate() throws IdNotExistServiceException, DuplicateEntryServiceException, BatchUpdateException {
         when(modelMapper.map(giftCertificateDto3, GiftCertificate.class)).thenReturn(giftCertificate3);
         when(giftCertificateDAOImpl.read(3)).thenReturn(giftCertificate3);
-        giftCertificateService.update(giftCertificateDto3,DEFAULT_LOCALE);
+        giftCertificateService.update(giftCertificateDto3);
         verify(giftCertificateDAOImpl).update(giftCertificate3);
     }
 
 
     @DisplayName("should be thrown PaginationException")
     @Test
-    public void findAllGiftCertificates() throws RequestParamServiceException, SQLSyntaxErrorException, PaginationException, IdNotExistServiceException {
+    public void findAllGiftCertificates(){
         assertThrows(PaginationException.class, () -> {
-            giftCertificateService.findAll("name", values, "something", "name", 0, 1, DEFAULT_LOCALE);
+            giftCertificateService.findAll("name", values, "something", "name", 0, 1);
         });
     }
 
@@ -135,7 +134,7 @@ public class GiftCertificateServiceImplTest {
     @Test
     public void deleteGiftCertificateById() throws IdNotExistServiceException {
         when(giftCertificateDAOImpl.read(5)).thenReturn(giftCertificate);
-        giftCertificateService.delete(5, DEFAULT_LOCALE);
+        giftCertificateService.delete(5);
         verify(giftCertificateDAOImpl).delete(giftCertificate);
 
     }
@@ -145,7 +144,7 @@ public class GiftCertificateServiceImplTest {
     public void deleteGiftCertificateByNotExistId() throws IdNotExistServiceException {
         when(giftCertificateDAOImpl.read(9)).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
-            giftCertificateService.delete(9, DEFAULT_LOCALE);
+            giftCertificateService.delete(9);
         });
     }
 

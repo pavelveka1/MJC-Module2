@@ -33,7 +33,6 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnitPlatform.class)
 public class OrderServiceImplTest {
 
-    private static final String DEFAULT_LOCALE="en";
     private static User user1 = new User(1, "firstName1", "lastName1", null);
     private static User user2 = new User(2, "firstName2", "lastName2", null);
     private static GiftCertificate giftCertificate = new GiftCertificate(1, "Test name", "Test description",
@@ -90,7 +89,7 @@ public class OrderServiceImplTest {
         when(modelMapper.map(orderDto2, Order.class)).thenReturn(order2);
         when(modelMapper.map(order2, OrderDto.class)).thenReturn(orderDto2);
         when(orderDAOImpl.makeOrder(order2)).thenReturn((long) 2);
-        assertEquals(orderDto2, orderService.makeOrder(orderDto2, DEFAULT_LOCALE));
+        assertEquals(orderDto2, orderService.makeOrder(orderDto2));
     }
 
     @DisplayName("should be thrown CertificateNameNotExistServiceException")
@@ -101,7 +100,7 @@ public class OrderServiceImplTest {
         when(modelMapper.map(orderDto1, Order.class)).thenReturn(order1);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         assertThrows(CertificateNameNotExistServiceException.class, () -> {
-            orderService.makeOrder(orderDto1, DEFAULT_LOCALE);
+            orderService.makeOrder(orderDto1);
         });
     }
 
@@ -113,14 +112,14 @@ public class OrderServiceImplTest {
         when(modelMapper.map(order2, OrderDto.class)).thenReturn(orderDto2);
         when(modelMapper.map(order1, OrderDto.class)).thenReturn(orderDto1);
         when(orderDAOImpl.getOrdersByUserId(user1, 1, 10)).thenReturn(orders);
-        assertEquals(orderDtoList, orderService.getOrdersByUserId(1, 1, 10, DEFAULT_LOCALE));
+        assertEquals(orderDtoList, orderService.getOrdersByUserId(1, 1, 10));
     }
 
     @DisplayName("should be thrown PaginationException")
     @Test
     public void getOrdersByUserIdZeroPage() throws IdNotExistServiceException, PaginationException {
         assertThrows(PaginationException.class, () -> {
-            orderService.getOrdersByUserId(1, 0, 10, DEFAULT_LOCALE);
+            orderService.getOrdersByUserId(1, 0, 10);
         });
     }
 
@@ -129,7 +128,7 @@ public class OrderServiceImplTest {
     public void getOrderById() throws IdNotExistServiceException {
         when(modelMapper.map(order1, OrderDto.class)).thenReturn(orderDto1);
         when(orderDAOImpl.getOrder(1)).thenReturn(order1);
-        assertEquals(orderDto1, orderService.getOrder(1, DEFAULT_LOCALE));
+        assertEquals(orderDto1, orderService.getOrder(1));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
@@ -138,7 +137,7 @@ public class OrderServiceImplTest {
         when(modelMapper.map(null, OrderDto.class)).thenThrow(IllegalArgumentException.class);
         when(orderDAOImpl.getOrder(1)).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
-            orderService.getOrder(1, DEFAULT_LOCALE);
+            orderService.getOrder(1);
         });
     }
 

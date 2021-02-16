@@ -1,6 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.configuration.ApplicationConfigDevProfile;
+import com.epam.esm.dao.impl.config.ApplicationConfigDevProfile;
 import com.epam.esm.entity.GiftCertificate;
 
 import static org.junit.jupiter.api.Assertions.*;

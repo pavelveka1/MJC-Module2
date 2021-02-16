@@ -6,8 +6,6 @@ package com.epam.esm.service.exception;
  */
 public class TagNameNotExistServiceException extends Exception {
 
-    private String language;
-
     /**
      * Constructor without parameters
      */
@@ -33,12 +31,4 @@ public class TagNameNotExistServiceException extends Exception {
         super(message, cause);
     }
 
-    public TagNameNotExistServiceException(String message, String language) {
-        super(message);
-        this.language = language;
-    }
-
-    public String getLanguage() {
-        return language;
-    }
 }

@@ -7,12 +7,12 @@ import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.beans.PropertyVetoException;
@@ -24,7 +24,6 @@ import java.util.Properties;
 @ComponentScan(basePackages = "com.epam.esm")
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-@EnableWebMvc
 public class ApplicationConfigProdProfile {
 
     private static Logger logger = Logger.getLogger(ApplicationConfigProdProfile.class);
@@ -101,4 +100,13 @@ public class ApplicationConfigProdProfile {
         return modelMapper;
     }
 
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource rs = new ResourceBundleMessageSource();
+        rs.setBasename("messages");
+        rs.setDefaultEncoding("UTF-8");
+        rs.setUseCodeAsDefaultMessage(true);
+        return rs;
+    }
 }

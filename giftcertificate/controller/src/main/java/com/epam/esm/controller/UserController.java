@@ -12,13 +12,11 @@ import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
-@RequestMapping("/controller/api")
+@RequestMapping("/api")
 public class UserController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
-    private static final String LOCALE_EN="en";
-    private static final Logger logger = Logger.getLogger(UserController.class);
     /**
      * OrderService is used for work with Orders
      */
@@ -33,9 +31,8 @@ public class UserController {
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      */
     @GetMapping("/users/{id}")
-    public User getUser(@PathVariable @Min(1) long id, @RequestParam(required = false, defaultValue = LOCALE_EN)
-            String language) throws IdNotExistServiceException {
-        User user = userService.getUser(id, language);
+    public User getUser(@PathVariable @Min(1) long id) throws IdNotExistServiceException {
+        User user = userService.getUser(id);
         HATEOASBuilder.addLinksToUser(user);
         return user;
     }
@@ -51,10 +48,9 @@ public class UserController {
      */
     @GetMapping("/users")
     public List<User> getUsers(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                               @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size,
-                               @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
+                               @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
-        List<User> users = userService.getUsers(page, size, language);
+        List<User> users = userService.getUsers(page, size);
         HATEOASBuilder.addLinksToUsers(users);
         return users;
     }

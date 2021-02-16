@@ -11,11 +11,11 @@ import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
+import com.epam.esm.service.util.PaginationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
@@ -27,7 +27,6 @@ import java.util.stream.Collectors;
 public class OrderServiceImpl implements OrderService {
 
     private static final String KEY_CERTIFICATE_NAME_NOT_EXIST = "certificate_name_not_exist";
-    private static final String KEY_PAGINATION = "pagination";
     private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
@@ -61,15 +60,15 @@ public class OrderServiceImpl implements OrderService {
      * @return OrderDto
      * @throws CertificateNameNotExistServiceException if certificate is not exist in DB
      */
-    @Transactional(propagation = Propagation.REQUIRES_NEW, rollbackFor = CertificateNameNotExistServiceException.class)
+    @Transactional
     @Override
-    public OrderDto makeOrder(OrderDto orderDto, String language) throws CertificateNameNotExistServiceException {
+    public OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException {
         User user = userDAO.getUser(orderDto.getUser().getId());
         orderDto.setUser(user);
         Order order = modelMapper.map(orderDto, Order.class);
         List<GiftCertificate> giftCertificateList = orderDto.getCertificates().stream()
                 .map(giftCertificateDto -> (modelMapper.map(giftCertificateDto, GiftCertificate.class))).collect(Collectors.toList());
-        giftCertificateList = getFilledCertificates(giftCertificateList, language);
+        giftCertificateList = getFilledCertificates(giftCertificateList);
         order.setCertificates(giftCertificateList);
         int cost = calculateOrderCost(giftCertificateList);
         order.setCost(cost);
@@ -90,12 +89,12 @@ public class OrderServiceImpl implements OrderService {
      */
     @Transactional
     @Override
-    public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size, String language)
+    public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<Order> orders;
         List<OrderDto> orderDtoList;
-        page = checkPage(page, language);
-        size = checkSizePage(size);
+        page = PaginationUtil.checkPage(page);
+        size = PaginationUtil.checkSizePage(size);
         try {
             User user = userDAO.getUser(userId);
             orders = orderDAO.getOrdersByUserId(user, page, size);
@@ -103,7 +102,7 @@ public class OrderServiceImpl implements OrderService {
                     .map(order -> modelMapper.map(order, OrderDto.class))
                     .collect(Collectors.toList());
         } catch (EmptyResultDataAccessException e) {
-            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST, language);
+            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
         return orderDtoList;
     }
@@ -116,49 +115,33 @@ public class OrderServiceImpl implements OrderService {
      * @throws IdNotExistServiceException if order with passed id is not exist
      */
     @Override
-    public OrderDto getOrder(long id, String language) throws IdNotExistServiceException {
+    public OrderDto getOrder(long id) throws IdNotExistServiceException {
         try {
             return modelMapper.map(orderDAO.getOrder(id), OrderDto.class);
         } catch (IllegalArgumentException e) {
-            throw new IdNotExistServiceException(KEY_ID_NOT_EXSIST, language);
+            throw new IdNotExistServiceException(KEY_ID_NOT_EXSIST);
         }
     }
 
-    private int calculateOrderCost(List<GiftCertificate> giftCertificateList)  {
-        int cost = 0;
+    private int calculateOrderCost(List<GiftCertificate> giftCertificateList) {
+        int cost = ZERO;
         for (GiftCertificate giftCertificate : giftCertificateList) {
             cost = cost + giftCertificate.getPrice();
         }
         return cost;
     }
 
-    private List<GiftCertificate> getFilledCertificates(List<GiftCertificate> giftCertificateList, String language)
+    private List<GiftCertificate> getFilledCertificates(List<GiftCertificate> giftCertificateList)
             throws CertificateNameNotExistServiceException {
         List<GiftCertificate> certificates = new ArrayList<>();
         for (GiftCertificate giftCertificate : giftCertificateList) {
             GiftCertificate giftCertificate1 = giftCertificateDAO.readByNotDeletedName(giftCertificate.getName());
             if (giftCertificate1 == null) {
-                throw new CertificateNameNotExistServiceException(KEY_CERTIFICATE_NAME_NOT_EXIST, language, giftCertificate.getName());
+                throw new CertificateNameNotExistServiceException(KEY_CERTIFICATE_NAME_NOT_EXIST, giftCertificate.getName());
             }
             certificates.add(giftCertificate1);
         }
         return certificates;
     }
 
-    private Integer checkPage(Integer page, String language) throws PaginationException {
-        if (page < ONE) {
-            if (page == ZERO) {
-                throw new PaginationException(KEY_PAGINATION, language);
-            }
-            page = Math.abs(page);
-        }
-        return page;
-    }
-
-    private Integer checkSizePage(Integer size)  {
-        if (size < ONE) {
-            size = Math.abs(size);
-        }
-        return size;
-    }
 }

@@ -18,12 +18,11 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/controller/api")
+@RequestMapping("/api")
 public class OrderController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
-    private static final String LOCALE_EN = "en";
     /**
      * OrderService is used for work with Orders
      */
@@ -52,9 +51,8 @@ public class OrderController {
      * @throws CertificateNameNotExistServiceException if passed name of certificate is not exist in DB
      * @throws IdNotExistServiceException              if user with such id is not exist in DB
      */
-    @PostMapping("/users/{userId}/orders")
+    @PostMapping("/orders/users/{userId}")
     public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto,
-                              @RequestParam(required = false, defaultValue = LOCALE_EN) String language,
                               BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException,
             IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
@@ -63,7 +61,7 @@ public class OrderController {
         User user = new User();
         user.setId(userId);
         orderDto.setUser(user);
-        OrderDto orderDtoResult = orderService.makeOrder(orderDto, language);
+        OrderDto orderDtoResult = orderService.makeOrder(orderDto);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;
     }
@@ -78,13 +76,12 @@ public class OrderController {
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      * @throws PaginationException        if page number equals zero
      */
-    @GetMapping("/users/{userId}/orders")
+    @GetMapping("/orders/users/{userId}")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId,
                                             @RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size,
-                                            @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
+                                            @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
-        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size, language);
+        List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size);
         HATEOASBuilder.addLinksToOrders(orderDtoList);
         return orderDtoList;
     }
@@ -97,9 +94,8 @@ public class OrderController {
      * @throws IdNotExistServiceException if order with such id is not exist in DB
      */
     @GetMapping("/orders/{id}")
-    public OrderDto getOrdersById(@PathVariable long id, @RequestParam(required = false, defaultValue = LOCALE_EN)
-            String language) throws IdNotExistServiceException {
-        OrderDto orderDtoResult = orderService.getOrder(id, language);
+    public OrderDto getOrdersById(@PathVariable long id) throws IdNotExistServiceException {
+        OrderDto orderDtoResult = orderService.getOrder(id);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;
     }

@@ -1,6 +1,6 @@
 package com.epam.esm.dao.impl;
 
-import com.epam.esm.configuration.ApplicationConfigDevProfile;
+import com.epam.esm.dao.impl.config.ApplicationConfigDevProfile;
 import com.epam.esm.dao.OrderDAO;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
@@ -16,7 +16,6 @@ import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 

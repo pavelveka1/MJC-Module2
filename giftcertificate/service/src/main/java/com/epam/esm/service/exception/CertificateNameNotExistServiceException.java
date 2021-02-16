@@ -2,7 +2,6 @@ package com.epam.esm.service.exception;
 
 public class CertificateNameNotExistServiceException extends Exception {
 
-    private String language;
     private String certificateName;
 
     public CertificateNameNotExistServiceException() {
@@ -16,14 +15,9 @@ public class CertificateNameNotExistServiceException extends Exception {
         super(message, cause);
     }
 
-    public CertificateNameNotExistServiceException(String message, String language, String certificateName) {
+    public CertificateNameNotExistServiceException(String message, String certificateName) {
         super(message);
-        this.language = language;
         this.certificateName = certificateName;
-    }
-
-    public String getLanguage() {
-        return language;
     }
 
     public String getCertificateName() {

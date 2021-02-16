@@ -2,52 +2,39 @@ package com.epam.esm.validator;
 
 import com.epam.esm.service.dto.GiftCertificateDto;
 import org.springframework.stereotype.Component;
-import org.springframework.validation.Errors;
-import org.springframework.validation.Validator;
+
+import java.util.Objects;
 
 @Component
-public class GiftCertificateDtoPatchValidator implements Validator {
+public class GiftCertificateDtoPatchValidator {
     private static final String NAME_PATTERN = ".{2,45}";
     private static final String DESCRIPTION_PATTERN = ".{2,300}";
     private static final int MIN_PRICE = 0;
     private static final int MIN_DURATION = 0;
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
-    private static final String PRICE = "price";
-    private static final String DURATION = "duration";
-    private static final String CERTIFICATE_NAME_INCORRECT = "certificate.name.incorrect";
-    private static final String CERTIFICATE_DESCRIPTION_INCORRECT = "certificate.description.incorrect";
-    private static final String CERTIFICATE_PRICE_INCORRECT = "certificate.price.incorrect";
-    private static final String CERTIFICATE_DURATION_INCORRECT = "certificate.duration.incorrect";
 
-    @Override
-    public boolean supports(Class<?> clazz) {
-        return GiftCertificateDto.class.equals(clazz);
-    }
-
-    @Override
-    public void validate(Object target, Errors errors) {
-        GiftCertificateDto giftCertificateDto = (GiftCertificateDto) target;
-        if (giftCertificateDto.getName() != null) {
+    public static boolean validate(GiftCertificateDto giftCertificateDto) {
+        boolean result = true;
+        if (Objects.nonNull(giftCertificateDto.getName())) {
             if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
-                errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
+                result = false;
             }
         }
-        if (giftCertificateDto.getDescription() != null) {
+        if (Objects.nonNull(giftCertificateDto.getDescription())) {
             if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
-                errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
+                result = false;
             }
         }
-        if (giftCertificateDto.getPrice() != null) {
-            if (giftCertificateDto.getPrice() <= MIN_PRICE) {
-                errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
+        if (Objects.nonNull(giftCertificateDto.getPrice())) {
+            if (giftCertificateDto.getPrice() <= MIN_PRICE ) {
+                result = false;
             }
         }
-        if (giftCertificateDto.getDuration() != null) {
+        if (Objects.nonNull(giftCertificateDto.getDuration())) {
             if (giftCertificateDto.getDuration() <= MIN_DURATION) {
-                errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
+                result = false;
             }
         }
+        return result;
     }
 
 }

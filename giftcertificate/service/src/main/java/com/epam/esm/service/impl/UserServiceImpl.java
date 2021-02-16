@@ -5,19 +5,17 @@ import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
+import com.epam.esm.service.util.PaginationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private static final String KEY_PAGINATION = "pagination";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
-    private static final int ZERO = 0;
-    private static final int ONE = 1;
     /**
      * TagJDBCTemplate is used for operations with User
      */
@@ -31,39 +29,28 @@ public class UserServiceImpl implements UserService {
      * @return User
      * @throws IdNotExistServiceException if user with passed id is not exist
      */
-    @Transactional
     @Override
-    public User getUser(long id, String language) throws IdNotExistServiceException {
+    public User getUser(long id) throws IdNotExistServiceException {
         User user;
         user = userDAO.getUser(id);
-        if (user == null) {
-            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST, language);
+        if (Objects.isNull(user)) {
+            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
         return user;
     }
 
-    @Transactional
+    /**
+     * Read users from DB
+     *
+     * @param page number of page
+     * @param size size of page
+     * @return List of users
+     * @throws PaginationException if page equals zero
+     */
     @Override
-    public List<User> getUsers(Integer page, Integer size, String language) throws PaginationException {
-        page = checkPage(page, language);
-        size = checkSizePage(size);
+    public List<User> getUsers(Integer page, Integer size) throws PaginationException {
+        page = PaginationUtil.checkPage(page);
+        size = PaginationUtil.checkSizePage(size);
         return userDAO.getUsers(page, size);
-    }
-
-    private Integer checkPage(Integer page, String language) throws PaginationException {
-        if (page < ONE) {
-            if (page == ZERO) {
-                throw new PaginationException(KEY_PAGINATION, language);
-            }
-            page = Math.abs(page);
-        }
-        return page;
-    }
-
-    private Integer checkSizePage(Integer size) {
-        if (size < ONE) {
-            size = Math.abs(size);
-        }
-        return size;
     }
 }

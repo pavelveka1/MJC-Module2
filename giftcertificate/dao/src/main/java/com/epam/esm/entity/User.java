@@ -2,8 +2,8 @@ package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.springframework.hateoas.RepresentationModel;
 
 import javax.persistence.*;
@@ -16,7 +16,7 @@ import java.util.Objects;
  *
  * @author Pavel Veka
  */
-@Data
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity

@@ -20,7 +20,7 @@ public interface TagService {
      * @return created TagDto
      * @throws DuplicateEntryServiceException if this Tag already exists in the DB
      */
-    TagDto create(TagDto tagDto, String language) throws DuplicateEntryServiceException;
+    TagDto create(TagDto tagDto) throws DuplicateEntryServiceException;
 
     /**
      * Read one Tag from DB by id
@@ -29,7 +29,7 @@ public interface TagService {
      * @return Optional<Tag>
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
-    TagDto read(long id, String language) throws IdNotExistServiceException;
+    TagDto read(long id) throws IdNotExistServiceException;
 
     /**
      * Delete Tag from DB by id
@@ -37,7 +37,7 @@ public interface TagService {
      * @param id id of Tag
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
-    void delete(long id, String language) throws IdNotExistServiceException;
+    void delete(long id) throws IdNotExistServiceException;
 
     /**
      * Find all Tags
@@ -45,7 +45,7 @@ public interface TagService {
      * @return list of TagDto
      * @throws PaginationException if page equals zero
      */
-    List<TagDto> findAll(Integer page, Integer size, String language) throws PaginationException;
+    List<TagDto> findAll(Integer page, Integer size) throws PaginationException;
 
     /**
      * Get widely used by user tag with max sun cost
@@ -54,5 +54,5 @@ public interface TagService {
      * @return TagDto
      * @throws IdNotExistServiceException if user with passed is not exist in DB
      */
-    TagDto getWidelyUsedByUserTagWithHighestCost(long userId, String language) throws IdNotExistServiceException;
+    TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException;
 }

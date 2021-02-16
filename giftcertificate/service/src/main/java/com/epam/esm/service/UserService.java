@@ -19,7 +19,7 @@ public interface UserService {
      * @return User
      * @throws IdNotExistServiceException if user with passed id is not exist
      */
-    User getUser(long id, String language) throws IdNotExistServiceException;
+    User getUser(long id) throws IdNotExistServiceException;
 
     /**
      * Get users
@@ -29,5 +29,5 @@ public interface UserService {
      * @return List of users
      * @throws PaginationException if page equals zero
      */
-    List<User> getUsers(Integer page, Integer size, String language) throws PaginationException;
+    List<User> getUsers(Integer page, Integer size) throws PaginationException;
 }

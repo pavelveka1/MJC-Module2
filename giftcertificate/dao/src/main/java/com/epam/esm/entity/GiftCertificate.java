@@ -2,8 +2,8 @@ package com.epam.esm.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 import org.hibernate.annotations.DynamicUpdate;
 
 import javax.persistence.*;
@@ -12,13 +12,13 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
-@Data
+@Setter
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "gift_certificates")
 @EntityListeners(AuditListener.class)
-@DynamicUpdate(true)
+@DynamicUpdate()
 @NamedQueries({
         @NamedQuery(name = "GiftCertificate.findByName",
                 query = "select distinct c from GiftCertificate c where c.name = :name")

@@ -1,4 +1,4 @@
-package com.epam.esm.configuration;
+package com.epam.esm.dao.impl.config;
 
 import org.hibernate.SessionFactory;
 import org.springframework.context.annotation.*;
@@ -9,7 +9,6 @@ import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
 import java.io.IOException;
@@ -20,7 +19,6 @@ import java.util.Properties;
 @ComponentScan(basePackages = "com.epam.esm")
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
-@EnableWebMvc
 public class ApplicationConfigDevProfile {
 
 

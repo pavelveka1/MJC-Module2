@@ -20,7 +20,7 @@ public interface OrderService {
      * @return OrderDto
      * @throws CertificateNameNotExistServiceException if pointed certificate in order is not exist
      */
-    OrderDto makeOrder(OrderDto orderDto, String language) throws CertificateNameNotExistServiceException;
+    OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException;
 
     /**
      * Read orders by user id
@@ -32,7 +32,7 @@ public interface OrderService {
      * @throws IdNotExistServiceException if user with passed id is not exist
      * @throws PaginationException        if page number equals zero
      */
-    List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size, String language) throws IdNotExistServiceException, PaginationException;
+    List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size) throws IdNotExistServiceException, PaginationException;
 
     /**
      * Read order by id
@@ -41,6 +41,6 @@ public interface OrderService {
      * @return OrderDto
      * @throws IdNotExistServiceException if odrer with passed id is not exist
      */
-    OrderDto getOrder(long id, String language) throws IdNotExistServiceException;
+    OrderDto getOrder(long id) throws IdNotExistServiceException;
 
 }

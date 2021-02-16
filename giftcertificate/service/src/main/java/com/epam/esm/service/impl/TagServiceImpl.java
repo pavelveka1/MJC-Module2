@@ -12,6 +12,7 @@ import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
+import com.epam.esm.service.util.PaginationUtil;
 import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,7 @@ public class TagServiceImpl implements TagService {
     private static final String KEY_TAG_DUPLICATE = "tag_duplicate";
     private static final String KEY_TAG_ID_NOT_FOUND = "tag_id_not_found";
     private static final String KEY_USER_NOT_FOUND_OR_NOR_ORDERS = "user_not_found_or_not_orders";
-    private static final String KEY_PAGINATION = "pagination";
-    private static final int ZERO = 0;
-    private static final int ONE = 1;
+
     /**
      * TagDAO is used for operations with Tag
      */
@@ -76,14 +75,14 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
     @Override
-    public TagDto create(TagDto tagDto, String language) throws DuplicateEntryServiceException {
+    public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
         long id;
         try {
             id = tagDAO.create(modelMapper.map(tagDto, Tag.class));
             addedTag = tagDAO.read(id);
         } catch (ConstraintViolationException e) {
-            throw new DuplicateEntryServiceException(KEY_TAG_DUPLICATE, language);
+            throw new DuplicateEntryServiceException(KEY_TAG_DUPLICATE);
         }
         return modelMapper.map(addedTag, TagDto.class);
     }
@@ -92,19 +91,18 @@ public class TagServiceImpl implements TagService {
      * Read one Tag from DB by id
      *
      * @param id id of Tag
-     * @return Optional<Tag>
+     * @return TagDto
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
-    @Transactional
     @Override
-    public TagDto read(long id, String language) throws IdNotExistServiceException {
+    public TagDto read(long id) throws IdNotExistServiceException {
         Tag readTag;
         TagDto tagDto;
         try {
             readTag = tagDAO.read(id);
             tagDto = modelMapper.map(readTag, TagDto.class);
         } catch (IllegalArgumentException e) {
-            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND, language);
+            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
         }
 
         return tagDto;
@@ -118,10 +116,10 @@ public class TagServiceImpl implements TagService {
      */
     @Transactional
     @Override
-    public void delete(long id, String language) throws IdNotExistServiceException {
+    public void delete(long id) throws IdNotExistServiceException {
         Tag tag = tagDAO.read(id);
         if (Objects.isNull(tag)) {
-            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND, language);
+            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
         }
         tagDAO.delete(tag);
     }
@@ -132,40 +130,22 @@ public class TagServiceImpl implements TagService {
      *
      * @return list of TagDto
      */
-    @Transactional
     @Override
-    public List<TagDto> findAll(Integer page, Integer size, String language) throws PaginationException {
-        page = checkPage(page, language);
-        size = checkSizePage(size);
+    public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
+        page = PaginationUtil.checkPage(page);
+        size = PaginationUtil.checkSizePage(size);
         List<Tag> tags = tagDAO.findAll(page, size);
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
 
     @Override
-    public TagDto getWidelyUsedByUserTagWithHighestCost(long userId, String language) throws IdNotExistServiceException {
+    public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
         long idTag;
         try {
             idTag = tagDAO.getIdWidelyUsedByUserTagWithHighestCost(userId);
         } catch (NullPointerException e) {
-            throw new IdNotExistServiceException(KEY_USER_NOT_FOUND_OR_NOR_ORDERS, language);
+            throw new IdNotExistServiceException(KEY_USER_NOT_FOUND_OR_NOR_ORDERS);
         }
         return modelMapper.map(tagDAO.read(idTag), TagDto.class);
-    }
-
-    private Integer checkPage(Integer page, String language) throws PaginationException {
-        if (page < ONE) {
-            if (page == ZERO) {
-                throw new PaginationException(KEY_PAGINATION, language);
-            }
-            page = Math.abs(page);
-        }
-        return page;
-    }
-
-    private Integer checkSizePage(Integer size)  {
-        if (size < ONE) {
-            size = Math.abs(size);
-        }
-        return size;
     }
 }

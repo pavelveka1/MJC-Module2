@@ -27,7 +27,6 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnitPlatform.class)
 public class UserServiceImplTest {
 
-    private static final String DEFAULT_LOCALE="en";
     private static User user1 = new User(1,"firstName1","lastName1", null);
     private static User user2 = new User(2,"firstName2","lastName2", null);
     private static List<User> users=new ArrayList<>();
@@ -55,7 +54,7 @@ public class UserServiceImplTest {
     @Test
     public void getUser() throws IdNotExistServiceException {
         when(userDAOImpl.getUser(1)).thenReturn(user1);
-        assertEquals(user1, userService.getUser(1, DEFAULT_LOCALE));
+        assertEquals(user1, userService.getUser(1));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
@@ -63,7 +62,7 @@ public class UserServiceImplTest {
     public void getUserIdNotExist() throws IdNotExistServiceException {
         when(userDAOImpl.getUser(1)).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
-            userService.getUser(1, DEFAULT_LOCALE);
+            userService.getUser(1);
         });
     }
 
@@ -71,14 +70,14 @@ public class UserServiceImplTest {
     @Test
     public void getUsers() throws PaginationException {
         when(userDAOImpl.getUsers(1,10)).thenReturn(users);
-        assertEquals(users, userService.getUsers(1,10, DEFAULT_LOCALE));
+        assertEquals(users, userService.getUsers(1,10));
     }
 
     @DisplayName("should be thrown PaginationException")
     @Test
     public void getUsersPaginationException() throws PaginationException {
         assertThrows(PaginationException.class, () -> {
-            userService.getUsers(0,10, DEFAULT_LOCALE);
+            userService.getUsers(0,10);
         });
     }
 }
