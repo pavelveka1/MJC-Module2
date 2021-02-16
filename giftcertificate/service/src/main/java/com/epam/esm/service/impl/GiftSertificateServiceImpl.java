@@ -124,7 +124,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     public GiftCertificateDto read(long id, String language) throws IdNotExistServiceException {
         GiftCertificate foundCertificate;
         GiftCertificateDto giftCertificateDto;
-        List<TagDto> tagsDto;
         foundCertificate = giftCertificateDAO.read(id);
         if (foundCertificate == null) {
             throw new IdNotExistServiceException(KEY_ID_NOT_EXIST, language);
@@ -141,7 +140,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     @Override
     @Transactional
     public void update(GiftCertificateDto modifiedGiftCertificateDto, String language) throws DuplicateEntryServiceException {
-        GiftCertificate modifiedGiftCertificate = modelMapper.map(modifiedGiftCertificateDto, GiftCertificate.class);
         GiftCertificate giftCertificateRead = giftCertificateDAO.read(modifiedGiftCertificateDto.getId());
 
         if (modifiedGiftCertificateDto.getName() != null) {
@@ -259,7 +257,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return page;
     }
 
-    private Integer checkSizePage(Integer size) throws PaginationException {
+    private Integer checkSizePage(Integer size) {
         if (size < ONE) {
             size = Math.abs(size);
         }

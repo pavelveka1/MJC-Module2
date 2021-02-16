@@ -149,8 +149,7 @@ public class TagServiceImpl implements TagService {
         } catch (NullPointerException e) {
             throw new IdNotExistServiceException(KEY_USER_NOT_FOUND_OR_NOR_ORDERS, language);
         }
-        TagDto tagDto = modelMapper.map(tagDAO.read(idTag), TagDto.class);
-        return tagDto;
+        return modelMapper.map(tagDAO.read(idTag), TagDto.class);
     }
 
     private Integer checkPage(Integer page, String language) throws PaginationException {
@@ -163,7 +162,7 @@ public class TagServiceImpl implements TagService {
         return page;
     }
 
-    private Integer checkSizePage(Integer size) throws PaginationException {
+    private Integer checkSizePage(Integer size)  {
         if (size < ONE) {
             size = Math.abs(size);
         }

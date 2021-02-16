@@ -48,10 +48,10 @@ public class UserDAOImpl implements UserDAO {
      */
     @Override
     public List<User> getUsers(Integer page, Integer size) {
-        CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        CriteriaQuery<User> cr = cb.createQuery(User.class);
+        CriteriaBuilder criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<User> cr = criteriaBuilder.createQuery(User.class);
         Root<User> userRoot = cr.from(User.class);
-        cr.select(userRoot).orderBy(cb.asc(userRoot.get(ID)));
+        cr.select(userRoot).orderBy(criteriaBuilder.asc(userRoot.get(ID)));
         Query<User> query = getSession().createQuery(cr);
         query.setFirstResult((page - ONE) * size);
         query.setMaxResults(size);

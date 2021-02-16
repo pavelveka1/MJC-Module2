@@ -18,7 +18,6 @@ public class OrderValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
-        OrderDto orderDto = (OrderDto) target;
         ValidationUtils.rejectIfEmpty(errors, CERTIFICATES, EMPTY_ORDER);
     }
 }

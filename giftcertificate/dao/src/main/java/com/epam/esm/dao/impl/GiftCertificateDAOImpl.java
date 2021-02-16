@@ -69,12 +69,12 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      */
     @Override
     public GiftCertificate read(long id) throws EmptyResultDataAccessException {
-        CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
+        CriteriaBuilder criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> cr = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificateRoot = cr.from(GiftCertificate.class);
-        Predicate predicateId = cb.equal(giftCertificateRoot.get(ID), id);
-        Predicate predicateDeleted = cb.equal(giftCertificateRoot.get(DELETED), false);
-        cr.select(giftCertificateRoot).where(cb.and(predicateId, predicateDeleted));
+        Predicate predicateId = criteriaBuilder.equal(giftCertificateRoot.get(ID), id);
+        Predicate predicateDeleted = criteriaBuilder.equal(giftCertificateRoot.get(DELETED), false);
+        cr.select(giftCertificateRoot).where(criteriaBuilder.and(predicateId, predicateDeleted));
         Query<GiftCertificate> query = getSession().createQuery(cr);
         return query.uniqueResult();
     }
@@ -99,12 +99,12 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
      */
     @Override
     public GiftCertificate readByNotDeletedName(String certificateName) {
-        CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        CriteriaQuery<GiftCertificate> cr = cb.createQuery(GiftCertificate.class);
+        CriteriaBuilder criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<GiftCertificate> cr = criteriaBuilder.createQuery(GiftCertificate.class);
         Root<GiftCertificate> giftCertificateRoot = cr.from(GiftCertificate.class);
-        Predicate predicateId = cb.equal(giftCertificateRoot.get(NAME), certificateName);
-        Predicate predicateNotDeleted = cb.equal(giftCertificateRoot.get(DELETED), false);
-        cr.select(giftCertificateRoot).where(cb.and(predicateId, predicateNotDeleted));
+        Predicate predicateId = criteriaBuilder.equal(giftCertificateRoot.get(NAME), certificateName);
+        Predicate predicateNotDeleted = criteriaBuilder.equal(giftCertificateRoot.get(DELETED), false);
+        cr.select(giftCertificateRoot).where(criteriaBuilder.and(predicateId, predicateNotDeleted));
         Query<GiftCertificate> query = getSession().createQuery(cr);
         return query.uniqueResult();
     }
@@ -170,18 +170,18 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     }
 
     private Predicate[] getSuitablePredicates(String search, List<Tag> tags, String nameOrDescription,
-                                              CriteriaBuilder cb, Root<GiftCertificate> giftCertificateRoot) {
-        Predicate predicateNotDeleted = cb.notEqual(giftCertificateRoot.get("deleted"), true);
+                                              CriteriaBuilder criteriaBuilder, Root<GiftCertificate> giftCertificateRoot) {
+        Predicate predicateNotDeleted = criteriaBuilder.notEqual(giftCertificateRoot.get("deleted"), true);
         Predicate predicate;
         Predicate[] predicates = new Predicate[]{};
         if (search.equals(NAME)) {
-            predicate = cb.like(giftCertificateRoot.get(NAME), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS);
+            predicate = criteriaBuilder.like(giftCertificateRoot.get(NAME), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS);
             predicates = new Predicate[]{predicateNotDeleted, predicate};
         } else if (search.equals(DESCRIPTION)) {
-            predicate = cb.like(giftCertificateRoot.get(DESCRIPTION), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS);
+            predicate = criteriaBuilder.like(giftCertificateRoot.get(DESCRIPTION), ANY_CHARACTERS + nameOrDescription + ANY_CHARACTERS);
             predicates = new Predicate[]{predicateNotDeleted, predicate};
         } else if (search.equals(TAG)) {
-            predicates = getPredicatesForTags(tags, cb, giftCertificateRoot);
+            predicates = getPredicatesForTags(tags, criteriaBuilder, giftCertificateRoot);
         }
         return predicates;
     }

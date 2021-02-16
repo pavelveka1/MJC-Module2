@@ -54,8 +54,8 @@ public class TagController {
      * @throws PaginationException        if page number equals zero
      */
     @GetMapping("/tags")
-    public List<TagDto> readAllTags(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+    public List<TagDto> readAllTags(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                     @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws IdNotExistServiceException, PaginationException {
         List<TagDto> tagDtoList = service.findAll(page, size, language);
@@ -120,7 +120,7 @@ public class TagController {
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      */
     @GetMapping("user/{id}/orders/certificates/tags")
-    public TagDto readWIdelyUsedTagByUserWithMaxCost(@PathVariable long id, @RequestParam(required = false,
+    public TagDto readWidelyUsedTagByUserWithMaxCost(@PathVariable long id, @RequestParam(required = false,
             defaultValue = LOCALE_EN) String language) throws IdNotExistServiceException {
         TagDto tagDto = service.getWidelyUsedByUserTagWithHighestCost(id, language);
         HATEOASBuilder.addLinksToTag(tagDto);

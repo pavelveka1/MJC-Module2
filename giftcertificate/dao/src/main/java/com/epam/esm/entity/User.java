@@ -28,6 +28,8 @@ import java.util.Objects;
 })
 public class User extends RepresentationModel<User> implements Serializable {
 
+    private static final long SERIAL_VERSION_UID = 1L;
+
     private long id;
 
     private String firstName;

@@ -21,7 +21,6 @@ import java.util.List;
 @RequestMapping("/controller/api")
 public class OrderController {
 
-    private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
     private static final String LOCALE_EN = "en";
@@ -81,8 +80,8 @@ public class OrderController {
      */
     @GetMapping("/users/{userId}/orders")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+                                            @RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                            @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws IdNotExistServiceException, PaginationException {
         List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size, language);

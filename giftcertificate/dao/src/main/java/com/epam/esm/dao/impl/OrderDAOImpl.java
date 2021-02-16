@@ -46,10 +46,10 @@ public class OrderDAOImpl implements OrderDAO {
      */
     @Override
     public List<Order> getOrdersByUserId(User user, Integer page, Integer size) {
-        CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        CriteriaQuery<Order> cr = cb.createQuery(Order.class);
+        CriteriaBuilder criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<Order> cr = criteriaBuilder.createQuery(Order.class);
         Root<Order> orderRoot = cr.from(Order.class);
-        cr.select(orderRoot).where(cb.equal(orderRoot.get(USER), user)).orderBy(cb.asc(orderRoot.get(ID)));
+        cr.select(orderRoot).where(criteriaBuilder.equal(orderRoot.get(USER), user)).orderBy(criteriaBuilder.asc(orderRoot.get(ID)));
         Query<Order> query = getSession().createQuery(cr);
         query.setFirstResult((page - ONE) * size);
         query.setMaxResults(size);

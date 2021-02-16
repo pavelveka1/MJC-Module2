@@ -28,7 +28,7 @@ import java.util.Objects;
 })
 public class Tag implements Serializable {
 
-    private static final long serialVersionUID = 1L;
+    private static final long SERIAL_VERSION_UID = 1L;
 
     private long id;
 

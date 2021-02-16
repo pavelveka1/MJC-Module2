@@ -82,10 +82,10 @@ public class TagDAOImpl implements TagDAO {
      */
     @Override
     public List<Tag> findAll(Integer pageNumber, Integer pageSize) {
-        CriteriaBuilder cb = getSession().getCriteriaBuilder();
-        CriteriaQuery<Tag> cr = cb.createQuery(Tag.class);
+        CriteriaBuilder criteriaBuilder = getSession().getCriteriaBuilder();
+        CriteriaQuery<Tag> cr = criteriaBuilder.createQuery(Tag.class);
         Root<Tag> tagRoot = cr.from(Tag.class);
-        cr.select(tagRoot).orderBy(cb.asc(tagRoot.get(ID)));
+        cr.select(tagRoot).orderBy(criteriaBuilder.asc(tagRoot.get(ID)));
         Query<Tag> query = getSession().createQuery(cr);
         query.setFirstResult((pageNumber - ONE) * pageSize);
         query.setMaxResults(pageSize);

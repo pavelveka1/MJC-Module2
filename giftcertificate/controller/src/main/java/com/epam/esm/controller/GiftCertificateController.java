@@ -63,8 +63,8 @@ public class GiftCertificateController {
                                             @RequestParam(required = false) String[] values,
                                             @RequestParam(required = false) String sortType,
                                             @RequestParam(required = false) String orderType,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+                                            @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                             @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");

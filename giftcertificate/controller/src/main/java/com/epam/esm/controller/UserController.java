@@ -50,8 +50,8 @@ public class UserController {
      * @throws PaginationException        if page number equals zero
      */
     @GetMapping("/users")
-    public List<User> getUsers(@RequestParam(required = true, defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                               @RequestParam(required = true, defaultValue = DEFAULT_PAGE_SIZE) Integer size,
+    public List<User> getUsers(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                               @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size,
                                @RequestParam(required = false, defaultValue = LOCALE_EN) String language)
             throws IdNotExistServiceException, PaginationException {
         List<User> users = userService.getUsers(page, size, language);

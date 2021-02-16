@@ -1,9 +1,6 @@
 package com.epam.esm.configuration;
 
-import com.mchange.v2.c3p0.ComboPooledDataSource;
-import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.*;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
@@ -15,7 +12,6 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import javax.sql.DataSource;
-import java.beans.PropertyVetoException;
 import java.io.IOException;
 import java.util.Properties;
 

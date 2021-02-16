@@ -155,7 +155,7 @@ public class OrderServiceImpl implements OrderService {
         return page;
     }
 
-    private Integer checkSizePage(Integer size) throws PaginationException {
+    private Integer checkSizePage(Integer size)  {
         if (size < ONE) {
             size = Math.abs(size);
         }

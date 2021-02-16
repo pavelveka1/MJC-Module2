@@ -27,28 +27,28 @@ import java.util.Properties;
 @EnableWebMvc
 public class ApplicationConfigProdProfile {
 
-    private Logger logger = Logger.getLogger(ApplicationConfigProdProfile.class);
+    private static Logger logger = Logger.getLogger(ApplicationConfigProdProfile.class);
 
     @Value("${db.driver}")
-    private String DRIVER_CLASS;
+    private String driverClass;
 
     @Value("${db.url}")
-    private String URL;
+    private String url;
 
     @Value("${db.user}")
-    private String USER_NAME;
+    private String userName;
 
     @Value("${db.password}")
-    private String PASSWORD;
+    private String password;
 
     @Bean
     public DataSource dataSourceProd() {
         ComboPooledDataSource dataSource = new ComboPooledDataSource();
         try {
-            dataSource.setDriverClass(DRIVER_CLASS);
-            dataSource.setJdbcUrl(URL);
-            dataSource.setUser(USER_NAME);
-            dataSource.setPassword(PASSWORD);
+            dataSource.setDriverClass(driverClass);
+            dataSource.setJdbcUrl(url);
+            dataSource.setUser(userName);
+            dataSource.setPassword(password);
         } catch (PropertyVetoException e) {
             logger.error("Error while setting fields for dataSource");
         }

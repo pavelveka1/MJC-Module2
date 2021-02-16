@@ -27,6 +27,8 @@ import java.util.Objects;
 })
 public class Order implements Serializable {
 
+    private static final long SERIAL_VERSION_UID = 1L;
+
     private long orders_id;
 
     private User user;
