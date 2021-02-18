@@ -78,12 +78,13 @@ public class TagServiceImpl implements TagService {
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
         long id;
+        addedTag = modelMapper.map(tagDto, Tag.class);
         try {
-            id = tagDAO.create(modelMapper.map(tagDto, Tag.class));
-            addedTag = tagDAO.read(id);
+            id = tagDAO.create(addedTag);
         } catch (ConstraintViolationException e) {
             throw new DuplicateEntryServiceException(KEY_TAG_DUPLICATE);
         }
+        addedTag = tagDAO.read(id);
         return modelMapper.map(addedTag, TagDto.class);
     }
 
@@ -139,6 +140,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Transactional
     public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
         long idTag;
         try {

@@ -25,7 +25,7 @@ public class GiftCertificateDtoPatchValidator {
             }
         }
         if (Objects.nonNull(giftCertificateDto.getPrice())) {
-            if (giftCertificateDto.getPrice() <= MIN_PRICE ) {
+            if (giftCertificateDto.getPrice() <= MIN_PRICE) {
                 result = false;
             }
         }

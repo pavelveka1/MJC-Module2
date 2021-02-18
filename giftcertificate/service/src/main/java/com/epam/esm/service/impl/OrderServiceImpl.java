@@ -14,7 +14,6 @@ import com.epam.esm.service.exception.PaginationException;
 import com.epam.esm.service.util.PaginationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -30,7 +29,6 @@ public class OrderServiceImpl implements OrderService {
     private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
-    private static final int ONE = 1;
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
      */
@@ -95,15 +93,14 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderDtoList;
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);
-        try {
-            User user = userDAO.getUser(userId);
-            orders = orderDAO.getOrdersByUserId(user, page, size);
-            orderDtoList = orders.stream()
-                    .map(order -> modelMapper.map(order, OrderDto.class))
-                    .collect(Collectors.toList());
-        } catch (EmptyResultDataAccessException e) {
+        User user = userDAO.getUser(userId);
+        if (Objects.isNull(user)) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
+        orders = orderDAO.getOrdersByUserId(user, page, size);
+        orderDtoList = orders.stream()
+                .map(order -> modelMapper.map(order, OrderDto.class))
+                .collect(Collectors.toList());
         return orderDtoList;
     }
 
@@ -136,7 +133,7 @@ public class OrderServiceImpl implements OrderService {
         List<GiftCertificate> certificates = new ArrayList<>();
         for (GiftCertificate giftCertificate : giftCertificateList) {
             GiftCertificate giftCertificate1 = giftCertificateDAO.readByNotDeletedName(giftCertificate.getName());
-            if (giftCertificate1 == null) {
+            if (Objects.isNull(giftCertificate1)) {
                 throw new CertificateNameNotExistServiceException(KEY_CERTIFICATE_NAME_NOT_EXIST, giftCertificate.getName());
             }
             certificates.add(giftCertificate1);

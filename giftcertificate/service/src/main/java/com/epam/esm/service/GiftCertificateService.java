@@ -1,6 +1,5 @@
 package com.epam.esm.service;
 
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.List;
 
 import com.epam.esm.service.dto.GiftCertificateDto;

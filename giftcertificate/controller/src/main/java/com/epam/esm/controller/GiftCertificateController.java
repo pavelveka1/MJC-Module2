@@ -20,7 +20,7 @@ import java.util.List;
  * Class GiftCertificateController - Rest controller for process of request to GiftCertificates
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/certificates")
 public class GiftCertificateController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
@@ -58,7 +58,7 @@ public class GiftCertificateController {
      * @throws IdNotExistServiceException   can be thrown by HATEOASBuilder while reading by id
      * @throws PaginationException          if page number equals zero
      */
-    @GetMapping("/certificates")
+    @GetMapping
     public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search,
                                             @RequestParam(required = false) String[] values,
                                             @RequestParam(required = false) String sortType,
@@ -79,7 +79,7 @@ public class GiftCertificateController {
      * @return GiftCertificateDto
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
      */
-    @GetMapping("/certificates/{id}")
+    @GetMapping("/{id}")
     public GiftCertificateDto read(@PathVariable long id) throws IdNotExistServiceException {
         GiftCertificateDto giftCertificateDto = service.read(id);
         HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDto);
@@ -94,11 +94,10 @@ public class GiftCertificateController {
      * @throws DuplicateEntryServiceException if such giftCertificate alredy exist in DB
      * @throws ValidationException            if passed GiftCertificateDto is not valid
      */
-    @PostMapping("/certificates")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult)
-            throws DuplicateEntryServiceException,
-            ValidationException, IdNotExistServiceException {
+            throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(CERTIFICATE_DTO_NOT_VALID);
         }
@@ -117,7 +116,7 @@ public class GiftCertificateController {
      * @throws ValidationException            if passed GiftCertificateDto is not valid
      * @throws DuplicateEntryServiceException if was attempt to rename certificate with alrery existing name
      */
-    @PatchMapping("/certificates/{id}")
+    @PatchMapping("/{id}")
     public GiftCertificateDto updateGiftCertificate(@PathVariable("id") long id,
                                                     @RequestBody GiftCertificateDto giftCertificateDto)
             throws IdNotExistServiceException, ValidationException, DuplicateEntryServiceException {
@@ -138,7 +137,7 @@ public class GiftCertificateController {
      * @param id of GiftCertificate
      * @throws IdNotExistServiceException if GiftCertificate with such id doesn't exist in DB
      */
-    @DeleteMapping("/certificates/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable int id)
             throws IdNotExistServiceException {

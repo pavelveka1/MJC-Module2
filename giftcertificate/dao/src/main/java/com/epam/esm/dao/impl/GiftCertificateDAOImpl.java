@@ -190,9 +190,11 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
                                           Root<GiftCertificate> giftCertificateRoot, Predicate[] predicates,
                                           CriteriaQuery<GiftCertificate> criteriaQuery) {
         if (orderType.equals(DESC)) {
-            criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates)).orderBy(cb.desc(giftCertificateRoot.get(sortType)));
+            criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates))
+                    .orderBy(cb.desc(giftCertificateRoot.get(sortType)));
         } else {
-            criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates)).orderBy(cb.asc(giftCertificateRoot.get(sortType)));
+            criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates))
+                    .orderBy(cb.asc(giftCertificateRoot.get(sortType)));
         }
     }
 }

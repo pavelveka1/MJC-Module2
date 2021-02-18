@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import java.util.Locale;
-import java.util.ResourceBundle;
 
 /**
  * Class GlobalExceptionHandler is used for catching all exceptions, which declared inside class

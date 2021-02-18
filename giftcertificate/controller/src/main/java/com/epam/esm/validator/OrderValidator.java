@@ -10,6 +10,7 @@ import org.springframework.validation.Validator;
 public class OrderValidator implements Validator {
     private static final String CERTIFICATES = "certificates";
     private static final String EMPTY_ORDER = "order.empty";
+    private static final Integer ZERO = 0;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -18,6 +19,12 @@ public class OrderValidator implements Validator {
 
     @Override
     public void validate(Object target, Errors errors) {
+        OrderDto orderDto = (OrderDto) target;
         ValidationUtils.rejectIfEmpty(errors, CERTIFICATES, EMPTY_ORDER);
+        if (!errors.hasErrors()) {
+            if (orderDto.getCertificates().size() == ZERO) {
+                errors.rejectValue(CERTIFICATES, EMPTY_ORDER);
+            }
+        }
     }
 }

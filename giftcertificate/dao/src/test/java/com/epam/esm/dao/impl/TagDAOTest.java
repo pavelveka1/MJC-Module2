@@ -109,7 +109,7 @@ public class TagDAOTest {
     @Test
     public void readAllTagsNotNull() {
         List<Tag> actual = tagDAOImpl.findAll(1, 100);
-        assertEquals(15,actual.size());
+        assertEquals(15, actual.size());
     }
 
     @DisplayName("should be thrown IllegalArgumentException if page = zero")
@@ -117,7 +117,7 @@ public class TagDAOTest {
     @Test
     public void readAllTagsZeroPage() {
         assertThrows(IllegalArgumentException.class, () -> {
-           tagDAOImpl.findAll(0, 100);
+            tagDAOImpl.findAll(0, 100);
         });
     }
 
@@ -125,7 +125,7 @@ public class TagDAOTest {
     @Transactional
     @Test
     public void getTagsByGiftCertificateId() {
-        List<Tag> tagList=tagDAOImpl.getTagsByGiftCertificateId(1);
+        List<Tag> tagList = tagDAOImpl.getTagsByGiftCertificateId(1);
         assertEquals(2, tagList.size());
     }
 
@@ -133,16 +133,16 @@ public class TagDAOTest {
     @Transactional
     @Test
     public void getTagsByGiftCertificateIdCheckName() {
-        List<Tag> tagList=tagDAOImpl.getTagsByGiftCertificateId(6);
+        List<Tag> tagList = tagDAOImpl.getTagsByGiftCertificateId(6);
         assertEquals(1, tagList.size());
-        assertEquals("Обучение",tagList.get(0).getName());
+        assertEquals("Обучение", tagList.get(0).getName());
     }
 
     @DisplayName("should be returned tag with name = Авто")
     @Transactional
     @Test
     public void getTagByName() {
-       Tag tag=tagDAOImpl.getTagByName("Авто");
+        Tag tag = tagDAOImpl.getTagByName("Авто");
         assertEquals("Авто", tag.getName());
     }
 
@@ -157,6 +157,6 @@ public class TagDAOTest {
     @Transactional
     @Test
     public void getIdWidelyUsedByUserTagWithHighestCost() {
-        assertEquals(1,tagDAOImpl.getIdWidelyUsedByUserTagWithHighestCost(1));
+        assertEquals(1, tagDAOImpl.getIdWidelyUsedByUserTagWithHighestCost(1));
     }
 }

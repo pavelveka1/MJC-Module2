@@ -21,7 +21,7 @@ import java.util.List;
  * Class TagController is Rest controller for Tag
  */
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/tags")
 public class TagController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
@@ -52,7 +52,7 @@ public class TagController {
      * @throws IdNotExistServiceException can be thrown by HATEOASBuilder while reading by id
      * @throws PaginationException        if page number equals zero
      */
-    @GetMapping("/tags")
+    @GetMapping
     public List<TagDto> readAllTags(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                     @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
@@ -69,7 +69,7 @@ public class TagController {
      * @throws DuplicateEntryServiceException is such tag alredy exist in DB
      * @throws ValidationException            if passed TagDto is not valid
      */
-    @PostMapping("/tags")
+    @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public TagDto createTag(@Valid @RequestBody TagDto tagDto, BindingResult bindingResult)
             throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
@@ -88,7 +88,7 @@ public class TagController {
      * @return TagDto with passed is as TagDto
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
      */
-    @GetMapping("/tags/{id}")
+    @GetMapping("/{id}")
     public TagDto readTagById(@PathVariable long id) throws IdNotExistServiceException {
         TagDto tagDto = service.read(id);
         HATEOASBuilder.addLinksToTag(tagDto);
@@ -101,7 +101,7 @@ public class TagController {
      * @param id id of Tag which will be deleted
      * @throws IdNotExistServiceException if Tag with such id doesn't exist in DB
      */
-    @DeleteMapping("/tags/{id}")
+    @DeleteMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void deleteTagById(@PathVariable long id) throws IdNotExistServiceException {
         service.delete(id);
@@ -114,7 +114,7 @@ public class TagController {
      * @return TagDto
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      */
-    @GetMapping("/tags/top_tag/users/{id}")
+    @GetMapping("toptag/users/{id}")
     public TagDto readWidelyUsedTagByUserWithMaxCost(@PathVariable long id) throws IdNotExistServiceException {
         TagDto tagDto = service.getWidelyUsedByUserTagWithHighestCost(id);
         HATEOASBuilder.addLinksToTag(tagDto);

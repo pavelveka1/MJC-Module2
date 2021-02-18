@@ -25,6 +25,7 @@ public class TagDAOImpl implements TagDAO {
     private static final String GET_TAGS_BY_GIFT_CERTIFICATE_ID = "Tag.findByCertificateId";
     private static final String GET_TAG_BY_NAME = "Tag.getTagByName";
     private static final String ID = "id";
+    private static final String TAG_ID = "tag_id";
     public static final String NAME_TAG = "name";
     private static final int ONE = 1;
     private static final String GET_WIDELY_USED_TAG_BY_USER_WITH_MAX_COST = " select tag_id from (\n" +
@@ -124,7 +125,7 @@ public class TagDAOImpl implements TagDAO {
     @Override
     public Long getIdWidelyUsedByUserTagWithHighestCost(long userId) {
         NativeQuery nativeQuery = getSession().createSQLQuery(GET_WIDELY_USED_TAG_BY_USER_WITH_MAX_COST)
-                .addScalar("tag_id", LongType.INSTANCE).setParameter(ID, userId);
+                .addScalar(TAG_ID, LongType.INSTANCE).setParameter(ID, userId);
         return (Long) nativeQuery.uniqueResult();
     }
 

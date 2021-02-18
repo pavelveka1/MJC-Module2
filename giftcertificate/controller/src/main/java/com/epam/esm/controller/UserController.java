@@ -4,7 +4,6 @@ import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,7 @@ import javax.validation.constraints.Min;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/users")
 public class UserController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
@@ -30,7 +29,7 @@ public class UserController {
      * @return User
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      */
-    @GetMapping("/users/{id}")
+    @GetMapping("/{id}")
     public User getUser(@PathVariable @Min(1) long id) throws IdNotExistServiceException {
         User user = userService.getUser(id);
         HATEOASBuilder.addLinksToUser(user);
@@ -46,7 +45,7 @@ public class UserController {
      * @throws IdNotExistServiceException can be thrown by HATEOASBuilder while reading by id
      * @throws PaginationException        if page number equals zero
      */
-    @GetMapping("/users")
+    @GetMapping
     public List<User> getUsers(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {

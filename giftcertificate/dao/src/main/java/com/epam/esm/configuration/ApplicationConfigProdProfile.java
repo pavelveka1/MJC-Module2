@@ -55,12 +55,6 @@ public class ApplicationConfigProdProfile {
     }
 
     @Bean
-    public JdbcTemplate jdbcTemplateProd() {
-        return new JdbcTemplate(dataSourceProd());
-    }
-
-
-    @Bean
     public PlatformTransactionManager transactionManagerProd() throws IOException {
         return new JpaTransactionManager(sessionFactory());
     }
@@ -76,7 +70,7 @@ public class ApplicationConfigProdProfile {
         return sessionFactoryBean.getObject();
     }
 
-       private Properties hibernateProperties() {
+    private Properties hibernateProperties() {
         Properties hibernateProp = new Properties();
         hibernateProp.put("hibernate.dialect", "org.hibernate.dialect.MySQLDialect");
         hibernateProp.put("hibernate.format_sql", true);

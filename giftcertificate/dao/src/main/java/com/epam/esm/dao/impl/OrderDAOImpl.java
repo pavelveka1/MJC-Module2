@@ -29,8 +29,13 @@ public class OrderDAOImpl implements OrderDAO {
     private static final String SELECT_ORDER_BY_ID = "Order.findById";
     private static final int ONE = 1;
     private static final String USER = "user";
-    private static final Logger logger = Logger.getLogger(OrderDAOImpl.class);
 
+    /**
+     * Method creates new order
+     *
+     * @param order will be created
+     * @return id of created order
+     */
     @Override
     public long makeOrder(Order order) {
         sessionFactory.getCurrentSession().saveOrUpdate(order);
@@ -38,7 +43,8 @@ public class OrderDAOImpl implements OrderDAO {
     }
 
     /**
-     *  Ger order by id of user
+     * Ger order by id of user
+     *
      * @param user orders of this user will be returned
      * @param page number of page
      * @param size size of page
@@ -59,7 +65,8 @@ public class OrderDAOImpl implements OrderDAO {
 
     @Override
     public Order getOrder(long id) {
-        return (Order) sessionFactory.getCurrentSession().getNamedQuery(SELECT_ORDER_BY_ID).setParameter(ID_PARAM, id).uniqueResult();
+        return (Order) sessionFactory.getCurrentSession().getNamedQuery(SELECT_ORDER_BY_ID).setParameter(ID_PARAM, id)
+                .uniqueResult();
 
     }
 

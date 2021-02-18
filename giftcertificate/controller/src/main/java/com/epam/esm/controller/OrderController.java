@@ -8,7 +8,6 @@ import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
 import com.epam.esm.validator.OrderValidator;
-import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.WebDataBinder;
@@ -18,11 +17,12 @@ import javax.validation.Valid;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/orders")
 public class OrderController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
+    private static final String KEY_VALIDATION="order_not_valid";
     /**
      * OrderService is used for work with Orders
      */
@@ -51,12 +51,12 @@ public class OrderController {
      * @throws CertificateNameNotExistServiceException if passed name of certificate is not exist in DB
      * @throws IdNotExistServiceException              if user with such id is not exist in DB
      */
-    @PostMapping("/orders/users/{userId}")
+    @PostMapping("/users/{userId}")
     public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto,
                               BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException,
             IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException("Name of certificate is not valid!");
+            throw new ValidationException(KEY_VALIDATION);
         }
         User user = new User();
         user.setId(userId);
@@ -76,7 +76,7 @@ public class OrderController {
      * @throws IdNotExistServiceException if user with such id is not exist in DB
      * @throws PaginationException        if page number equals zero
      */
-    @GetMapping("/orders/users/{userId}")
+    @GetMapping("/users/{userId}")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId,
                                             @RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                             @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size)
@@ -93,7 +93,7 @@ public class OrderController {
      * @return OrderDto
      * @throws IdNotExistServiceException if order with such id is not exist in DB
      */
-    @GetMapping("/orders/{id}")
+    @GetMapping("/{id}")
     public OrderDto getOrdersById(@PathVariable long id) throws IdNotExistServiceException {
         OrderDto orderDtoResult = orderService.getOrder(id);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
