@@ -252,8 +252,10 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
                 Tag tag = tagDAO.getTagByName(tagDtoList.get(i).getName());
                 if (Objects.nonNull(tag)) {
                     tags.add(tag);
-                }else{
-                    tags.add(modelMapper.map(tagDtoList.get(i), Tag.class));
+                } else {
+                    Tag newTag = new Tag();
+                    newTag.setName(tagDtoList.get(i).getName());
+                    tags.add(newTag);
                 }
             }
         }
