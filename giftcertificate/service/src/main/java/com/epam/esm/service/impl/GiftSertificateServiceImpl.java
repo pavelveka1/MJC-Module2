@@ -14,6 +14,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
+import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
 import com.epam.esm.service.util.PaginationUtil;
 import org.apache.commons.lang3.StringUtils;
@@ -153,7 +154,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             giftCertificateRead.setDuration(modifiedGiftCertificateDto.getDuration());
         }
         if (!modifiedGiftCertificateDto.getTags().isEmpty()) {
-            giftCertificateRead.setTags(modifiedGiftCertificateDto.getTags().stream().map(tagDto -> modelMapper.map(tagDto, Tag.class)).collect(Collectors.toList()));
+            giftCertificateRead.setTags(getListTagsByNameForUpdate(modifiedGiftCertificateDto.getTags()));
+            //  giftCertificateRead.setTags(modifiedGiftCertificateDto.getTags().stream().map(tagDto -> modelMapper.map(tagDto, Tag.class)).collect(Collectors.toList()));
         }
         giftCertificateDAO.update(giftCertificateRead);
         logger.info("GiftCertificate has been updated in DB");
@@ -242,4 +244,20 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         }
         return tags;
     }
+
+    private List<Tag> getListTagsByNameForUpdate(List<TagDto> tagDtoList) {
+        List<Tag> tags = new ArrayList<>();
+        if (!Objects.isNull(tagDtoList)) {
+            for (int i = ZERO; i < tagDtoList.size(); i++) {
+                Tag tag = tagDAO.getTagByName(tagDtoList.get(i).getName());
+                if (Objects.nonNull(tag)) {
+                    tags.add(tag);
+                }else{
+                    tags.add(modelMapper.map(tagDtoList.get(i), Tag.class));
+                }
+            }
+        }
+        return tags;
+    }
+
 }

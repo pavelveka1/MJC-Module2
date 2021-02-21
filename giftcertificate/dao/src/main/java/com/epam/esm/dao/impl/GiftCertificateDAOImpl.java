@@ -20,6 +20,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.criteria.*;
 
+import static jdk.nashorn.internal.objects.NativeArray.forEach;
+
 /**
  * GiftSertificateJDBCTemplate - class for work with GiftCertificate
  */
@@ -118,6 +120,7 @@ public class GiftCertificateDAOImpl implements GiftCertificateDAO {
     @Override
     public void update(GiftCertificate giftCertificate) {
         giftCertificate.setLastUpdateDate(LocalDateTime.now(ZoneId.systemDefault()));
+
         getSession().save(giftCertificate);
     }
 
