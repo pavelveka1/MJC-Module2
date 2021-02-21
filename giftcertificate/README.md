@@ -1,4 +1,4 @@
-# MJC-shcool-module 3. Restfull application
+# MJC-shcool-module 4 (Spring Sequrity). Restfull application
 ## web service for Gift Certificates
 ### List of requests:
 - 1) Read gift certificate by id, "method": "GET", header: Content-Type: application/json, url: http://localhost:8080/api/giftCertificates/1
