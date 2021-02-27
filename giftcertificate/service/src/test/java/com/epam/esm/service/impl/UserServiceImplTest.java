@@ -27,14 +27,14 @@ import static org.mockito.Mockito.*;
 @RunWith(JUnitPlatform.class)
 public class UserServiceImplTest {
 
-    private static User user1 = new User(1,"firstName1","lastName1", null);
-    private static User user2 = new User(2,"firstName2","lastName2", null);
-    private static List<User> users=new ArrayList<>();
+    private static User user1 = new User(1, "login1", "password", "firstName1", "lastName1");
+    private static User user2 = new User(2, "login2", "password", "firstName2", "lastName2");
+    private static List<User> users = new ArrayList<>();
 
     @BeforeAll
     public static void init() {
-       users.add(user1);
-       users.add(user2);
+        users.add(user1);
+        users.add(user2);
     }
 
 
@@ -69,15 +69,15 @@ public class UserServiceImplTest {
     @DisplayName("should be returned list of User")
     @Test
     public void getUsers() throws PaginationException {
-        when(userDAOImpl.getUsers(1,10)).thenReturn(users);
-        assertEquals(users, userService.getUsers(1,10));
+        when(userDAOImpl.getUsers(1, 10)).thenReturn(users);
+        assertEquals(users, userService.getUsers(1, 10));
     }
 
     @DisplayName("should be thrown PaginationException")
     @Test
     public void getUsersPaginationException() throws PaginationException {
         assertThrows(PaginationException.class, () -> {
-            userService.getUsers(0,10);
+            userService.getUsers(0, 10);
         });
     }
 }

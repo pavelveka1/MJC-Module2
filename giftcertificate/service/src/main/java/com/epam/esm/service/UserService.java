@@ -1,6 +1,7 @@
 package com.epam.esm.service;
 
 import com.epam.esm.entity.User;
+import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
 
@@ -30,4 +31,8 @@ public interface UserService {
      * @throws PaginationException if page equals zero
      */
     List<User> getUsers(Integer page, Integer size) throws PaginationException;
+
+    User register(UserDto user);
+
+    User findByUserName(String userName);
 }

@@ -5,6 +5,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.MessageSource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -88,10 +90,32 @@ public class GlobalExceptionHandler {
                 HttpStatus.BAD_REQUEST);
     }
 
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> handleDuplicateUsernameException(UserRegistrationException exception, Locale locale) {
+        String errorMessage = messageSource.getMessage(exception.getMessage(), null, locale);
+        return new ResponseEntity<>(new ErrorTO(errorMessage, ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
+    }
 
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> handleWrongUsernameException(BadCredentialsException exception, Locale locale) {
+        String errorMessage = messageSource.getMessage(exception.getMessage(), null, locale);
+        return new ResponseEntity<>(new ErrorTO(errorMessage, ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler
+    public ResponseEntity<ErrorTO> handleWrongTokenException(JwtAuthenticationException exception, Locale locale) {
+        String errorMessage = messageSource.getMessage(exception.getMessage(), null, locale);
+        return new ResponseEntity<>(new ErrorTO(errorMessage, ErrorCode.BAD_REQUEST.getErrorCode()),
+                HttpStatus.BAD_REQUEST);
+    }
+ /*
     @ExceptionHandler
     public ResponseEntity<ErrorTO> unknownException(Exception exception) {
         return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
                 HttpStatus.BAD_REQUEST);
     }
+
+  */
 }

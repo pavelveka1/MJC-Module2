@@ -250,12 +250,14 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         if (!Objects.isNull(tagDtoList)) {
             for (int i = ZERO; i < tagDtoList.size(); i++) {
                 Tag tag = tagDAO.getTagByName(tagDtoList.get(i).getName());
-                if (Objects.nonNull(tag)) {
+                if ((Objects.nonNull(tag)) && (!tags.contains(tag))) {
                     tags.add(tag);
                 } else {
                     Tag newTag = new Tag();
                     newTag.setName(tagDtoList.get(i).getName());
-                    tags.add(newTag);
+                    if (!tags.contains(newTag)) {
+                        tags.add(newTag);
+                    }
                 }
             }
         }

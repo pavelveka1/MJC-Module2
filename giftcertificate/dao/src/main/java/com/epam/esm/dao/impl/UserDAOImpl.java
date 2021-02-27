@@ -24,7 +24,9 @@ public class UserDAOImpl implements UserDAO {
     private SessionFactory sessionFactory;
 
     private static final String SELECT_USER_BY_ID = "User.findById";
+    private static final String SELECT_USER_BY_NAME = "User.findByName";
     private static final String ID = "id";
+    private static final String USER_NAME = "username";
     private static final int ONE = 1;
 
     /**
@@ -56,6 +58,18 @@ public class UserDAOImpl implements UserDAO {
         query.setFirstResult((page - ONE) * size);
         query.setMaxResults(size);
         return query.getResultList();
+    }
+
+    @Override
+    public User findByUserName(String username) {
+        User user = (User) sessionFactory.getCurrentSession().getNamedQuery(SELECT_USER_BY_NAME).setParameter(USER_NAME, username).uniqueResult();
+        return user;
+    }
+
+    @Override
+    public User save(User user) {
+        sessionFactory.getCurrentSession().saveOrUpdate(user);
+        return user;
     }
 
     private Session getSession() {

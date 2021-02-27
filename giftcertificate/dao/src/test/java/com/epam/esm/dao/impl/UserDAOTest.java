@@ -18,7 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest(classes = {UserDAOTest.class})
 public class UserDAOTest {
 
-    private static User user = new User(1, "Adeline", "Donal");
+    private static User user = new User(1, "Adeline", "Donal", "firstName1", "lastName1");
 
     @Autowired
     private UserDAO userDAO;

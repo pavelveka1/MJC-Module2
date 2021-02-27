@@ -37,7 +37,7 @@ public class OrderDAOTest {
     private static Tag tag2 = new Tag(2, "Спорт");
     private static List<GiftCertificate> certificates = new ArrayList<>();
     private static List<Tag> tags = new ArrayList<>();
-    private static User user = new User(1, "Adeline", "Donal");
+    private static User user = new User(1, "Adeline", "Donal", "firstName1", "lastName1");
     private static Order order1 = new Order(1, user, 100, "2021-02-04 17:00:00", certificates);
     private static Order order2 = new Order(2, user, 100, "2021-02-04 17:00:00", certificates);
     private static Order order3 = new Order(3, user, 1000, "2021-02-04 17:00:00", certificates);

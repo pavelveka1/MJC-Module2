@@ -44,6 +44,7 @@
         <hibernate.version>5.4.10.Final</hibernate.version>
         <spring-orm.version>5.3.3</spring-orm.version>
         <commons-lang.version>3.11</commons-lang.version>
+        <jwt.version>0.9.1</jwt.version>
 
     </properties>
     <build>
@@ -83,6 +84,18 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-actuator</artifactId>
             <version>${spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security</artifactId>
+            <version>${spring-boot.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>io.jsonwebtoken</groupId>
+            <artifactId>jjwt</artifactId>
+            <version>${jwt.version}</version>
         </dependency>
 
 

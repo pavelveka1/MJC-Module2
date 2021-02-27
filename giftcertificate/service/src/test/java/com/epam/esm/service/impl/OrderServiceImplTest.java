@@ -33,8 +33,8 @@ import static org.mockito.Mockito.when;
 @RunWith(JUnitPlatform.class)
 public class OrderServiceImplTest {
 
-    private static User user1 = new User(1, "firstName1", "lastName1", null);
-    private static User user2 = new User(2, "firstName2", "lastName2", null);
+    private static User user1 = new User(1, "login1", "password", "firstName1", "lastName1");
+    private static User user2 = new User(2, "login2", "password", "firstName2", "lastName2");
     private static GiftCertificate giftCertificate = new GiftCertificate(1, "Test name", "Test description",
             10, 20, null, null, null, null, false);
     private static GiftCertificate giftCertificate2 = new GiftCertificate(2, "Test name 2", "Test description 2",

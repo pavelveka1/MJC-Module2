@@ -27,4 +27,8 @@ public interface UserDAO {
      */
     List<User> getUsers(Integer page, Integer size);
 
+    User findByUserName(String username);
+
+    User save(User user);
+
 }

@@ -22,6 +22,8 @@ public class UserController {
     @Autowired
     private UserService userService;
 
+
+
     /**
      * Method gets user by id
      *
