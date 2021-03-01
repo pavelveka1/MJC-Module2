@@ -7,26 +7,29 @@ import com.epam.esm.entity.GiftCertificate;
 import static org.junit.jupiter.api.Assertions.*;
 
 import com.epam.esm.entity.Tag;
-import org.hibernate.SessionFactory;
 import org.hibernate.exception.ConstraintViolationException;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.BadSqlGrammarException;
 import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
-@SpringJUnitConfig(classes = ApplicationConfigDevProfile.class)
+//@SpringJUnitConfig(classes = ApplicationConfigDevProfile.class)
 @ActiveProfiles("dev")
-@SpringBootTest(classes = {GiftCertificateDAOTest.class})
+@SpringBootTest(classes = ApplicationConfigDevProfile.class)
+//@DataJpaTest
+@ExtendWith(SpringExtension.class)
 public class GiftCertificateDAOTest {
 
     private static final String TEST_NAME = "Поeлет на дельтоплане";
@@ -42,9 +45,6 @@ public class GiftCertificateDAOTest {
     private static Tag tag1 = new Tag(1, "Активный отдых");
     private static Tag tag2 = new Tag(2, "Спорт");
     private static List<Tag> tags = new ArrayList<>();
-
-    @Autowired
-    private SessionFactory sessionFactory;
 
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
@@ -70,14 +70,13 @@ public class GiftCertificateDAOTest {
         certificate3.setTags(tags);
 
     }
-/*
+
 
     @DisplayName("should create gift certificate in DB and return this one")
     @Transactional
     @Test
     public void createGiftCertificates() {
-        long id = giftCertificateDAO.create(certificate1);
-        GiftCertificate createdGiftCertificate = giftCertificateDAO.read(id);
+        GiftCertificate  createdGiftCertificate  = giftCertificateDAO.save(certificate1);
         assertEquals(certificate1.getName(), createdGiftCertificate.getName());
         assertEquals(certificate1.getDescription(), createdGiftCertificate.getDescription());
         assertEquals(certificate1.getPrice(), createdGiftCertificate.getPrice());
@@ -90,7 +89,7 @@ public class GiftCertificateDAOTest {
     @Test
     public void createGiftCertificatesDuplicate() {
         assertThrows(ConstraintViolationException.class, () -> {
-            giftCertificateDAO.create(certificate2);
+            giftCertificateDAO.save(certificate2);
         });
 
     }
@@ -99,7 +98,8 @@ public class GiftCertificateDAOTest {
     @Transactional
     @Test
     public void readGiftCertificateById() {
-        GiftCertificate actual = giftCertificateDAO.read(1);
+        Optional<GiftCertificate> certificate = giftCertificateDAO.findById(new Long(1));
+        GiftCertificate actual=certificate.get();
         assertEquals(certificate3.getName(), actual.getName());
         assertEquals(certificate3.getDescription(), actual.getDescription());
         assertEquals(certificate3.getPrice(), actual.getPrice());
@@ -110,14 +110,14 @@ public class GiftCertificateDAOTest {
     @Transactional
     @Test
     public void readGiftCertificateByNotExistId() {
-        assertEquals(null, giftCertificateDAO.read(Integer.MAX_VALUE));
+        assertEquals(null, giftCertificateDAO.findById(new Long(Integer.MAX_VALUE)));
     }
 
     @DisplayName("read gift certificate by id, return not bull ")
     @Transactional
     @Test
     public void readGiftCertificateByIdNotNull() {
-        assertNotNull(giftCertificateDAO.read(5));
+        assertNotNull(giftCertificateDAO.findById(new Long(5)));
     }
 
 
@@ -125,7 +125,8 @@ public class GiftCertificateDAOTest {
     @Transactional
     @Test
     public void findAllGiftCertificatesByName() throws BadSqlGrammarException {
-        List<GiftCertificate> actual = giftCertificateDAO.findAll("name", null, TEST_NAME,
+        List<Tag> tags=new ArrayList<>();
+        List<GiftCertificate> actual = giftCertificateDAO.readAll("name", "%", tags,
                 "id", "ASC", 1, 10);
         assertEquals(1, actual.size());
     }
@@ -134,19 +135,9 @@ public class GiftCertificateDAOTest {
     @Transactional
     @Test
     public void findAllGiftCertificatesByTag() throws BadSqlGrammarException {
-        List<GiftCertificate> actual = giftCertificateDAO.findAll("tag", tags, null,
-                "id", "ASC", 1, 10);
+        List<GiftCertificate> actual = giftCertificateDAO.readAll("%", "%", tags, "id",
+                "ASC", 1,  10);
         assertEquals(3, actual.size());
-    }
-
-    @DisplayName("should be thrown IllegalArgumentException if page = zero")
-    @Transactional
-    @Test
-    public void findAllGiftCertificatesBadSqlGrammarException() throws BadSqlGrammarException {
-        assertThrows(IllegalArgumentException.class, () -> {
-            giftCertificateDAO.findAll("search", null, "notExistParam", "id",
-                    "asc", 0, 10);
-        });
     }
 
 
@@ -154,9 +145,9 @@ public class GiftCertificateDAOTest {
     @Transactional
     @Test
     public void deleteGiftCertificateById() {
-        assertEquals("Экстрeмальные", giftCertificateDAO.read(4).getName());
-        giftCertificateDAO.delete(giftCertificateDAO.read(4));
-        assertEquals(null, giftCertificateDAO.read(4));
+        assertEquals("Экстрeмальные", giftCertificateDAO.findById(new Long(4)).get().getName());
+        giftCertificateDAO.deleteById(new Long(4));
+        assertEquals(null, giftCertificateDAO.findById(new Long(4)));
     }
 
     @DisplayName("should be return equals name")
@@ -177,11 +168,10 @@ public class GiftCertificateDAOTest {
     @Transactional
     @Test
     public void readByDeletedName() {
-        GiftCertificate certificate = giftCertificateDAO.read(5);
+        GiftCertificate certificate = giftCertificateDAO.findById(new Long(5)).get();
         giftCertificateDAO.delete(certificate);
         assertEquals("Рисование", giftCertificateDAO.readByName("Рисование").getName());
     }
 
 
- */
 }

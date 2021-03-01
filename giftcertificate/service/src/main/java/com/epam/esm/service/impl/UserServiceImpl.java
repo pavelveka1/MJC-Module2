@@ -13,6 +13,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -65,6 +66,7 @@ public class UserServiceImpl implements UserService {
      * @throws PaginationException if page equals zero
      */
     @Override
+    @Secured( "ROLE_ADMIN")
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);

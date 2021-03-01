@@ -43,7 +43,6 @@ public class OrderController {
     /**
      * Method create new order
      *
-     * @param userId        id of user
      * @param orderDto      passed OrderDto
      * @param bindingResult result of validation
      * @return OrderDto
@@ -51,16 +50,13 @@ public class OrderController {
      * @throws CertificateNameNotExistServiceException if passed name of certificate is not exist in DB
      * @throws IdNotExistServiceException              if user with such id is not exist in DB
      */
-    @PostMapping("/users/{userId}")
-    public OrderDto makeOrder(@PathVariable int userId, @Valid @RequestBody OrderDto orderDto,
+    @PostMapping
+    public OrderDto makeOrder( @Valid @RequestBody OrderDto orderDto,
                               BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException,
             IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
             throw new ValidationException(KEY_VALIDATION);
         }
-        User user = new User();
-        user.setId(userId);
-        orderDto.setUser(user);
         OrderDto orderDtoResult = orderService.makeOrder(orderDto);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
         return orderDtoResult;

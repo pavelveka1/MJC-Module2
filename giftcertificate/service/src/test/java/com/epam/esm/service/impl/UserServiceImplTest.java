@@ -15,9 +15,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.data.domain.*;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -49,18 +51,18 @@ public class UserServiceImplTest {
 
     @InjectMocks
     private UserServiceImpl userService = new UserServiceImpl();
-/*
+
     @DisplayName("should be returned User")
     @Test
     public void getUser() throws IdNotExistServiceException {
-        when(userDAOImpl.getUser(1)).thenReturn(user1);
+        when(userDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(user1));
         assertEquals(user1, userService.getUser(1));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
     public void getUserIdNotExist() throws IdNotExistServiceException {
-        when(userDAOImpl.getUser(1)).thenReturn(null);
+        when(userDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(null));
         assertThrows(IdNotExistServiceException.class, () -> {
             userService.getUser(1);
         });
@@ -69,7 +71,9 @@ public class UserServiceImplTest {
     @DisplayName("should be returned list of User")
     @Test
     public void getUsers() throws PaginationException {
-        when(userDAOImpl.getUsers(1, 10)).thenReturn(users);
+        Pageable pageable = PageRequest.of(0, 10);
+        Page<User> page = new PageImpl<>(users, pageable, users.size());
+        when(userDAOImpl.findAll(pageable)).thenReturn(page);
         assertEquals(users, userService.getUsers(1, 10));
     }
 
@@ -81,5 +85,4 @@ public class UserServiceImplTest {
         });
     }
 
- */
 }

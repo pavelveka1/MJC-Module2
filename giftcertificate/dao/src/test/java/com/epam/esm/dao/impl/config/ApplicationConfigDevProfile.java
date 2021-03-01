@@ -1,12 +1,20 @@
 package com.epam.esm.dao.impl.config;
 
 import org.hibernate.SessionFactory;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.convention.MatchingStrategies;
 import org.springframework.context.annotation.*;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
 import org.springframework.orm.hibernate5.LocalSessionFactoryBean;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.JpaVendorAdapter;
+import org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean;
+import org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -40,18 +48,27 @@ public class ApplicationConfigDevProfile {
     }
 
     @Bean
-    public SessionFactory sessionFactory() throws IOException {
-        LocalSessionFactoryBean sessionFactoryBean = new LocalSessionFactoryBean();
-        sessionFactoryBean.setDataSource(testDataSource());
-        sessionFactoryBean.setPackagesToScan("com.epam.esm.entity");
-        sessionFactoryBean.setHibernateProperties(hibernatePropertiesTest());
-        sessionFactoryBean.afterPropertiesSet();
-        return sessionFactoryBean.getObject();
+    public PlatformTransactionManager transactionManager() throws IOException {
+        JpaTransactionManager transactionManager
+                = new JpaTransactionManager();
+        transactionManager.setEntityManagerFactory(
+                entityManagerFactory().getObject());
+        return transactionManager;
+
     }
 
     @Bean
-    public PlatformTransactionManager transactionManager() throws IOException {
-        return new JpaTransactionManager(sessionFactory());
+    public LocalContainerEntityManagerFactoryBean entityManagerFactory() {
+        LocalContainerEntityManagerFactoryBean em
+                = new LocalContainerEntityManagerFactoryBean();
+        em.setDataSource(testDataSource());
+        em.setPackagesToScan(new String[]{"com.epam.esm"});
+
+        JpaVendorAdapter vendorAdapter = new HibernateJpaVendorAdapter();
+        em.setJpaVendorAdapter(vendorAdapter);
+        em.setJpaProperties(hibernatePropertiesTest());
+
+        return em;
     }
 
     private Properties hibernatePropertiesTest() {
@@ -66,4 +83,30 @@ public class ApplicationConfigDevProfile {
         return hibernateProp;
     }
 
+
+    @Bean
+    public ModelMapper modelMapperProd() {
+        ModelMapper modelMapper = new ModelMapper();
+        modelMapper.getConfiguration()
+                .setMatchingStrategy(MatchingStrategies.STRICT)
+                .setFieldMatchingEnabled(true)
+                .setSkipNullEnabled(true)
+                .setFieldAccessLevel(org.modelmapper.config.Configuration.AccessLevel.PRIVATE);
+        return modelMapper;
+    }
+
+
+    @Bean
+    public ResourceBundleMessageSource messageSource() {
+        ResourceBundleMessageSource rs = new ResourceBundleMessageSource();
+        rs.setBasename("messages");
+        rs.setDefaultEncoding("UTF-8");
+        rs.setUseCodeAsDefaultMessage(true);
+        return rs;
+    }
+
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

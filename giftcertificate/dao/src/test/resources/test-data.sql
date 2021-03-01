@@ -67,8 +67,21 @@ INSERT INTO `gift_certificates_has_tags` (`gift_certificates_id`,`tags_id`) VALU
 INSERT INTO `gift_certificates_has_tags` (`gift_certificates_id`,`tags_id`) VALUES (10,13);
 INSERT INTO `gift_certificates_has_tags` (`gift_certificates_id`,`tags_id`) VALUES (10,14);
 
-insert into users (first_name, last_name) values ('Adeline', 'Donal');
-insert into users (first_name, last_name) values ('Nerta', 'Zerk');
+
+insert into users (username, password, first_name, last_name) values ('Admin', '$2y$12$V/phpB5mcaK.OWp1j3nxw.elXcJBHqos8AZI6pPK8ZrsFQxD3U38q', 'John', 'johnson');
+insert into users (username, password, first_name, last_name) values ('User', '$2y$12$V/phpB5mcaK.OWp1j3nxw.elXcJBHqos8AZI6pPK8ZrsFQxD3U38q', 'John', 'johnson');
+
+
+insert into roles(name) values ('ROLE_GUEST');
+insert into roles(name) values ('ROLE_USER');
+insert into roles(name) values ('ROLE_ADMIN');
+
+insert into users_has_roles(users_id, roles_id) values (1, 1);
+insert into users_has_roles(users_id, roles_id) values (1, 2);
+insert into users_has_roles(users_id, roles_id) values (1, 3);
+insert into users_has_roles(users_id, roles_id) values (2, 1);
+insert into users_has_roles(users_id, roles_id) values (2, 2);
+
 
 INSERT INTO orders (users_id, cost, buy_date) VALUES (1, 100, '2021-02-04 17:00:00');
 INSERT INTO orders (users_id, cost, buy_date) VALUES (1, 100, '2021-02-04 17:00:00');

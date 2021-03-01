@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,6 +78,7 @@ public class TagServiceImpl implements TagService {
      * @throws DuplicateEntryServiceException if this Tag already exists in the DB
      */
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
+    @Secured( "ROLE_ADMIN")
     @Override
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
@@ -124,6 +126,7 @@ public class TagServiceImpl implements TagService {
      * @throws IdNotExistServiceException if records with such id not exist in DB
      */
     @Transactional
+    @Secured( "ROLE_ADMIN")
     @Override
     public void delete(long id) throws IdNotExistServiceException {
         Optional<Tag> tag = tagDAO.findById(id);
@@ -149,6 +152,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
+    @Secured( "ROLE_USER")
     @Transactional
     public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
         long idTag;

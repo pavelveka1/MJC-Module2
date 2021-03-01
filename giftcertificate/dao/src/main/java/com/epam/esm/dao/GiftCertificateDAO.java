@@ -3,11 +3,13 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 /**
  * Interface GiftCertificateDAO.
  * Contains methods for work with GiftCertificate class
  */
+@Repository
 public interface GiftCertificateDAO extends PagingAndSortingRepository<GiftCertificate, Long>, GiftCertificateDAOCustom {
 
     GiftCertificate readByName(String certificateName);

@@ -11,9 +11,12 @@ import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
+import com.epam.esm.service.security.JwtUser;
 import com.epam.esm.service.util.PaginationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,7 +31,6 @@ public class OrderServiceImpl implements OrderService {
     private static final String KEY_CERTIFICATE_NAME_NOT_EXIST = "certificate_name_not_exist";
     private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
-    private static final String USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -60,13 +62,12 @@ public class OrderServiceImpl implements OrderService {
      * @throws CertificateNameNotExistServiceException if certificate is not exist in DB
      */
     @Transactional
+    @Secured("ROLE_USER")
     @Override
     public OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException, IdNotExistServiceException {
-        Optional<User> user = userDAO.findById(orderDto.getUser().getId());
-        if (!user.isPresent()) {
-            throw new IdNotExistServiceException(USER_ID_NOT_EXIST);
-        }
-        orderDto.setUser(user.get());
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        User user = userDAO.findByUsername(jwtUser.getUsername());
+        orderDto.setUser(user);
         Order order = modelMapper.map(orderDto, Order.class);
         List<GiftCertificate> giftCertificateList = orderDto.getCertificates().stream()
                 .map(giftCertificateDto -> (modelMapper.map(giftCertificateDto, GiftCertificate.class))).collect(Collectors.toList());
@@ -90,6 +91,7 @@ public class OrderServiceImpl implements OrderService {
      * @throws PaginationException        if page equals zero
      */
     @Transactional
+    @Secured("ROLE_USER")
     @Override
     public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size)
             throws IdNotExistServiceException, PaginationException {
@@ -117,11 +119,11 @@ public class OrderServiceImpl implements OrderService {
      */
     @Override
     public OrderDto getOrder(long id) throws IdNotExistServiceException {
-        try {
-            return modelMapper.map(orderDAO.findById(id).get(), OrderDto.class);
-        } catch (IllegalArgumentException e) {
+        Optional<Order> order = orderDAO.findById(id);
+        if (!order.isPresent()) {
             throw new IdNotExistServiceException(KEY_ID_NOT_EXSIST);
         }
+        return modelMapper.map(orderDAO.findById(id).get(), OrderDto.class);
     }
 
     private int calculateOrderCost(List<GiftCertificate> giftCertificateList) {

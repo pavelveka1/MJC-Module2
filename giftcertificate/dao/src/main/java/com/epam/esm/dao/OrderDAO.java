@@ -3,6 +3,7 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.Order;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
@@ -10,6 +11,7 @@ import java.util.List;
  * Interface OrderDAO.
  * Contains methods for work with Order class
  */
+@Repository
 public interface OrderDAO extends PagingAndSortingRepository<Order, Long> {
 
 

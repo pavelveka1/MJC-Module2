@@ -22,6 +22,7 @@ import org.apache.log4j.Logger;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.InvalidDataAccessApiUsageException;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -85,6 +86,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @throws DuplicateEntryServiceException if this GiftCertificate already exists in the DB
      */
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
+    @Secured( "ROLE_ADMIN")
     @Override
     public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException {
         GiftCertificate certificate;
@@ -126,6 +128,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @param modifiedGiftCertificateDto modified GiftCertificate
      */
     @Override
+    @Secured( "ROLE_ADMIN")
     @Transactional
     public void update(GiftCertificateDto modifiedGiftCertificateDto) throws DuplicateEntryServiceException, IdNotExistServiceException {
         GiftCertificate giftCertificateRead = giftCertificateDAO.readById(modifiedGiftCertificateDto.getId());
@@ -160,6 +163,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
      * @throws IdNotExistServiceException if record with such id not exist in DB
      */
     @Override
+    @Secured( "ROLE_ADMIN")
     @Transactional
     public void delete(long id) throws IdNotExistServiceException {
         GiftCertificate giftCertificate;
