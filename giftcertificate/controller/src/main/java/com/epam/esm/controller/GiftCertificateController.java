@@ -25,6 +25,9 @@ public class GiftCertificateController {
 
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
+    private static final String DEFAULT_NAME_OR_DESCRIPTION = "%";
+    private static final String DEFAULT_SORT_ORDER = "asc";
+    private static final String DEFAULT_SORT_TYPE = "id";
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
     private static final String CERTIFICATE_DTO_NOT_VALID = "GiftCertificateDto_not_valid";
     /**
@@ -47,8 +50,9 @@ public class GiftCertificateController {
     /**
      * Method readAll - reads all GiftCertificates from DB
      *
-     * @param search    type of search
-     * @param values    name of value
+     * @param name    type of search
+     * @param description    name of value
+     * @param tags array of tag names
      * @param sortType  it is name of field in table gitf_certificates of DB
      * @param orderType ASC or DESC
      * @param page      number of page
@@ -59,15 +63,17 @@ public class GiftCertificateController {
      * @throws PaginationException          if page number equals zero
      */
     @GetMapping
-    public List<GiftCertificateDto> readAll(@RequestParam(required = false) String search,
-                                            @RequestParam(required = false) String[] values,
-                                            @RequestParam(required = false) String sortType,
-                                            @RequestParam(required = false) String orderType,
+    public List<GiftCertificateDto> readAll(@RequestParam(defaultValue = DEFAULT_NAME_OR_DESCRIPTION) String name,
+                                            @RequestParam(defaultValue = DEFAULT_NAME_OR_DESCRIPTION) String description,
+                                            @RequestParam(required = false) String[] tags,
+                                            @RequestParam(defaultValue = DEFAULT_SORT_TYPE) String sortType,
+                                            @RequestParam(defaultValue = DEFAULT_SORT_ORDER) String orderType,
                                             @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
                                             @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");
-        List<GiftCertificateDto> giftCertificateDtoList = service.findAll(search, values, sortType, orderType, page, size);
+        List<GiftCertificateDto> giftCertificateDtoList = service.findAll(name, description, tags, sortType,
+                orderType, page, size);
         HATEOASBuilder.addLinksToGiftCertificates(giftCertificateDtoList);
         return giftCertificateDtoList;
     }

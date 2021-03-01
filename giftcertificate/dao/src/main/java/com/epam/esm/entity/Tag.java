@@ -34,9 +34,9 @@ public class Tag implements Serializable {
 
     private String name;
 
-    public Tag(long id, String name){
-        this.id=id;
-        this.name=name;
+    public Tag(long id, String name) {
+        this.id = id;
+        this.name = name;
     }
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
@@ -76,7 +76,7 @@ public class Tag implements Serializable {
         if (!(o instanceof Tag)) return false;
         Tag tag = (Tag) o;
         return id == tag.id &&
-                name.equals(tag.name) ;
+                name.equals(tag.name);
     }
 
     @Override

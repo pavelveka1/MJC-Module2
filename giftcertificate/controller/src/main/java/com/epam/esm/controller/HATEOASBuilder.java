@@ -70,7 +70,7 @@ public class HATEOASBuilder {
     }
 
     private static void addAllLinksToOrder(OrderDto orderDto) throws IdNotExistServiceException {
-        orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrders_id())).withSelfRel());
+        orderDto.add(linkTo(methodOn(OrderController.class).getOrdersById(orderDto.getOrdersId())).withSelfRel());
         List<GiftCertificateDto> certificatesHaveLink = new ArrayList<>();
         List<TagDto> tagsHaveLink = new ArrayList<>();
         for (GiftCertificateDto giftCertificateDto : orderDto.getCertificates()) {

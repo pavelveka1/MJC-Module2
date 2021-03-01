@@ -20,7 +20,7 @@ public interface OrderService {
      * @return OrderDto
      * @throws CertificateNameNotExistServiceException if pointed certificate in order is not exist
      */
-    OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException;
+    OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException, IdNotExistServiceException;
 
     /**
      * Read orders by user id

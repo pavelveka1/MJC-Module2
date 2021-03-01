@@ -59,6 +59,7 @@ public class OrderDAOTest {
         orders.add(order2);
     }
 
+    /*
     @DisplayName("read order by id ")
     @Transactional
     @Test
@@ -97,4 +98,6 @@ public class OrderDAOTest {
         assertEquals(order3, orderDAO.getOrder(id));
     }
 
+
+     */
 }

@@ -1,7 +1,7 @@
 package com.epam.esm.service.impl;
 
 import java.util.List;
-import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import com.epam.esm.dao.GiftCertificateDAO;
@@ -13,9 +13,11 @@ import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
 import com.epam.esm.service.util.PaginationUtil;
-import org.hibernate.exception.ConstraintViolationException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +31,7 @@ public class TagServiceImpl implements TagService {
     private static final String KEY_TAG_DUPLICATE = "tag_duplicate";
     private static final String KEY_TAG_ID_NOT_FOUND = "tag_id_not_found";
     private static final String KEY_USER_NOT_FOUND_OR_NOR_ORDERS = "user_not_found_or_not_orders";
+    private static final String ID = "id";
 
     /**
      * TagDAO is used for operations with Tag
@@ -80,11 +83,10 @@ public class TagServiceImpl implements TagService {
         long id;
         addedTag = modelMapper.map(tagDto, Tag.class);
         try {
-            id = tagDAO.create(addedTag);
-        } catch (ConstraintViolationException e) {
+            addedTag = tagDAO.save(addedTag);
+        } catch (Exception e) {
             throw new DuplicateEntryServiceException(KEY_TAG_DUPLICATE);
         }
-        addedTag = tagDAO.read(id);
         return modelMapper.map(addedTag, TagDto.class);
     }
 
@@ -97,11 +99,17 @@ public class TagServiceImpl implements TagService {
      */
     @Override
     public TagDto read(long id) throws IdNotExistServiceException {
-        Tag readTag;
+        Optional<Tag> readTag;
+        Tag tag;
         TagDto tagDto;
         try {
-            readTag = tagDAO.read(id);
-            tagDto = modelMapper.map(readTag, TagDto.class);
+            readTag = tagDAO.findById(id);
+            if (readTag.isPresent()) {
+                tag = readTag.get();
+            } else {
+                throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
+            }
+            tagDto = modelMapper.map(tag, TagDto.class);
         } catch (IllegalArgumentException e) {
             throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
         }
@@ -118,11 +126,11 @@ public class TagServiceImpl implements TagService {
     @Transactional
     @Override
     public void delete(long id) throws IdNotExistServiceException {
-        Tag tag = tagDAO.read(id);
-        if (Objects.isNull(tag)) {
+        Optional<Tag> tag = tagDAO.findById(id);
+        if (!tag.isPresent()) {
             throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
         }
-        tagDAO.delete(tag);
+        tagDAO.delete(tag.get());
     }
 
 
@@ -135,7 +143,8 @@ public class TagServiceImpl implements TagService {
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);
-        List<Tag> tags = tagDAO.findAll(page, size);
+        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(ID).ascending());
+        List<Tag> tags = tagDAO.findAll(pageable).getContent();
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
 
@@ -148,6 +157,6 @@ public class TagServiceImpl implements TagService {
         } catch (NullPointerException e) {
             throw new IdNotExistServiceException(KEY_USER_NOT_FOUND_OR_NOR_ORDERS);
         }
-        return modelMapper.map(tagDAO.read(idTag), TagDto.class);
+        return modelMapper.map(tagDAO.findById(idTag).get(), TagDto.class);
     }
 }

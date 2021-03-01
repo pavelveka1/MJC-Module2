@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 public class OrderDto extends RepresentationModel<OrderDto> {
 
-    private long orders_id;
+    private long ordersId;
     private User user;
     private int cost;
     private String date;

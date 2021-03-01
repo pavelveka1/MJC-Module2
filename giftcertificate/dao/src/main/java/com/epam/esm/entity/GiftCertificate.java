@@ -110,7 +110,7 @@ public class GiftCertificate implements Serializable {
         return orders;
     }
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.ALL})
+    @ManyToMany(fetch = FetchType.EAGER, cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinTable(name = "gift_certificates_has_tags",
             joinColumns = @JoinColumn(name = "gift_certificates_id"),
             inverseJoinColumns = @JoinColumn(name = "tags_id"))

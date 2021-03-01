@@ -52,7 +52,7 @@ public interface GiftCertificateService {
      * @return list og GiftCertificates
      * @throws RequestParamServiceException if parameters don't right
      */
-    List<GiftCertificateDto> findAll(String search, String[] values, String sortType,
+    List<GiftCertificateDto> findAll(String name, String description, String[] tags, String sortType,
                                      String orderType, Integer page, Integer size)
             throws RequestParamServiceException, PaginationException;
 

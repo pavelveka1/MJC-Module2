@@ -22,7 +22,7 @@ public class UserDAOTest {
 
     @Autowired
     private UserDAO userDAO;
-
+/*
     @DisplayName("read user by id ")
     @Transactional
     @Test
@@ -60,4 +60,6 @@ public class UserDAOTest {
         });
     }
 
+
+ */
 }

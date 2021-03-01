@@ -11,6 +11,8 @@ import com.epam.esm.service.exception.PaginationException;
 import com.epam.esm.service.util.PaginationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,12 +48,12 @@ public class UserServiceImpl implements UserService {
      */
     @Override
     public User getUser(long id) throws IdNotExistServiceException {
-        User user;
-        user = userDAO.getUser(id);
-        if (Objects.isNull(user)) {
+        Optional<User> user;
+        user = userDAO.findById(id);
+        if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
-        return user;
+        return user.get();
     }
 
     /**
@@ -66,14 +68,15 @@ public class UserServiceImpl implements UserService {
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);
-        return userDAO.getUsers(page, size);
+        Pageable pageable= PageRequest.of(page-1, size);
+        return  userDAO.findAll(pageable).getContent();
     }
 
     @Override
     @Transactional
     public User register(UserDto userDto) {
         User user=modelMapper.map(userDto, User.class);
-        Role role = roleDAO.getRoleByName(USER_ROLE);
+        Role role = roleDAO.findRoleByName(USER_ROLE);
         List<Role> roles = new ArrayList<>();
         roles.add(role);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
@@ -86,7 +89,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     @Override
     public User findByUserName(String userName) {
-        return userDAO.findByUserName(userName);
+        return userDAO.findByUsername(userName);
     }
 
 }

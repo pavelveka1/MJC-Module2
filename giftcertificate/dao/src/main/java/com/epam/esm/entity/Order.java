@@ -29,7 +29,7 @@ public class Order implements Serializable {
 
     private static final long SERIAL_VERSION_UID = 1L;
 
-    private long orders_id;
+    private long ordersId;
 
     private User user;
 
@@ -42,8 +42,8 @@ public class Order implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id")
-    public long getOrders_id() {
-        return orders_id;
+    public long getOrdersId() {
+        return ordersId;
     }
 
     @JsonIgnore
@@ -74,7 +74,7 @@ public class Order implements Serializable {
     @Override
     public String toString() {
         return "Order{" +
-                "orders_id=" + orders_id +
+                "ordersId=" + ordersId +
                 ", cost=" + cost +
                 ", date='" + date + '\'' +
                 ", certificates=" + certificates +
@@ -86,7 +86,7 @@ public class Order implements Serializable {
         if (this == o) return true;
         if (!(o instanceof Order)) return false;
         Order order = (Order) o;
-        return orders_id == order.orders_id &&
+        return ordersId == order.ordersId &&
                 cost == order.cost &&
                 user.equals(order.user) &&
                 date.equals(order.date) &&
@@ -95,6 +95,6 @@ public class Order implements Serializable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(orders_id, user, cost, date, certificates);
+        return Objects.hash(ordersId, user, cost, date, certificates);
     }
 }

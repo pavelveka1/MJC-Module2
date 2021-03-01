@@ -1,33 +1,20 @@
 package com.epam.esm.dao;
 
 import com.epam.esm.entity.User;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.PagingAndSortingRepository;
 
 /**
  * Interface UserDAO.
  * Contains methods for work with User class
  */
-public interface UserDAO {
+public interface UserDAO extends PagingAndSortingRepository<User, Long> {
 
-    /**
-     * Get user by id
-     *
-     * @param id id of user
-     * @return User
-     */
-    User getUser(long id);
 
-    /**
-     * Get users
-     *
-     * @param page number of page
-     * @param size size of page
-     * @return List of users
-     */
-    List<User> getUsers(Integer page, Integer size);
+    Page<User> findAll(Pageable pageable);
 
-    User findByUserName(String username);
+    User findByUsername(String username);
 
     User save(User user);
 

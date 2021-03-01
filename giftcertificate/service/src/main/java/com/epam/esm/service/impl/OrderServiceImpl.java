@@ -28,6 +28,7 @@ public class OrderServiceImpl implements OrderService {
     private static final String KEY_CERTIFICATE_NAME_NOT_EXIST = "certificate_name_not_exist";
     private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
+    private static final String USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
     /**
      * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
@@ -60,9 +61,12 @@ public class OrderServiceImpl implements OrderService {
      */
     @Transactional
     @Override
-    public OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException {
-        User user = userDAO.getUser(orderDto.getUser().getId());
-        orderDto.setUser(user);
+    public OrderDto makeOrder(OrderDto orderDto) throws CertificateNameNotExistServiceException, IdNotExistServiceException {
+        Optional<User> user = userDAO.findById(orderDto.getUser().getId());
+        if (!user.isPresent()) {
+            throw new IdNotExistServiceException(USER_ID_NOT_EXIST);
+        }
+        orderDto.setUser(user.get());
         Order order = modelMapper.map(orderDto, Order.class);
         List<GiftCertificate> giftCertificateList = orderDto.getCertificates().stream()
                 .map(giftCertificateDto -> (modelMapper.map(giftCertificateDto, GiftCertificate.class))).collect(Collectors.toList());
@@ -71,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
         int cost = calculateOrderCost(giftCertificateList);
         order.setCost(cost);
         order.setDate(LocalDateTime.now(ZoneId.systemDefault()).toString());
-        orderDAO.makeOrder(order);
+        order = orderDAO.save(order);
         return modelMapper.map(order, OrderDto.class);
     }
 
@@ -93,11 +97,11 @@ public class OrderServiceImpl implements OrderService {
         List<OrderDto> orderDtoList;
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);
-        User user = userDAO.getUser(userId);
-        if (Objects.isNull(user)) {
+        Optional<User> user = userDAO.findById(userId);
+        if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
-        orders = orderDAO.getOrdersByUserId(user, page, size);
+        orders = orderDAO.getOrdersByUserId(user.get().getId());
         orderDtoList = orders.stream()
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .collect(Collectors.toList());
@@ -114,7 +118,7 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto getOrder(long id) throws IdNotExistServiceException {
         try {
-            return modelMapper.map(orderDAO.getOrder(id), OrderDto.class);
+            return modelMapper.map(orderDAO.findById(id).get(), OrderDto.class);
         } catch (IllegalArgumentException e) {
             throw new IdNotExistServiceException(KEY_ID_NOT_EXSIST);
         }
