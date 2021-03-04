@@ -3,7 +3,6 @@ package com.epam.esm.dao.impl;
 import com.epam.esm.dao.GiftCertificateDAOCustom;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
-import org.hibernate.query.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;

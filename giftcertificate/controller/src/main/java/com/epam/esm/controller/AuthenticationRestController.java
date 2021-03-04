@@ -16,7 +16,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -25,10 +24,8 @@ import java.util.Objects;
 @RequestMapping(value = "/api/auth/")
 public class AuthenticationRestController {
 
-    private static final String USER_NAME = "username";
     private static final String TOKEN = "token";
     private static final String DUPLICATE_USERNAME = "duplicate_username";
-    private static final String USER_NOT_FOUND = "user_not_found";
     private static final String AUTHENTICATION_EXCEPTION = "authentication_exception";
     private static final String USER_DTO_NOT_VALID = "user_not_valid";
 
@@ -38,17 +35,6 @@ public class AuthenticationRestController {
 
     private final UserService userService;
 
-    /*
-        @Autowired
-        private Validator userDtoValidator;
-
-        @InitBinder
-        protected void initBinder(WebDataBinder binder) {
-            binder.setValidator(userDtoValidator);
-        }
-
-
-     */
     @Autowired
     public AuthenticationRestController(AuthenticationManager authenticationManager, JwtTokenProvider jwtTokenProvider, UserService userService) {
         this.authenticationManager = authenticationManager;
@@ -64,9 +50,7 @@ public class AuthenticationRestController {
             UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken(username, password);
             authenticationManager.authenticate(authenticationToken);
             User user = userService.findByUserName(username);
-
             String token = jwtTokenProvider.createToken(username, user.getRoles());
-
             Map<Object, Object> response = new HashMap<>();
             response.put(TOKEN, token);
             return ResponseEntity.ok(response);

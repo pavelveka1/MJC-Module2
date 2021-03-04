@@ -9,9 +9,11 @@ import com.epam.esm.entity.User;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.context.junit.jupiter.SpringJUnitConfig;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,7 +26,8 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringJUnitConfig(classes = ApplicationConfigDevProfile.class)
 @ActiveProfiles("dev")
-@SpringBootTest(classes = {UserDAOTest.class})
+@ExtendWith(SpringExtension.class)
+@SpringBootTest
 public class OrderDAOTest {
 
     private static GiftCertificate certificate1 = new GiftCertificate(1, "Поeлет на дельтоплане", "Полеты на мотодельтаплане " +
@@ -59,45 +62,18 @@ public class OrderDAOTest {
         orders.add(order2);
     }
 
-    /*
-    @DisplayName("read order by id ")
-    @Transactional
-    @Test
-    public void readOrderById() {
-        assertEquals(order1, orderDAO.getOrder(1));
-    }
-
-    @DisplayName("read order by not existing id ")
-    @Transactional
-    @Test
-    public void readOrderByNotExistId() {
-        assertEquals(null, orderDAO.getOrder(100));
-    }
-
-    @DisplayName("read order by id ")
-    @Transactional
+    @DisplayName("compare size of list of orders ")
     @Test
     public void readOrdersByUserId() {
-        assertEquals(orders, orderDAO.getOrdersByUserId(user, 1, 5));
+        assertEquals(2, orderDAO.getOrdersByUserId(user.getId()).size());
     }
 
-    @DisplayName(" should be thrown IllegalArgumentException if page = zero ")
-    @Transactional
+    @DisplayName(" compare id of orders ")
     @Test
     public void readOrdersByUserIdZeroPage() {
-        assertThrows(IllegalArgumentException.class, () -> {
-            orderDAO.getOrdersByUserId(user, 0, 5);
-        });
+        List<Order> orders = orderDAO.getOrdersByUserId(user.getId());
+        assertEquals(1, orders.get(0).getOrdersId());
+        assertEquals(2, orders.get(1).getOrdersId());
     }
 
-    @DisplayName("make order")
-    @Transactional
-    @Test
-    public void makeOrder() {
-        long id = orderDAO.makeOrder(order3);
-        assertEquals(order3, orderDAO.getOrder(id));
-    }
-
-
-     */
 }

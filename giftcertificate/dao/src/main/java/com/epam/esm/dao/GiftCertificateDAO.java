@@ -20,9 +20,15 @@ public interface GiftCertificateDAO extends PagingAndSortingRepository<GiftCerti
      * @param certificateName Name of certificate
      * @return GiftCertificate by name
      */
-    @Query("select gc from GiftCertificate as gc where gc.deleted=false and name=:certificateName")
+    @Query("select gc from GiftCertificate as gc where deleted=false and name=:certificateName")
     GiftCertificate readByNotDeletedName(String certificateName);
 
+    /**
+     * Read certificate by id
+     *
+     * @param id of certificate
+     * @return GiftCertificate
+     */
     @Query("select gc from GiftCertificate as gc where gc.id=:id and gc.deleted=false")
     GiftCertificate readById(Long id);
 

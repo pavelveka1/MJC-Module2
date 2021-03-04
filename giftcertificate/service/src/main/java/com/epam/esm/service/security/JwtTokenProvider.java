@@ -77,7 +77,7 @@ public class JwtTokenProvider {
             }
             return true;
         } catch (JwtException | IllegalArgumentException e) {
-           return false;
+            return false;
         }
     }
 
@@ -87,7 +87,6 @@ public class JwtTokenProvider {
         userRoles.forEach(role -> {
             result.add(role.getName());
         });
-
         return result;
     }
 }

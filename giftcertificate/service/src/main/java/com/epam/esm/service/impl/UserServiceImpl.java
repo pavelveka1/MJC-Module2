@@ -25,9 +25,7 @@ public class UserServiceImpl implements UserService {
 
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final String USER_ROLE = "ROLE_USER";
-    /**
-     * TagJDBCTemplate is used for operations with User
-     */
+
     @Autowired
     private UserDAO userDAO;
 
@@ -40,13 +38,6 @@ public class UserServiceImpl implements UserService {
     @Autowired
     private ModelMapper modelMapper;
 
-    /**
-     * Read user by id
-     *
-     * @param id id of user
-     * @return User
-     * @throws IdNotExistServiceException if user with passed id is not exist
-     */
     @Override
     public User getUser(long id) throws IdNotExistServiceException {
         Optional<User> user;
@@ -57,27 +48,20 @@ public class UserServiceImpl implements UserService {
         return user.get();
     }
 
-    /**
-     * Read users from DB
-     *
-     * @param page number of page
-     * @param size size of page
-     * @return List of users
-     * @throws PaginationException if page equals zero
-     */
+
     @Override
-    @Secured( "ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);
-        Pageable pageable= PageRequest.of(page-1, size);
-        return  userDAO.findAll(pageable).getContent();
+        Pageable pageable = PageRequest.of(page - 1, size);
+        return userDAO.findAll(pageable).getContent();
     }
 
     @Override
     @Transactional
     public User register(UserDto userDto) {
-        User user=modelMapper.map(userDto, User.class);
+        User user = modelMapper.map(userDto, User.class);
         Role role = roleDAO.findRoleByName(USER_ROLE);
         List<Role> roles = new ArrayList<>();
         roles.add(role);

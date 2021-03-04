@@ -30,19 +30,19 @@ public class GiftCertificateDtoValidator implements Validator {
     public void validate(Object target, Errors errors) {
         GiftCertificateDto giftCertificateDto = (GiftCertificateDto) target;
         ValidationUtils.rejectIfEmpty(errors, NAME, CERTIFICATE_NAME_INCORRECT);
-        ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT  );
-        ValidationUtils.rejectIfEmpty(errors,PRICE, CERTIFICATE_PRICE_INCORRECT);
+        ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
+        ValidationUtils.rejectIfEmpty(errors, PRICE, CERTIFICATE_PRICE_INCORRECT);
         ValidationUtils.rejectIfEmpty(errors, DURATION, CERTIFICATE_DURATION_INCORRECT);
-       if(!errors.hasErrors()){
-           if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
-               errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
-           } else if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
-               errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
-           } else if (giftCertificateDto.getPrice() <= MIN_PRICE) {
-               errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
-           } else if (giftCertificateDto.getDuration() <= MIN_DURATION) {
-               errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
-           }
-       }
+        if (!errors.hasErrors()) {
+            if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
+                errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
+            } else if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
+                errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
+            } else if (giftCertificateDto.getPrice() <= MIN_PRICE) {
+                errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
+            } else if (giftCertificateDto.getDuration() <= MIN_DURATION) {
+                errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
+            }
+        }
     }
 }

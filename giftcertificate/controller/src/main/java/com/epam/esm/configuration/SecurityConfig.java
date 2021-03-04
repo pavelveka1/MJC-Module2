@@ -31,9 +31,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     private static final String READ_ENDPOINT = "/api/**";
     private static final String READ_TAGS_ENDPOINT = "/api/tags";
     private static final String READ_TAG_ENDPOINT = "/api/tags/*";
-    private static final String READ_TOP_TAG_USER="/api/tags/toptag/**";
-    private static final String READ_USERS="/api/users";
-    private static final String READ_USER="/api/users/*";
+    private static final String READ_TOP_TAG_USER = "/api/tags/toptag/**";
+    private static final String READ_USERS = "/api/users";
+    private static final String READ_USER = "/api/users/*";
     private static final String READ_CERTIFICATES_ENDPOINT = "/api/certificates";
     private static final String READ_CERTIFICATE_ENDPOINT = "/api/certificates/**";
     private static final String USER_ROLE = "USER";

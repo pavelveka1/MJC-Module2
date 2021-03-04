@@ -11,6 +11,7 @@ import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.PaginationException;
+import com.epam.esm.service.security.JwtUser;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,9 +20,14 @@ import org.junit.platform.runner.JUnitPlatform;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.modelmapper.ModelMapper;
+import org.springframework.boot.autoconfigure.security.saml2.Saml2RelyingPartyProperties;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
+import sun.security.krb5.Credentials;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -56,8 +62,10 @@ public class OrderServiceImplTest {
     private static Order order2 = new Order(2, user2, 2, null, giftCertificateList2);
     private static OrderDto orderDto1 = new OrderDto(2, user1, 2, null, giftCertificateDtoList);
     private static OrderDto orderDto2 = new OrderDto(2, user2, 2, null, giftCertificateDtoList2);
+    private static JwtUser jwtUser = new JwtUser(new Long(1), "User", "password", null);
 
     @BeforeAll
+
     public static void init() {
         orders.add(order1);
         orders.add(order2);
@@ -67,6 +75,7 @@ public class OrderServiceImplTest {
         users.add(user2);
         giftCertificateDtoList.add(giftCertificateDto);
         giftCertificateDtoList.add(giftCertificateDto2);
+
     }
 
     @Mock
@@ -84,7 +93,7 @@ public class OrderServiceImplTest {
     @Mock
     private SecurityContextHolder contextHolder;
 
-    @InjectMocks
+    @Mock
     private OrderServiceImpl orderService = new OrderServiceImpl();
 
     @DisplayName("should be returned OrderDto")

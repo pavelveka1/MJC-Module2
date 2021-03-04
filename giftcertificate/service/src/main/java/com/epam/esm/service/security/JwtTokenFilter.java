@@ -19,7 +19,6 @@ import java.util.Objects;
 
 public class JwtTokenFilter extends GenericFilterBean {
 
-    private static final String TOKEN_INVALID = "token_invalid";
     private JwtTokenProvider jwtTokenProvider;
 
     public JwtTokenFilter(JwtTokenProvider jwtTokenProvider) {

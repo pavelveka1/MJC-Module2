@@ -45,6 +45,7 @@
         <spring-orm.version>5.3.3</spring-orm.version>
         <commons-lang.version>3.11</commons-lang.version>
         <jwt.version>0.9.1</jwt.version>
+        <http-client.version>4.5.13</http-client.version>
 
     </properties>
     <build>
@@ -197,6 +198,11 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-starter-data-jpa</artifactId>
                 <version>${spring-boot.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient</artifactId>
+                <version>${http-client.version}</version>
             </dependency>
 
         </dependencies>

@@ -22,10 +22,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Class TagServiceImpl.
- * Contains methods for work with Tag class
- */
 @Service
 public class TagServiceImpl implements TagService {
 
@@ -34,51 +30,26 @@ public class TagServiceImpl implements TagService {
     private static final String KEY_USER_NOT_FOUND_OR_NOR_ORDERS = "user_not_found_or_not_orders";
     private static final String ID = "id";
 
-    /**
-     * TagDAO is used for operations with Tag
-     */
     @Autowired
     private TagDAO tagDAO;
 
-    /**
-     * GiftCertificateDAO is used for operations with GiftCertificate
-     */
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
 
-    /**
-     * ModelMapper is used for convertation TagDto to Tag
-     */
     @Autowired
     private ModelMapper modelMapper;
 
-    /**
-     * Empty constructor
-     */
     public TagServiceImpl() {
 
     }
 
-    /**
-     * Constcuctor with all parameters
-     *
-     * @param tagDAO      for operations with Tag
-     * @param modelMapper for convertion object
-     */
     public TagServiceImpl(TagDAO tagDAO, ModelMapper modelMapper) {
         this.tagDAO = tagDAO;
         this.modelMapper = modelMapper;
     }
 
-    /**
-     * Create new tag in DB
-     *
-     * @param tagDto it contains data of Tag will be created
-     * @return created TagDto
-     * @throws DuplicateEntryServiceException if this Tag already exists in the DB
-     */
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
-    @Secured( "ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @Override
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
@@ -92,13 +63,7 @@ public class TagServiceImpl implements TagService {
         return modelMapper.map(addedTag, TagDto.class);
     }
 
-    /**
-     * Read one Tag from DB by id
-     *
-     * @param id id of Tag
-     * @return TagDto
-     * @throws IdNotExistServiceException if records with such id not exist in DB
-     */
+
     @Override
     public TagDto read(long id) throws IdNotExistServiceException {
         Optional<Tag> readTag;
@@ -119,14 +84,9 @@ public class TagServiceImpl implements TagService {
         return tagDto;
     }
 
-    /**
-     * Delete Tag from DB by id
-     *
-     * @param id id of Tag
-     * @throws IdNotExistServiceException if records with such id not exist in DB
-     */
+
     @Transactional
-    @Secured( "ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @Override
     public void delete(long id) throws IdNotExistServiceException {
         Optional<Tag> tag = tagDAO.findById(id);
@@ -136,12 +96,6 @@ public class TagServiceImpl implements TagService {
         tagDAO.delete(tag.get());
     }
 
-
-    /**
-     * Find all Tags
-     *
-     * @return list of TagDto
-     */
     @Override
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
         page = PaginationUtil.checkPage(page);
@@ -152,7 +106,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Secured( "ROLE_USER")
+    @Secured("ROLE_USER")
     @Transactional
     public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
         long idTag;

@@ -32,35 +32,19 @@ public class OrderServiceImpl implements OrderService {
     private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
-    /**
-     * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
-     */
+
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
 
-    /**
-     * TagJDBCTemplate is used for operations with Order
-     */
     @Autowired
     private OrderDAO orderDAO;
 
     @Autowired
     private UserDAO userDAO;
 
-    /**
-     * ModelMapper is used for convertation TagDto to Tag or GiftCertificateDto to GiftCertificate
-     */
     @Autowired
     private ModelMapper modelMapper;
 
-
-    /**
-     * Create new order
-     *
-     * @param orderDto will be created
-     * @return OrderDto
-     * @throws CertificateNameNotExistServiceException if certificate is not exist in DB
-     */
     @Transactional
     @Secured("ROLE_USER")
     @Override
@@ -80,16 +64,7 @@ public class OrderServiceImpl implements OrderService {
         return modelMapper.map(order, OrderDto.class);
     }
 
-    /**
-     * Read orders by id of user
-     *
-     * @param userId id of user
-     * @param page   number of page
-     * @param size   zise of page
-     * @return List of orders
-     * @throws IdNotExistServiceException if user with passed id is not exist
-     * @throws PaginationException        if page equals zero
-     */
+
     @Transactional
     @Secured("ROLE_USER")
     @Override
@@ -110,13 +85,7 @@ public class OrderServiceImpl implements OrderService {
         return orderDtoList;
     }
 
-    /**
-     * Rear order by id
-     *
-     * @param id of order
-     * @return OrderDto
-     * @throws IdNotExistServiceException if order with passed id is not exist
-     */
+
     @Override
     public OrderDto getOrder(long id) throws IdNotExistServiceException {
         Optional<Order> order = orderDAO.findById(id);

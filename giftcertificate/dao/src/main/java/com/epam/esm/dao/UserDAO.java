@@ -13,11 +13,20 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface UserDAO extends PagingAndSortingRepository<User, Long> {
 
-
+    /**
+     * Method finds all user with pagination
+     *
+     * @param pageable object for pagination
+     * @return Page of User
+     */
     Page<User> findAll(Pageable pageable);
 
+    /**
+     * Mehtod finds User by user name
+     *
+     * @param username name of User
+     * @return User
+     */
     User findByUsername(String username);
-
-    User save(User user);
 
 }

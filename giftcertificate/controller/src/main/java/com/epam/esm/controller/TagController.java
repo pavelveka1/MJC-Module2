@@ -53,8 +53,8 @@ public class TagController {
      * @throws PaginationException        if page number equals zero
      */
     @GetMapping
-    public List<TagDto> readAllTags(@RequestParam( defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam( defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+    public List<TagDto> readAllTags(@RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<TagDto> tagDtoList = service.findAll(page, size);
         HATEOASBuilder.addLinksToTags(tagDtoList);

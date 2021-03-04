@@ -1,4 +1,4 @@
-package com.epam.esm.dao.impl.config;
+package com.epam.esm.controller.security.config;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.convention.MatchingStrategies;
@@ -27,7 +27,7 @@ import java.util.Properties;
 @PropertySource("classpath:db.properties")
 @EnableTransactionManagement
 @EnableJpaRepositories(basePackages = "com.epam.esm.dao")
-public class ApplicationConfigDevProfile {
+public class ApplicationConfigurationDevProfile {
 
 
     @Bean
@@ -110,3 +110,4 @@ public class ApplicationConfigDevProfile {
         return new BCryptPasswordEncoder();
     }
 }
+

@@ -26,10 +26,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- * Class GiftCertificateService
- * Contains methods for work with GiftCertificateDto
- */
 @Service
 public class GiftSertificateServiceImpl implements GiftCertificateService {
 
@@ -40,53 +36,29 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private static final String KEY_DUPLICATE_CERTIFICATE = "certificate_duplicate";
     private static final String KEY_ID_NOT_EXIST = "certificate_no_id";
 
-    /**
-     * GiftSertificateJDBCTemplate is used for operations with GiftCertificate
-     */
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
 
-    /**
-     * TagJDBCTemplate is used for operations with Tag
-     */
     @Autowired
     private TagDAO tagDAO;
 
-    /**
-     * ModelMapper is used for convertation TagDto to Tag or GiftCertificateDto to GiftCertificate
-     */
     @Autowired
     private ModelMapper modelMapper;
 
-    /**
-     * Empty constructor
-     */
     public GiftSertificateServiceImpl() {
 
     }
 
-    /**
-     * Constcuctor with all parameters
-     *
-     * @param giftCertificateDAO for operations with GiftCertivicate
-     * @param tagDAO             for operations with Tag
-     * @param modelMapper        for convertion object
-     */
+
     public GiftSertificateServiceImpl(GiftCertificateDAO giftCertificateDAO, TagDAO tagDAO, ModelMapper modelMapper) {
         this.giftCertificateDAO = giftCertificateDAO;
         this.tagDAO = tagDAO;
         this.modelMapper = modelMapper;
     }
 
-    /**
-     * Create GiftCertificate in DB
-     *
-     * @param giftCertificateDto it contains data for creation giftCertificate
-     * @return created GiftCertificate as GiftCertificateDto
-     * @throws DuplicateEntryServiceException if this GiftCertificate already exists in the DB
-     */
+
     @Transactional(rollbackFor = DuplicateEntryServiceException.class)
-    @Secured( "ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @Override
     public GiftCertificateDto create(GiftCertificateDto giftCertificateDto) throws DuplicateEntryServiceException {
         GiftCertificate certificate;
@@ -103,13 +75,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return modelMapper.map(certificate, GiftCertificateDto.class);
     }
 
-    /**
-     * Read GiftCertificateDto from DB by id
-     *
-     * @param id id of GiftCertificate
-     * @return GiftCertificateDto
-     * @throws IdNotExistServiceException if records with such id not exist in DB
-     */
+
     @Override
     public GiftCertificateDto read(long id) throws IdNotExistServiceException {
         GiftCertificate foundCertificate;
@@ -122,13 +88,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         return giftCertificateDto;
     }
 
-    /**
-     * Update GiftCertificate as GiftCertificateDto
-     *
-     * @param modifiedGiftCertificateDto modified GiftCertificate
-     */
     @Override
-    @Secured( "ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @Transactional
     public void update(GiftCertificateDto modifiedGiftCertificateDto) throws DuplicateEntryServiceException, IdNotExistServiceException {
         GiftCertificate giftCertificateRead = giftCertificateDAO.readById(modifiedGiftCertificateDto.getId());
@@ -150,20 +111,19 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         }
         if (!modifiedGiftCertificateDto.getTags().isEmpty()) {
             giftCertificateRead.setTags(getListTagsByNameForUpdate(modifiedGiftCertificateDto.getTags()));
-            //  giftCertificateRead.setTags(modifiedGiftCertificateDto.getTags().stream().map(tagDto -> modelMapper.map(tagDto, Tag.class)).collect(Collectors.toList()));
         }
-        giftCertificateDAO.save(giftCertificateRead);
+        try {
+            giftCertificateDAO.save(giftCertificateRead);
+        } catch (Exception e) {
+            throw new DuplicateEntryServiceException(KEY_DUPLICATE_CERTIFICATE);
+        }
+
+
         logger.info("GiftCertificate has been updated in DB");
     }
 
-    /**
-     * Delete GiftCertificate from DB by id
-     *
-     * @param id id of GiftCertificate
-     * @throws IdNotExistServiceException if record with such id not exist in DB
-     */
     @Override
-    @Secured( "ROLE_ADMIN")
+    @Secured("ROLE_ADMIN")
     @Transactional
     public void delete(long id) throws IdNotExistServiceException {
         GiftCertificate giftCertificate;
@@ -177,15 +137,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         logger.info("GiftCertificate is deleted from DB");
     }
 
-    /**
-     * Find all giftCertificates with condition determined by parameters
-     *
-     * @param sortType  name of field of table in DB
-     * @param orderType ASC or DESC
-     * @return list og GiftCertificates
-     * @throws RequestParamServiceException if parameters don't right
-     * @throws PaginationException          if page equals zero
-     */
     @Override
     @Transactional
     public List<GiftCertificateDto> findAll(String name, String description, String[] tags, String sortType, String orderType,
@@ -202,7 +153,6 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         if (!description.equals(ANY_SYMBOL)) {
             description = ANY_SYMBOL + description + ANY_SYMBOL;
         }
-
         if (Objects.nonNull(tags)) {
             tagList = getListTagsByNames(tags);
         } else {

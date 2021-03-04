@@ -110,12 +110,11 @@ public class GlobalExceptionHandler {
         return new ResponseEntity<>(new ErrorTO(errorMessage, ErrorCode.BAD_REQUEST.getErrorCode()),
                 HttpStatus.BAD_REQUEST);
     }
- /*
+
     @ExceptionHandler
     public ResponseEntity<ErrorTO> unknownException(Exception exception) {
         return new ResponseEntity<>(new ErrorTO(exception.getMessage(), ErrorCode.BAD_REQUEST.getErrorCode()),
                 HttpStatus.BAD_REQUEST);
     }
 
-  */
 }

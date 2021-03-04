@@ -50,13 +50,13 @@ public class GiftCertificateController {
     /**
      * Method readAll - reads all GiftCertificates from DB
      *
-     * @param name    type of search
-     * @param description    name of value
-     * @param tags array of tag names
-     * @param sortType  it is name of field in table gitf_certificates of DB
-     * @param orderType ASC or DESC
-     * @param page      number of page
-     * @param size      number of entity on page
+     * @param name        type of search
+     * @param description name of value
+     * @param tags        array of tag names
+     * @param sortType    it is name of field in table gitf_certificates of DB
+     * @param orderType   ASC or DESC
+     * @param page        number of page
+     * @param size        number of entity on page
      * @return List of GiftCertificateDto
      * @throws RequestParamServiceException if params don't correlate with name of field in DB
      * @throws IdNotExistServiceException   can be thrown by HATEOASBuilder while reading by id
