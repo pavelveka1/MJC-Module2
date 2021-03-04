@@ -64,8 +64,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .antMatchers(LOGIN_ENDPOINT).permitAll()
                 .antMatchers(HttpMethod.GET, READ_TAG_ENDPOINT, READ_TAGS_ENDPOINT, READ_CERTIFICATE_ENDPOINT,
                         READ_CERTIFICATES_ENDPOINT).permitAll()
-                .antMatchers(HttpMethod.GET, READ_ENDPOINT, READ_TOP_TAG_USER).hasRole(USER_ROLE)
-                .antMatchers(HttpMethod.GET, READ_USER, READ_USERS).hasRole(ADMIN_ROLE)
+                .antMatchers(HttpMethod.GET, READ_ENDPOINT, READ_USER).hasRole(USER_ROLE)
+                .antMatchers(HttpMethod.GET, READ_USERS, READ_TOP_TAG_USER).hasRole(ADMIN_ROLE)
                 .antMatchers(HttpMethod.POST, ORDER_ENDPOINT).hasRole(USER_ROLE)
                 .antMatchers(HttpMethod.POST, ADMIN_ENDPOINT).hasRole(ADMIN_ROLE)
                 .antMatchers(HttpMethod.DELETE, ADMIN_ENDPOINT).hasRole(ADMIN_ROLE)

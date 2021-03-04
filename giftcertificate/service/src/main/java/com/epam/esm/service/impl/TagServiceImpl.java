@@ -106,7 +106,7 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    @Secured("ROLE_USER")
+    @Secured("ROLE_ADMIN")
     @Transactional
     public TagDto getWidelyUsedByUserTagWithHighestCost(long userId) throws IdNotExistServiceException {
         long idTag;

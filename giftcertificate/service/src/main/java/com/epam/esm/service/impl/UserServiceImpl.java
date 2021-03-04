@@ -7,13 +7,17 @@ import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.JwtAuthenticationException;
 import com.epam.esm.service.exception.PaginationException;
+import com.epam.esm.service.security.JwtUser;
 import com.epam.esm.service.util.PaginationUtil;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,6 +29,8 @@ public class UserServiceImpl implements UserService {
 
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final String USER_ROLE = "ROLE_USER";
+    private static final String ADMIN_AUTHORITY = "ROLE_ADMIN";
+    private static final String FORBIDDEN="get_user_forbidden";
 
     @Autowired
     private UserDAO userDAO;
@@ -39,9 +45,20 @@ public class UserServiceImpl implements UserService {
     private ModelMapper modelMapper;
 
     @Override
+    @Secured("ROLE_USER")
     public User getUser(long id) throws IdNotExistServiceException {
         Optional<User> user;
-        user = userDAO.findById(id);
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+       if(hasAdminAuthority(jwtUser)){
+           user = userDAO.findById(id);
+       }else{
+           if(id==jwtUser.getId()){
+               user=userDAO.findById(jwtUser.getId());
+           }else {
+               throw new JwtAuthenticationException(FORBIDDEN);
+           }
+
+       }
         if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
@@ -78,4 +95,12 @@ public class UserServiceImpl implements UserService {
         return userDAO.findByUsername(userName);
     }
 
+    private boolean hasAdminAuthority(JwtUser jwtUser) {
+        for (GrantedAuthority authority : jwtUser.getAuthorities()) {
+            if (authority.getAuthority().equals(ADMIN_AUTHORITY)) {
+                return true;
+            }
+        }
+        return false;
+    }
 }
