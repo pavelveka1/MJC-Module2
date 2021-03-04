@@ -10,6 +10,7 @@ import com.epam.esm.service.OrderService;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
+import com.epam.esm.service.exception.JwtAuthenticationException;
 import com.epam.esm.service.exception.PaginationException;
 import com.epam.esm.service.security.JwtUser;
 import com.epam.esm.service.util.PaginationUtil;
@@ -32,6 +33,8 @@ public class OrderServiceImpl implements OrderService {
     private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final int ZERO = 0;
+    private static final String ADMIN_AUTHORITY = "ROLE_ADMIN";
+    private static final String FORBIDDEN = "get_order_forbidden";
 
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
@@ -70,11 +73,21 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public List<OrderDto> getOrdersByUserId(long userId, Integer page, Integer size)
             throws IdNotExistServiceException, PaginationException {
+        Optional<User> user;
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (RoleUtil.hasAdminAuthority(jwtUser)) {
+            user = userDAO.findById(userId);
+        } else {
+            if (userId == jwtUser.getId()) {
+                user = userDAO.findById(jwtUser.getId());
+            } else {
+                throw new JwtAuthenticationException(FORBIDDEN);
+            }
+        }
         List<Order> orders;
         List<OrderDto> orderDtoList;
         page = PaginationUtil.checkPage(page);
         size = PaginationUtil.checkSizePage(size);
-        Optional<User> user = userDAO.findById(userId);
         if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
@@ -83,16 +96,25 @@ public class OrderServiceImpl implements OrderService {
                 .map(order -> modelMapper.map(order, OrderDto.class))
                 .collect(Collectors.toList());
         return orderDtoList;
+
     }
 
 
     @Override
+    @Secured("ROLE_USER")
     public OrderDto getOrder(long id) throws IdNotExistServiceException {
-        Optional<Order> order = orderDAO.findById(id);
+        Optional<Order> order;
+        JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        order = orderDAO.findById(id);
         if (!order.isPresent()) {
             throw new IdNotExistServiceException(KEY_ID_NOT_EXSIST);
         }
-        return modelMapper.map(orderDAO.findById(id).get(), OrderDto.class);
+        if (!RoleUtil.hasAdminAuthority(jwtUser)) {
+            if (jwtUser.getId() != order.get().getUser().getId()) {
+                throw new JwtAuthenticationException(FORBIDDEN);
+            }
+        }
+        return modelMapper.map(order.get(), OrderDto.class);
     }
 
     private int calculateOrderCost(List<GiftCertificate> giftCertificateList) {
@@ -117,3 +139,4 @@ public class OrderServiceImpl implements OrderService {
     }
 
 }
+

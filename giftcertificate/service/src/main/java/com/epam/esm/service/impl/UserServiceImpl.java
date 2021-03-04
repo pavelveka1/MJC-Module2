@@ -49,7 +49,7 @@ public class UserServiceImpl implements UserService {
     public User getUser(long id) throws IdNotExistServiceException {
         Optional<User> user;
         JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       if(hasAdminAuthority(jwtUser)){
+       if(RoleUtil.hasAdminAuthority(jwtUser)){
            user = userDAO.findById(id);
        }else{
            if(id==jwtUser.getId()){
@@ -57,7 +57,6 @@ public class UserServiceImpl implements UserService {
            }else {
                throw new JwtAuthenticationException(FORBIDDEN);
            }
-
        }
         if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
@@ -93,14 +92,5 @@ public class UserServiceImpl implements UserService {
     @Override
     public User findByUserName(String userName) {
         return userDAO.findByUsername(userName);
-    }
-
-    private boolean hasAdminAuthority(JwtUser jwtUser) {
-        for (GrantedAuthority authority : jwtUser.getAuthorities()) {
-            if (authority.getAuthority().equals(ADMIN_AUTHORITY)) {
-                return true;
-            }
-        }
-        return false;
     }
 }
