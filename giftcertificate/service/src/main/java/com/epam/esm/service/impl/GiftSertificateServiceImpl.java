@@ -145,8 +145,8 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         List<GiftCertificate> giftCertificates;
         List<GiftCertificateDto> giftCertificateDtoList;
         List<Tag> tagList;
-        page = PaginationUtil.checkPage(page);
-        size = PaginationUtil.checkSizePage(size);
+        int checkedPage = PaginationUtil.checkPage(page);
+        int checkedSize = PaginationUtil.checkSizePage(size);
         if (!name.equals(ANY_SYMBOL)) {
             name = ANY_SYMBOL + name + ANY_SYMBOL;
         }
@@ -159,7 +159,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             tagList = new ArrayList<>();
         }
         try {
-            giftCertificates = giftCertificateDAO.readAll(name, description, tagList, sortType, orderType, page, size);
+            giftCertificates = giftCertificateDAO.readAll(name, description, tagList, sortType, orderType, checkedPage, checkedSize);
         } catch (InvalidDataAccessApiUsageException e) {
             throw new RequestParamServiceException(KEY_NO_SUCH_FIELD);
         }
@@ -173,13 +173,13 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private List<Tag> getListTagsByNames(String[] names) {
         List<Tag> tags = new ArrayList<>();
         if (!Objects.isNull(names)) {
-            for (int i = ZERO; i < names.length; i++) {
-                Tag tag = tagDAO.getTagByName((names[i]));
+            for (String tagName : names) {
+                Tag tag = tagDAO.getTagByName(tagName);
                 if (Objects.nonNull(tag)) {
                     tags.add(tag);
                 } else {
                     Tag newTag = new Tag();
-                    newTag.setName(names[i]);
+                    newTag.setName(tagName);
                     newTag = tagDAO.save(newTag);
                     tags.add(newTag);
                 }
@@ -191,15 +191,15 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     private List<Tag> getListTagsByNameForUpdate(List<TagDto> tagDtoList) {
         List<Tag> tags = new ArrayList<>();
         if (!Objects.isNull(tagDtoList)) {
-            for (int i = ZERO; i < tagDtoList.size(); i++) {
-                Tag tag = tagDAO.getTagByName(tagDtoList.get(i).getName());
+            for (TagDto tagDto : tagDtoList) {
+                Tag tag = tagDAO.getTagByName(tagDto.getName());
                 if ((Objects.nonNull(tag))) {
                     if (!tags.contains(tag)) {
                         tags.add(tag);
                     }
                 } else {
                     Tag newTag = new Tag();
-                    newTag.setName(tagDtoList.get(i).getName());
+                    newTag.setName(tagDto.getName());
                     if (!tags.contains(newTag)) {
                         tags.add(newTag);
                     }

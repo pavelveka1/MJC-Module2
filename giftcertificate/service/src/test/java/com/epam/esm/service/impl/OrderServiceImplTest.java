@@ -92,7 +92,7 @@ public class OrderServiceImplTest {
 
     @DisplayName("should be returned OrderDto")
     @Test
-    public void makeOrder() throws CertificateNameNotExistServiceException, IdNotExistServiceException {
+    public void testMakeOrder() throws CertificateNameNotExistServiceException, IdNotExistServiceException {
         when(userDAO.findByUsername("Admin")).thenReturn(user2);
         when(modelMapper.map(orderDto2, Order.class)).thenReturn(order2);
         when(modelMapper.map(order2, OrderDto.class)).thenReturn(orderDto2);
@@ -102,7 +102,7 @@ public class OrderServiceImplTest {
 
     @DisplayName("should be thrown CertificateNameNotExistServiceException")
     @Test
-    public void makeOrderCertificateNameNotExist() throws CertificateNameNotExistServiceException {
+    public void testMakeOrderCertificateNameNotExist() throws CertificateNameNotExistServiceException {
         when(userDAO.findByUsername("User")).thenReturn(user2);
         when(giftCertificateDAO.readByNotDeletedName("Test name")).thenReturn(null);
         when(modelMapper.map(orderDto1, Order.class)).thenReturn(order1);
@@ -115,7 +115,7 @@ public class OrderServiceImplTest {
 
     @DisplayName("should be returned list OrderDto")
     @Test
-    public void getOrdersByUserId() throws IdNotExistServiceException, PaginationException {
+    public void testGetOrdersByUserId() throws IdNotExistServiceException, PaginationException {
         when(userDAO.findById(new Long(1))).thenReturn(Optional.ofNullable(user1));
         when(modelMapper.map(order2, OrderDto.class)).thenReturn(orderDto2);
         when(modelMapper.map(order1, OrderDto.class)).thenReturn(orderDto1);
@@ -125,7 +125,7 @@ public class OrderServiceImplTest {
 
     @DisplayName("should be thrown PaginationException")
     @Test
-    public void getOrdersByUserIdZeroPage() throws IdNotExistServiceException, PaginationException {
+    public void testGetOrdersByUserIdZeroPage() throws IdNotExistServiceException, PaginationException {
         assertThrows(PaginationException.class, () -> {
             orderService.getOrdersByUserId(1, 0, 10);
         });
@@ -133,7 +133,7 @@ public class OrderServiceImplTest {
 
     @DisplayName("should be returned OrderDto")
     @Test
-    public void getOrderById() throws IdNotExistServiceException {
+    public void testGetOrderById() throws IdNotExistServiceException {
         when(modelMapper.map(order1, OrderDto.class)).thenReturn(orderDto1);
         when(orderDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(order1));
         assertEquals(orderDto1, orderService.getOrder(1));
@@ -141,7 +141,7 @@ public class OrderServiceImplTest {
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void getOrdersByNotExistId() throws IdNotExistServiceException {
+    public void testGetOrdersByNotExistId() throws IdNotExistServiceException {
         when(orderDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(null));
         assertThrows(IdNotExistServiceException.class, () -> {
             orderService.getOrder(1);

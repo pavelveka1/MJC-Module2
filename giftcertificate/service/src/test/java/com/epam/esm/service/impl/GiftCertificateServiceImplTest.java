@@ -71,7 +71,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be returned created gift certificate")
     @Test
-    public void createGiftCertificate() throws DuplicateEntryServiceException, TagNotExistServiceException, SQLIntegrityConstraintViolationException {
+    public void testCreateGiftCertificate() throws DuplicateEntryServiceException, TagNotExistServiceException, SQLIntegrityConstraintViolationException {
         when(giftCertificateDAO.save(giftCertificate)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
@@ -80,7 +80,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be thrown duplicateEntryServiceException")
     @Test
-    public void createGiftCertificateDuplicateEntryException() throws SQLIntegrityConstraintViolationException {
+    public void testCreateGiftCertificateDuplicateEntryException() throws SQLIntegrityConstraintViolationException {
         when(giftCertificateDAO.save(giftCertificate)).thenThrow(ConstraintViolationException.class);
         when(modelMapper.map(giftCertificateDto, GiftCertificate.class)).thenReturn(giftCertificate);
         assertThrows(DuplicateEntryServiceException.class, () -> {
@@ -91,7 +91,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be renurned giftCertificateDto")
     @Test
-    public void readGiftCertificateById() throws IdNotExistServiceException {
+    public void testReadGiftCertificateById() throws IdNotExistServiceException {
         GiftCertificate giftCertificate = giftCertificateList.get(0);
         when(giftCertificateDAO.readById(new Long(2))).thenReturn(giftCertificate);
         when(modelMapper.map(giftCertificate, GiftCertificateDto.class)).thenReturn(giftCertificateDto);
@@ -100,7 +100,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void readGiftCertificateByNotExistId() {
+    public void testReadGiftCertificateByNotExistId() {
         when(giftCertificateDAO.readById(new Long(10))).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
             giftCertificateService.read(10);
@@ -110,7 +110,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be returned updated giftCertificateDto")
     @Test
-    public void updateGiftCertificate() throws IdNotExistServiceException, DuplicateEntryServiceException, BatchUpdateException {
+    public void testUpdateGiftCertificate() throws IdNotExistServiceException, DuplicateEntryServiceException, BatchUpdateException {
         when(giftCertificateDAO.readById(new Long(3))).thenReturn(giftCertificate3);
         giftCertificateService.update(giftCertificateDto3);
         verify(giftCertificateDAO).save(giftCertificate3);
@@ -119,7 +119,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be thrown PaginationException")
     @Test
-    public void findAllGiftCertificates() {
+    public void testFindAllGiftCertificates() {
         String[] tagNames = new String[]{};
         assertThrows(PaginationException.class, () -> {
             giftCertificateService.findAll("name", "description", tagNames, "name", "ASC", 0, 10);
@@ -129,7 +129,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be called delete method from DAO")
     @Test
-    public void deleteGiftCertificateById() throws IdNotExistServiceException {
+    public void testDeleteGiftCertificateById() throws IdNotExistServiceException {
         when(giftCertificateDAO.readById(new Long(5))).thenReturn(giftCertificate);
         giftCertificateService.delete(5);
         verify(giftCertificateDAO).save(giftCertificate);
@@ -138,7 +138,7 @@ public class GiftCertificateServiceImplTest {
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void deleteGiftCertificateByNotExistId() throws IdNotExistServiceException {
+    public void testDeleteGiftCertificateByNotExistId() throws IdNotExistServiceException {
         when(giftCertificateDAO.readById(new Long(9))).thenReturn(null);
         assertThrows(IdNotExistServiceException.class, () -> {
             giftCertificateService.delete(9);

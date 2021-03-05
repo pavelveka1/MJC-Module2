@@ -23,12 +23,13 @@ import java.util.List;
 @RequestMapping("/api/certificates")
 public class GiftCertificateController {
 
+    private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
+
     private static final String DEFAULT_PAGE_SIZE = "1000";
     private static final String DEFAULT_PAGE_NUMBER = "1";
     private static final String DEFAULT_NAME_OR_DESCRIPTION = "%";
     private static final String DEFAULT_SORT_ORDER = "asc";
     private static final String DEFAULT_SORT_TYPE = "id";
-    private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
     private static final String CERTIFICATE_DTO_NOT_VALID = "GiftCertificateDto_not_valid";
     /**
      * GiftCertificateService is used for work with GiftCertificateDto

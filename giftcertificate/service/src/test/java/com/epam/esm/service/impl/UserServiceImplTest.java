@@ -54,14 +54,14 @@ public class UserServiceImplTest {
 
     @DisplayName("should be returned User")
     @Test
-    public void getUser() throws IdNotExistServiceException {
+    public void testGetUser() throws IdNotExistServiceException {
         when(userDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(user1));
         assertEquals(user1, userService.getUser(1));
     }
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void getUserIdNotExist() throws IdNotExistServiceException {
+    public void testGetUserIdNotExist() throws IdNotExistServiceException {
         when(userDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(null));
         assertThrows(IdNotExistServiceException.class, () -> {
             userService.getUser(1);
@@ -70,7 +70,7 @@ public class UserServiceImplTest {
 
     @DisplayName("should be returned list of User")
     @Test
-    public void getUsers() throws PaginationException {
+    public void testGetUsers() throws PaginationException {
         Pageable pageable = PageRequest.of(0, 10);
         Page<User> page = new PageImpl<>(users, pageable, users.size());
         when(userDAOImpl.findAll(pageable)).thenReturn(page);
@@ -79,7 +79,7 @@ public class UserServiceImplTest {
 
     @DisplayName("should be thrown PaginationException")
     @Test
-    public void getUsersPaginationException() throws PaginationException {
+    public void testGetUsersPaginationException() throws PaginationException {
         assertThrows(PaginationException.class, () -> {
             userService.getUsers(0, 10);
         });

@@ -69,7 +69,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be returned created Tag")
     @Test
-    public void createTag() throws DuplicateEntryServiceException, SQLIntegrityConstraintViolationException {
+    public void testCreateTag() throws DuplicateEntryServiceException, SQLIntegrityConstraintViolationException {
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
         when(tagDAOImpl.save(tag)).thenReturn(tag);
@@ -78,7 +78,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be returned created Tag not null")
     @Test
-    public void createTagNotNull() throws DuplicateEntryServiceException, SQLIntegrityConstraintViolationException {
+    public void testCreateTagNotNull() throws DuplicateEntryServiceException, SQLIntegrityConstraintViolationException {
         when(modelMapper.map(tagDto, Tag.class)).thenReturn(tag);
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
         when(tagDAOImpl.save(tag)).thenReturn(tag);
@@ -88,7 +88,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be returned tagDto by id")
     @Test
-    public void readTagById() throws IdNotExistServiceException {
+    public void testReadTagById() throws IdNotExistServiceException {
         Tag tag = tagList.get(0);
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
         when(tagDAOImpl.findById(new Long(5))).thenReturn(Optional.of(tag));
@@ -98,7 +98,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be thrown idNotExistServiceException")
     @Test
-    public void readTagByNotExistId() {
+    public void testReadTagByNotExistId() {
         when(tagDAOImpl.findById(new Long(1))).thenThrow(IllegalArgumentException.class);
         assertThrows(IdNotExistServiceException.class, () -> {
             tagService.read(1);
@@ -108,7 +108,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be returned list of TagDto")
     @Test
-    public void findAllTags() throws PaginationException {
+    public void testFindAllTags() throws PaginationException {
         Tag testTag = new Tag();
         TagDto testTagDto = new TagDto();
         testTag.setId(1);
@@ -128,7 +128,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be thrown PaginationException")
     @Test
-    public void findAllTagsPaginationException() throws PaginationException {
+    public void testFindAllTagsPaginationException() throws PaginationException {
         assertThrows(PaginationException.class, () -> {
             tagService.findAll(0, 1).size();
         });
@@ -137,7 +137,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be called method delete from DAO")
     @Test
-    public void deleteTagById() throws IdNotExistServiceException {
+    public void testDeleteTagById() throws IdNotExistServiceException {
         when(tagDAOImpl.findById(new Long(6))).thenReturn(Optional.ofNullable(tag));
         tagService.delete(6);
         verify(tagDAOImpl).delete(tag);
@@ -145,7 +145,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be called method delete from DAO")
     @Test
-    public void deleteTagByNotExistId() throws IdNotExistServiceException {
+    public void testDeleteTagByNotExistId() throws IdNotExistServiceException {
         when(tagDAOImpl.findById(new Long(3))).thenReturn(Optional.ofNullable(null));
         assertThrows(IdNotExistServiceException.class, () -> {
             tagService.delete(3);
@@ -154,7 +154,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be returned widely used tag")
     @Test
-    public void getWidelyUsedByUserTagWithHighestCost() throws IdNotExistServiceException {
+    public void testGetWidelyUsedByUserTagWithHighestCost() throws IdNotExistServiceException {
         when(tagDAOImpl.getIdWidelyUsedByUserTagWithHighestCost(1)).thenReturn(ONE);
         when(tagDAOImpl.findById(new Long(1))).thenReturn(Optional.ofNullable(tag));
         when(modelMapper.map(tag, TagDto.class)).thenReturn(tagDto);
@@ -163,7 +163,7 @@ public class TagServiceImplTest {
 
     @DisplayName("should be thrown IdNotExistServiceException")
     @Test
-    public void getWidelyUsedByUserTagWithHighestCostUserIdNotExist() throws IdNotExistServiceException {
+    public void testGetWidelyUsedByUserTagWithHighestCostUserIdNotExist() throws IdNotExistServiceException {
         when(tagDAOImpl.getIdWidelyUsedByUserTagWithHighestCost(2)).thenThrow(NullPointerException.class);
         assertThrows(IdNotExistServiceException.class, () -> {
             tagService.getWidelyUsedByUserTagWithHighestCost(2);

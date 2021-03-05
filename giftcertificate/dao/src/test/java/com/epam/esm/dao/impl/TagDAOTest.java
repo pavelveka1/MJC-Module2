@@ -30,7 +30,7 @@ public class TagDAOTest {
 
     @DisplayName("should create tag in DB and return this one")
     @Test
-    public void createTag() throws SQLIntegrityConstraintViolationException {
+    public void testCreateTag() throws SQLIntegrityConstraintViolationException {
         Tag tag = new Tag();
         tag.setName("Test tag 1");
         Tag tag1 = tagDAO.save(tag);
@@ -40,14 +40,14 @@ public class TagDAOTest {
 
     @DisplayName("should be returned list with size = 2")
     @Test
-    public void getTagsByGiftCertificateId() {
+    public void testGetTagsByGiftCertificateId() {
         List<Tag> tagList = tagDAO.getTagsByGiftCertificateId(1);
         assertEquals(2, tagList.size());
     }
 
     @DisplayName("should be returned list with size = 1 and name = Обучение")
     @Test
-    public void getTagsByGiftCertificateIdCheckName() {
+    public void testGetTagsByGiftCertificateIdCheckName() {
         List<Tag> tagList = tagDAO.getTagsByGiftCertificateId(6);
         assertEquals(1, tagList.size());
         assertEquals("Обучение", tagList.get(0).getName());
@@ -55,13 +55,13 @@ public class TagDAOTest {
 
     @DisplayName("should be returned widely used by user tag ")
     @Test
-    public void getIdWidelyUsedByUserTagWithHighestCost() {
+    public void testGetIdWidelyUsedByUserTagWithHighestCost() {
         assertEquals(1, tagDAO.getIdWidelyUsedByUserTagWithHighestCost(1));
     }
 
     @DisplayName("result should be true")
     @Test
-    public void getIdWidelyUsedByUserTagWithHighestCostNotEquals() {
+    public void testGetIdWidelyUsedByUserTagWithHighestCostNotEquals() {
         assertNotEquals(2, tagDAO.getIdWidelyUsedByUserTagWithHighestCost(1));
     }
 

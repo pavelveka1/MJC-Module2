@@ -64,7 +64,7 @@ public class OrderDAOTest {
 
     @DisplayName("compare size of list of orders ")
     @Test
-    public void readOrdersByUserId() {
+    public void testReadOrdersByUserId() {
         assertEquals(2, orderDAO.getOrdersByUserId(user.getId()).size());
     }
 

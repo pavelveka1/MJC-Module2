@@ -86,8 +86,8 @@ public class OrderServiceImpl implements OrderService {
         }
         List<Order> orders;
         List<OrderDto> orderDtoList;
-        page = PaginationUtil.checkPage(page);
-        size = PaginationUtil.checkSizePage(size);
+        int checkedPage = PaginationUtil.checkPage(page);
+        int checkedSize = PaginationUtil.checkSizePage(size);
         if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }

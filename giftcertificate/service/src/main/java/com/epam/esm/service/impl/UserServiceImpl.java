@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -29,8 +28,7 @@ public class UserServiceImpl implements UserService {
 
     private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
     private static final String USER_ROLE = "ROLE_USER";
-    private static final String ADMIN_AUTHORITY = "ROLE_ADMIN";
-    private static final String FORBIDDEN="get_user_forbidden";
+    private static final String FORBIDDEN = "get_user_forbidden";
 
     @Autowired
     private UserDAO userDAO;
@@ -49,15 +47,15 @@ public class UserServiceImpl implements UserService {
     public User getUser(long id) throws IdNotExistServiceException {
         Optional<User> user;
         JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-       if(RoleUtil.hasAdminAuthority(jwtUser)){
-           user = userDAO.findById(id);
-       }else{
-           if(id==jwtUser.getId()){
-               user=userDAO.findById(jwtUser.getId());
-           }else {
-               throw new JwtAuthenticationException(FORBIDDEN);
-           }
-       }
+        if (RoleUtil.hasAdminAuthority(jwtUser)) {
+            user = userDAO.findById(id);
+        } else {
+            if (id == jwtUser.getId()) {
+                user = userDAO.findById(jwtUser.getId());
+            } else {
+                throw new JwtAuthenticationException(FORBIDDEN);
+            }
+        }
         if (!user.isPresent()) {
             throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
         }
@@ -68,9 +66,9 @@ public class UserServiceImpl implements UserService {
     @Override
     @Secured("ROLE_ADMIN")
     public List<User> getUsers(Integer page, Integer size) throws PaginationException {
-        page = PaginationUtil.checkPage(page);
-        size = PaginationUtil.checkSizePage(size);
-        Pageable pageable = PageRequest.of(page - 1, size);
+        int checkedPage = PaginationUtil.checkPage(page);
+        int checkedSize = PaginationUtil.checkSizePage(size);
+        Pageable pageable = PageRequest.of(checkedPage - 1, checkedSize);
         return userDAO.findAll(pageable).getContent();
     }
 
@@ -83,9 +81,7 @@ public class UserServiceImpl implements UserService {
         roles.add(role);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));
         user.setRoles(roles);
-        User reggisteredUser = userDAO.save(user);
-        //duplicate
-        return reggisteredUser;
+        return userDAO.save(user);
     }
 
     @Transactional

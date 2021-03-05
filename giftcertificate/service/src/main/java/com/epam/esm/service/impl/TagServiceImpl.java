@@ -53,7 +53,6 @@ public class TagServiceImpl implements TagService {
     @Override
     public TagDto create(TagDto tagDto) throws DuplicateEntryServiceException {
         Tag addedTag;
-        long id;
         addedTag = modelMapper.map(tagDto, Tag.class);
         try {
             addedTag = tagDAO.save(addedTag);
@@ -98,9 +97,9 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
-        page = PaginationUtil.checkPage(page);
-        size = PaginationUtil.checkSizePage(size);
-        Pageable pageable = PageRequest.of(page - 1, size, Sort.by(ID).ascending());
+        int checkedPage = PaginationUtil.checkPage(page);
+        int checkedSize = PaginationUtil.checkSizePage(size);
+        Pageable pageable = PageRequest.of(checkedPage - 1, checkedSize, Sort.by(ID).ascending());
         List<Tag> tags = tagDAO.findAll(pageable).getContent();
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }

@@ -71,7 +71,7 @@ public class GiftCertificateDAOTest {
 
     @DisplayName("read gift certificate by id ")
     @Test
-    public void readGiftCertificateById() {
+    public void testReadGiftCertificateById() {
         GiftCertificate actual = giftCertificateDAO.readById(new Long(1));
         assertEquals(certificate3.getName(), actual.getName());
         assertEquals(certificate3.getDescription(), actual.getDescription());
@@ -81,14 +81,14 @@ public class GiftCertificateDAOTest {
 
     @DisplayName("should be returned null")
     @Test
-    public void readGiftCertificateByNotExistId() {
-        assertEquals(null, giftCertificateDAO.readById(new Long(Integer.MAX_VALUE)));
+    public void testReadGiftCertificateByNotExistId() {
+        assertNull( giftCertificateDAO.readById(new Long(Integer.MAX_VALUE)));
     }
 
 
     @DisplayName("should be found one certificate")
     @Test
-    public void findAllGiftCertificatesByDescription() throws BadSqlGrammarException {
+    public void testFindAllGiftCertificatesByDescription() throws BadSqlGrammarException {
         List<Tag> tags = new ArrayList<>();
         List<GiftCertificate> actual = giftCertificateDAO.readAll("%", "Забудьте, все", tags,
                 "id", "ASC", 1, 10);
@@ -97,7 +97,7 @@ public class GiftCertificateDAOTest {
 
     @DisplayName("should be found one certificate")
     @Test
-    public void findAllGiftCertificatesByName() throws BadSqlGrammarException {
+    public void testFindAllGiftCertificatesByName() throws BadSqlGrammarException {
         List<Tag> tags = new ArrayList<>();
         List<GiftCertificate> actual = giftCertificateDAO.readAll("Поeлет на дельтоплане", "%", tags,
                 "id", "ASC", 1, 10);
@@ -106,7 +106,7 @@ public class GiftCertificateDAOTest {
 
     @DisplayName("should be found 3 certificates")
     @Test
-    public void findAllGiftCertificatesByTag() throws BadSqlGrammarException {
+    public void testFindAllGiftCertificatesByTag() throws BadSqlGrammarException {
         List<GiftCertificate> actual = giftCertificateDAO.readAll("%", "%", tags, "id",
                 "ASC", 1, 10);
         assertEquals(3, actual.size());
@@ -115,27 +115,27 @@ public class GiftCertificateDAOTest {
 
     @DisplayName("should be return equals name")
     @Test
-    public void readByNotDeletedName() {
+    public void testReadByNotDeletedName() {
         assertEquals("Массаж", giftCertificateDAO.readByNotDeletedName("Массаж").getName());
     }
 
     @DisplayName("should not be equals null")
     @Test
-    public void readByNotDeletedNameNotNull() {
+    public void testReadByNotDeletedNameNotNull() {
         assertNotNull(giftCertificateDAO.readByNotDeletedName("Массаж"));
     }
 
 
     @DisplayName("should be returned null")
     @Test
-    public void readCertificateByDeletedName() {
+    public void testReadCertificateByDeletedName() {
         assertEquals(null, giftCertificateDAO.readByNotDeletedName("Мастefeер-класс"));
     }
 
 
     @DisplayName("should be return equals name")
     @Test
-    public void readByDeletedName() {
+    public void testReadByDeletedName() {
         GiftCertificate certificate = giftCertificateDAO.findById(new Long(5)).get();
         giftCertificateDAO.delete(certificate);
         assertEquals("Рисование", giftCertificateDAO.readByName("Рисование").getName());

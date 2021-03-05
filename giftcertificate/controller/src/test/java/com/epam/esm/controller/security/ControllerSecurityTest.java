@@ -71,31 +71,31 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void getTagsPermitAll() throws Exception {
+    public void testGetTagsPermitAll() throws Exception {
         ResponseEntity<String> result = template.getForEntity(URI_TAGS, String.class);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
-    public void getCertificatesPermitAll() throws Exception {
+    public void testGetCertificatesPermitAll() throws Exception {
         ResponseEntity<String> result = template.getForEntity(URI_CERTIFICATES, String.class);
         assertEquals(HttpStatus.OK, result.getStatusCode());
     }
 
     @Test
-    public void getUsersForbiddenGuest() throws Exception {
+    public void testGetUsersForbiddenGuest() throws Exception {
         ResponseEntity<String> result = template.getForEntity(URI_USERS, String.class);
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test
-    public void getUsersPermitUser() throws Exception {
+    public void testGetUsersPermitUser() throws Exception {
         ResponseEntity<String> result = template.getForEntity(URI_USERS, String.class);
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test
-    public void getTopTagPermitUser() throws Exception {
+    public void testGetTopTagPermitUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = new HttpHeaders();
         headers.add(AUTHORISATION_HEADER, token);
@@ -104,13 +104,13 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void getTopTagForbiddenGuest() throws Exception {
+    public void testGetTopTagForbiddenGuest() throws Exception {
         ResponseEntity<String> result = template.getForEntity(URI_USERS, String.class);
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test
-    public void makeOrderPermitUser() throws Exception {
+    public void testMakeOrderPermitUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<OrderDto> entity = new HttpEntity<>(order, headers);
@@ -119,13 +119,13 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void makeOrderForbiddenGuest() throws Exception {
+    public void testMakeOrderForbiddenGuest() throws Exception {
         ResponseEntity<OrderDto> result = template.postForEntity(URI_ORDER, order, OrderDto.class);
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test
-    public void createTagPermitAdmin() throws Exception {
+    public void testCreateTagPermitAdmin() throws Exception {
         String token = getToken(adminAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<TagDto> entity = new HttpEntity<>(tagDto, headers);
@@ -134,7 +134,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void createTagForbiddenUser() throws Exception {
+    public void testCreateTagForbiddenUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<TagDto> entity = new HttpEntity<>(tagDto, headers);
@@ -143,7 +143,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void createCertificateForbiddenUser() throws Exception {
+    public void testCreateCertificateForbiddenUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<GiftCertificateDto> entity = new HttpEntity<>(giftCertificateDto1, headers);
@@ -153,13 +153,13 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void createCertificateForbiddenGuest() throws Exception {
+    public void testCreateCertificateForbiddenGuest() throws Exception {
         ResponseEntity<GiftCertificateDto> result = template.postForEntity(URI_CERTIFICATES, giftCertificateDto1, GiftCertificateDto.class);
         assertEquals(HttpStatus.FORBIDDEN, result.getStatusCode());
     }
 
     @Test
-    public void createCertificatePermitAdmin() throws Exception {
+    public void testCreateCertificatePermitAdmin() throws Exception {
         String token = getToken(adminAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<GiftCertificateDto> entity = new HttpEntity<>(giftCertificateDto1, headers);
@@ -169,7 +169,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void updateCertificateForbiddenUser() throws Exception {
+    public void testUpdateCertificateForbiddenUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<GiftCertificateDto> entity = new HttpEntity<>(giftCertificateDto2, headers);
@@ -180,7 +180,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void updateCertificateForbiddenGuest() throws Exception {
+    public void testUpdateCertificateForbiddenGuest() throws Exception {
         HttpEntity<GiftCertificateDto> entity = new HttpEntity<>(giftCertificateDto2);
         template.getRestTemplate().setRequestFactory(new HttpComponentsClientHttpRequestFactory());
         ResponseEntity<GiftCertificateDto> result = template.exchange(URI_CERTIFICATE, HttpMethod.PATCH, entity,
@@ -189,7 +189,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void updateCertificatePermitAdmin() throws Exception {
+    public void testUpdateCertificatePermitAdmin() throws Exception {
         String token = getToken(adminAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<GiftCertificateDto> entity = new HttpEntity<>(giftCertificateDto2, headers);
@@ -200,7 +200,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void deleteTagForbiddenUser() throws Exception {
+    public void testDeleteTagForbiddenUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -210,7 +210,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void deleteTagForbiddenGuest() throws Exception {
+    public void testDeleteTagForbiddenGuest() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.add(CONTENT_TYPE_HEADER, CONTENT_TYPE_VALUE);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -220,7 +220,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void deleteTagPermitadmin() throws Exception {
+    public void testDeleteTagPermitAdmin() throws Exception {
         String token = getToken(adminAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -230,7 +230,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void deleteCertificateForbiddenUser() throws Exception {
+    public void testDeleteCertificateForbiddenUser() throws Exception {
         String token = getToken(userAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -240,7 +240,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void deleteCertificateForbiddenGuest() throws Exception {
+    public void testDeleteCertificateForbiddenGuest() throws Exception {
         HttpHeaders headers = new HttpHeaders();
         headers.add(CONTENT_TYPE_HEADER, CONTENT_TYPE_VALUE);
         HttpEntity<String> entity = new HttpEntity<>(headers);
@@ -250,7 +250,7 @@ public class ControllerSecurityTest {
     }
 
     @Test
-    public void deleteCertificatePermitadmin() throws Exception {
+    public void testDeleteCertificatePermitadmin() throws Exception {
         String token = getToken(adminAuthentication);
         HttpHeaders headers = getHeaders(token);
         HttpEntity<String> entity = new HttpEntity<>(headers);
