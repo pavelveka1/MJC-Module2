@@ -1,5 +1,6 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -8,18 +9,6 @@ import org.springframework.validation.Validator;
 
 @Component
 public class GiftCertificateDtoValidator implements Validator {
-    private static final String NAME_PATTERN = ".{2,45}";
-    private static final String DESCRIPTION_PATTERN = ".{2,300}";
-    private static final int MIN_PRICE = 0;
-    private static final int MIN_DURATION = 0;
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
-    private static final String PRICE = "price";
-    private static final String DURATION = "duration";
-    private static final String CERTIFICATE_NAME_INCORRECT = "certificate.name.incorrect";
-    private static final String CERTIFICATE_DESCRIPTION_INCORRECT = "certificate.description.incorrect";
-    private static final String CERTIFICATE_PRICE_INCORRECT = "certificate.price.incorrect";
-    private static final String CERTIFICATE_DURATION_INCORRECT = "certificate.duration.incorrect";
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -29,19 +18,19 @@ public class GiftCertificateDtoValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         GiftCertificateDto giftCertificateDto = (GiftCertificateDto) target;
-        ValidationUtils.rejectIfEmpty(errors, NAME, CERTIFICATE_NAME_INCORRECT);
-        ValidationUtils.rejectIfEmpty(errors, DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
-        ValidationUtils.rejectIfEmpty(errors, PRICE, CERTIFICATE_PRICE_INCORRECT);
-        ValidationUtils.rejectIfEmpty(errors, DURATION, CERTIFICATE_DURATION_INCORRECT);
+        ValidationUtils.rejectIfEmpty(errors, ControllerConstant.NAME, ControllerConstant.CERTIFICATE_NAME_INCORRECT);
+        ValidationUtils.rejectIfEmpty(errors, ControllerConstant.DESCRIPTION, ControllerConstant.CERTIFICATE_DESCRIPTION_INCORRECT);
+        ValidationUtils.rejectIfEmpty(errors, ControllerConstant.PRICE, ControllerConstant.CERTIFICATE_PRICE_INCORRECT);
+        ValidationUtils.rejectIfEmpty(errors, ControllerConstant.DURATION, ControllerConstant.CERTIFICATE_DURATION_INCORRECT);
         if (!errors.hasErrors()) {
-            if (!giftCertificateDto.getName().matches(NAME_PATTERN)) {
-                errors.rejectValue(NAME, CERTIFICATE_NAME_INCORRECT);
-            } else if (!giftCertificateDto.getDescription().matches(DESCRIPTION_PATTERN)) {
-                errors.rejectValue(DESCRIPTION, CERTIFICATE_DESCRIPTION_INCORRECT);
-            } else if (giftCertificateDto.getPrice() <= MIN_PRICE) {
-                errors.rejectValue(PRICE, CERTIFICATE_PRICE_INCORRECT);
-            } else if (giftCertificateDto.getDuration() <= MIN_DURATION) {
-                errors.rejectValue(DURATION, CERTIFICATE_DURATION_INCORRECT);
+            if (!giftCertificateDto.getName().matches(ControllerConstant.NAME_PATTERN)) {
+                errors.rejectValue(ControllerConstant.NAME, ControllerConstant.CERTIFICATE_NAME_INCORRECT);
+            } else if (!giftCertificateDto.getDescription().matches(ControllerConstant.DESCRIPTION_PATTERN)) {
+                errors.rejectValue(ControllerConstant.DESCRIPTION, ControllerConstant.CERTIFICATE_DESCRIPTION_INCORRECT);
+            } else if (giftCertificateDto.getPrice() <= ControllerConstant.MIN_PRICE) {
+                errors.rejectValue(ControllerConstant.PRICE, ControllerConstant.CERTIFICATE_PRICE_INCORRECT);
+            } else if (giftCertificateDto.getDuration() <= ControllerConstant.MIN_DURATION) {
+                errors.rejectValue(ControllerConstant.DURATION, ControllerConstant.CERTIFICATE_DURATION_INCORRECT);
             }
         }
     }

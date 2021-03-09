@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
 import com.epam.esm.service.exception.IdNotExistServiceException;
@@ -13,8 +14,6 @@ import java.util.List;
 @RequestMapping("/api/users")
 public class UserController {
 
-    private static final String DEFAULT_PAGE_SIZE = "1000";
-    private static final String DEFAULT_PAGE_NUMBER = "1";
     /**
      * OrderService is used for work with Orders
      */
@@ -46,8 +45,8 @@ public class UserController {
      * @throws PaginationException        if page number equals zero
      */
     @GetMapping
-    public List<User> getUsers(@RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                               @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+    public List<User> getUsers(@RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_NUMBER) Integer page,
+                               @RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<User> users = userService.getUsers(page, size);
         HATEOASBuilder.addLinksToUsers(users);

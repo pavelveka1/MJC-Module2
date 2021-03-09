@@ -52,6 +52,7 @@ public class UserServiceImplTest {
     @InjectMocks
     private UserServiceImpl userService = new UserServiceImpl();
 
+
     @DisplayName("should be returned User")
     @Test
     public void testGetUser() throws IdNotExistServiceException {
@@ -67,6 +68,7 @@ public class UserServiceImplTest {
             userService.getUser(1);
         });
     }
+
 
     @DisplayName("should be returned list of User")
     @Test

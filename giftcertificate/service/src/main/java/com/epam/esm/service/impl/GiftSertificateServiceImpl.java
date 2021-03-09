@@ -13,6 +13,7 @@ import com.epam.esm.entity.GiftCertificate;
 
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.GiftCertificateService;
+import com.epam.esm.service.constant.ServiceConstant;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.*;
@@ -30,11 +31,6 @@ import org.springframework.transaction.annotation.Transactional;
 public class GiftSertificateServiceImpl implements GiftCertificateService {
 
     private static final Logger logger = Logger.getLogger(GiftSertificateServiceImpl.class);
-    private static final String ANY_SYMBOL = "%";
-    private static final int ZERO = 0;
-    private static final String KEY_NO_SUCH_FIELD = "certificate_no_such_field";
-    private static final String KEY_DUPLICATE_CERTIFICATE = "certificate_duplicate";
-    private static final String KEY_ID_NOT_EXIST = "certificate_no_id";
 
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
@@ -70,7 +66,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         try {
             certificate = giftCertificateDAO.save(certificate);
         } catch (Exception e) {
-            throw new DuplicateEntryServiceException(KEY_DUPLICATE_CERTIFICATE);
+            throw new DuplicateEntryServiceException(ServiceConstant.KEY_DUPLICATE_CERTIFICATE);
         }
         return modelMapper.map(certificate, GiftCertificateDto.class);
     }
@@ -82,7 +78,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         GiftCertificateDto giftCertificateDto;
         foundCertificate = giftCertificateDAO.readById(id);
         if (Objects.isNull(foundCertificate)) {
-            throw new IdNotExistServiceException(KEY_ID_NOT_EXIST);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_ID_NOT_EXIST);
         }
         giftCertificateDto = modelMapper.map(foundCertificate, GiftCertificateDto.class);
         return giftCertificateDto;
@@ -94,7 +90,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
     public void update(GiftCertificateDto modifiedGiftCertificateDto) throws DuplicateEntryServiceException, IdNotExistServiceException {
         GiftCertificate giftCertificateRead = giftCertificateDAO.readById(modifiedGiftCertificateDto.getId());
         if (Objects.isNull(giftCertificateRead)) {
-            throw new IdNotExistServiceException(KEY_ID_NOT_EXIST);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_ID_NOT_EXIST);
         }
         if (StringUtils.isNoneEmpty(modifiedGiftCertificateDto.getName())) {
 
@@ -115,7 +111,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         try {
             giftCertificateDAO.save(giftCertificateRead);
         } catch (Exception e) {
-            throw new DuplicateEntryServiceException(KEY_DUPLICATE_CERTIFICATE);
+            throw new DuplicateEntryServiceException(ServiceConstant.KEY_DUPLICATE_CERTIFICATE);
         }
 
 
@@ -132,7 +128,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
             giftCertificate.setDeleted(true);
             giftCertificateDAO.save(giftCertificate);
         } else {
-            throw new IdNotExistServiceException(KEY_ID_NOT_EXIST);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_ID_NOT_EXIST);
         }
         logger.info("GiftCertificate is deleted from DB");
     }
@@ -147,11 +143,11 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         List<Tag> tagList;
         int checkedPage = PaginationUtil.checkPage(page);
         int checkedSize = PaginationUtil.checkSizePage(size);
-        if (!name.equals(ANY_SYMBOL)) {
-            name = ANY_SYMBOL + name + ANY_SYMBOL;
+        if (!name.equals(ServiceConstant.ANY_SYMBOL)) {
+            name = ServiceConstant.ANY_SYMBOL + name + ServiceConstant.ANY_SYMBOL;
         }
-        if (!description.equals(ANY_SYMBOL)) {
-            description = ANY_SYMBOL + description + ANY_SYMBOL;
+        if (!description.equals(ServiceConstant.ANY_SYMBOL)) {
+            description = ServiceConstant.ANY_SYMBOL + description + ServiceConstant.ANY_SYMBOL;
         }
         if (Objects.nonNull(tags)) {
             tagList = getListTagsByNames(tags);
@@ -161,7 +157,7 @@ public class GiftSertificateServiceImpl implements GiftCertificateService {
         try {
             giftCertificates = giftCertificateDAO.readAll(name, description, tagList, sortType, orderType, checkedPage, checkedSize);
         } catch (InvalidDataAccessApiUsageException e) {
-            throw new RequestParamServiceException(KEY_NO_SUCH_FIELD);
+            throw new RequestParamServiceException(ServiceConstant.KEY_NO_SUCH_FIELD);
         }
         giftCertificateDtoList = giftCertificates.stream()
                 .map(giftCertificate -> modelMapper.map(giftCertificate, GiftCertificateDto.class))

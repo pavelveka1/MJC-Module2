@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -31,7 +32,7 @@ public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
      */
     @Query("select distinct t from Tag t inner join fetch t.giftCertificateList as certificates where " +
             "certificates.id = :certificateId")
-    List<Tag> getTagsByGiftCertificateId(long certificateId);
+    List<Tag> getTagsByGiftCertificateId(@Param("certificateId") long certificateId);
 
     /**
      * Get Tag by name
@@ -56,6 +57,6 @@ public interface TagDAO extends PagingAndSortingRepository<Tag, Long> {
             "group by tags.name order by quantity desc, sum_cost desc limit 1) as T",
             nativeQuery = true
     )
-    Long getIdWidelyUsedByUserTagWithHighestCost(long userId);
+    Long getIdWidelyUsedByUserTagWithHighestCost(@Param("userId") long userId);
 
 }

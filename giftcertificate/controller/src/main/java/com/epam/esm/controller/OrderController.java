@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.OrderService;
 import com.epam.esm.service.dto.OrderDto;
@@ -19,9 +20,6 @@ import java.util.List;
 @RequestMapping("/api/orders")
 public class OrderController {
 
-    private static final String DEFAULT_PAGE_SIZE = "1000";
-    private static final String DEFAULT_PAGE_NUMBER = "1";
-    private static final String KEY_VALIDATION = "order_not_valid";
     /**
      * OrderService is used for work with Orders
      */
@@ -54,7 +52,7 @@ public class OrderController {
                               BindingResult bindingResult) throws ValidationException, CertificateNameNotExistServiceException,
             IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(KEY_VALIDATION);
+            throw new ValidationException(ControllerConstant.KEY_VALIDATION);
         }
         OrderDto orderDtoResult = orderService.makeOrder(orderDto);
         HATEOASBuilder.addLinksToOrder(orderDtoResult);
@@ -73,8 +71,8 @@ public class OrderController {
      */
     @GetMapping("/users/{userId}")
     public List<OrderDto> getOrdersByUserId(@PathVariable long userId,
-                                            @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_NUMBER) Integer page,
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<OrderDto> orderDtoList = orderService.getOrdersByUserId(userId, page, size);
         HATEOASBuilder.addLinksToOrders(orderDtoList);

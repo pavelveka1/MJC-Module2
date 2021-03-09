@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.TagService;
 import com.epam.esm.service.dto.TagDto;
@@ -24,8 +25,6 @@ import java.util.List;
 @RequestMapping("/api/tags")
 public class TagController {
 
-    private static final String DEFAULT_PAGE_SIZE = "1000";
-    private static final String DEFAULT_PAGE_NUMBER = "1";
     /**
      * service is used for operations with TagDto
      */
@@ -53,8 +52,8 @@ public class TagController {
      * @throws PaginationException        if page number equals zero
      */
     @GetMapping
-    public List<TagDto> readAllTags(@RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                    @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+    public List<TagDto> readAllTags(@RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_NUMBER) Integer page,
+                                    @RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_SIZE) Integer size)
             throws IdNotExistServiceException, PaginationException {
         List<TagDto> tagDtoList = service.findAll(page, size);
         HATEOASBuilder.addLinksToTags(tagDtoList);

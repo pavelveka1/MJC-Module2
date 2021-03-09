@@ -3,6 +3,7 @@ package com.epam.esm.dao;
 import com.epam.esm.entity.GiftCertificate;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.PagingAndSortingRepository;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -21,7 +22,7 @@ public interface GiftCertificateDAO extends PagingAndSortingRepository<GiftCerti
      * @return GiftCertificate by name
      */
     @Query("select gc from GiftCertificate as gc where deleted=false and name=:certificateName")
-    GiftCertificate readByNotDeletedName(String certificateName);
+    GiftCertificate readByNotDeletedName(@Param("certificateName") String certificateName);
 
     /**
      * Read certificate by id
@@ -30,7 +31,7 @@ public interface GiftCertificateDAO extends PagingAndSortingRepository<GiftCerti
      * @return GiftCertificate
      */
     @Query("select gc from GiftCertificate as gc where gc.id=:id and gc.deleted=false")
-    GiftCertificate readById(Long id);
+    GiftCertificate readById(@Param("id") Long id);
 
     /**
      * Delete Tag from DB by id

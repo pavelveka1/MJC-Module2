@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.GiftCertificateService;
 import com.epam.esm.service.dto.GiftCertificateDto;
@@ -25,12 +26,7 @@ public class GiftCertificateController {
 
     private static final Logger logger = Logger.getLogger(GiftCertificateController.class);
 
-    private static final String DEFAULT_PAGE_SIZE = "1000";
-    private static final String DEFAULT_PAGE_NUMBER = "1";
-    private static final String DEFAULT_NAME_OR_DESCRIPTION = "%";
-    private static final String DEFAULT_SORT_ORDER = "asc";
-    private static final String DEFAULT_SORT_TYPE = "id";
-    private static final String CERTIFICATE_DTO_NOT_VALID = "GiftCertificateDto_not_valid";
+
     /**
      * GiftCertificateService is used for work with GiftCertificateDto
      */
@@ -64,13 +60,13 @@ public class GiftCertificateController {
      * @throws PaginationException          if page number equals zero
      */
     @GetMapping
-    public List<GiftCertificateDto> readAll(@RequestParam(defaultValue = DEFAULT_NAME_OR_DESCRIPTION) String name,
-                                            @RequestParam(defaultValue = DEFAULT_NAME_OR_DESCRIPTION) String description,
+    public List<GiftCertificateDto> readAll(@RequestParam(defaultValue = ControllerConstant.DEFAULT_NAME_OR_DESCRIPTION) String name,
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_NAME_OR_DESCRIPTION) String description,
                                             @RequestParam(required = false) String[] tags,
-                                            @RequestParam(defaultValue = DEFAULT_SORT_TYPE) String sortType,
-                                            @RequestParam(defaultValue = DEFAULT_SORT_ORDER) String orderType,
-                                            @RequestParam(defaultValue = DEFAULT_PAGE_NUMBER) Integer page,
-                                            @RequestParam(defaultValue = DEFAULT_PAGE_SIZE) Integer size)
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_SORT_TYPE) String sortType,
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_SORT_ORDER) String orderType,
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_NUMBER) Integer page,
+                                            @RequestParam(defaultValue = ControllerConstant.DEFAULT_PAGE_SIZE) Integer size)
             throws RequestParamServiceException, IdNotExistServiceException, PaginationException {
         logger.info("read all giftCertificates");
         List<GiftCertificateDto> giftCertificateDtoList = service.findAll(name, description, tags, sortType,
@@ -106,7 +102,7 @@ public class GiftCertificateController {
     public GiftCertificateDto create(@Valid @RequestBody GiftCertificateDto giftCertificateDto, BindingResult bindingResult)
             throws DuplicateEntryServiceException, ValidationException, IdNotExistServiceException {
         if (bindingResult.hasErrors()) {
-            throw new ValidationException(CERTIFICATE_DTO_NOT_VALID);
+            throw new ValidationException(ControllerConstant.CERTIFICATE_DTO_NOT_VALID);
         }
         GiftCertificateDto giftCertificateDtoResult = service.create(giftCertificateDto);
         HATEOASBuilder.addLinksToGiftCertificate(giftCertificateDtoResult);
@@ -129,7 +125,7 @@ public class GiftCertificateController {
             throws IdNotExistServiceException, ValidationException, DuplicateEntryServiceException {
 
         if (!GiftCertificateDtoPatchValidator.validate(giftCertificateDto)) {
-            throw new ValidationException(CERTIFICATE_DTO_NOT_VALID);
+            throw new ValidationException(ControllerConstant.CERTIFICATE_DTO_NOT_VALID);
         }
         giftCertificateDto.setId(id);
         service.update(giftCertificateDto);

@@ -5,6 +5,7 @@ import com.epam.esm.dao.UserDAO;
 import com.epam.esm.entity.Role;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.UserService;
+import com.epam.esm.service.constant.ServiceConstant;
 import com.epam.esm.service.dto.UserDto;
 import com.epam.esm.service.exception.IdNotExistServiceException;
 import com.epam.esm.service.exception.JwtAuthenticationException;
@@ -25,10 +26,6 @@ import java.util.*;
 
 @Service
 public class UserServiceImpl implements UserService {
-
-    private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
-    private static final String USER_ROLE = "ROLE_USER";
-    private static final String FORBIDDEN = "get_user_forbidden";
 
     @Autowired
     private UserDAO userDAO;
@@ -53,11 +50,11 @@ public class UserServiceImpl implements UserService {
             if (id == jwtUser.getId()) {
                 user = userDAO.findById(jwtUser.getId());
             } else {
-                throw new JwtAuthenticationException(FORBIDDEN);
+                throw new JwtAuthenticationException(ServiceConstant.USER_FORBIDDEN);
             }
         }
         if (!user.isPresent()) {
-            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_USER_ID_NOT_EXIST);
         }
         return user.get();
     }
@@ -76,7 +73,7 @@ public class UserServiceImpl implements UserService {
     @Transactional
     public User register(UserDto userDto) {
         User user = modelMapper.map(userDto, User.class);
-        Role role = roleDAO.findRoleByName(USER_ROLE);
+        Role role = roleDAO.findRoleByName(ServiceConstant.USER_ROLE);
         List<Role> roles = new ArrayList<>();
         roles.add(role);
         user.setPassword(bCryptPasswordEncoder.encode(user.getPassword()));

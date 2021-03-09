@@ -7,6 +7,7 @@ import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Order;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.OrderService;
+import com.epam.esm.service.constant.ServiceConstant;
 import com.epam.esm.service.dto.OrderDto;
 import com.epam.esm.service.exception.CertificateNameNotExistServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
@@ -28,13 +29,6 @@ import java.util.stream.Collectors;
 
 @Service
 public class OrderServiceImpl implements OrderService {
-
-    private static final String KEY_CERTIFICATE_NAME_NOT_EXIST = "certificate_name_not_exist";
-    private static final String KEY_ID_NOT_EXSIST = "order_id_not_exist";
-    private static final String KEY_USER_ID_NOT_EXIST = "user_id_not_exist";
-    private static final int ZERO = 0;
-    private static final String ADMIN_AUTHORITY = "ROLE_ADMIN";
-    private static final String FORBIDDEN = "get_order_forbidden";
 
     @Autowired
     private GiftCertificateDAO giftCertificateDAO;
@@ -81,7 +75,7 @@ public class OrderServiceImpl implements OrderService {
             if (userId == jwtUser.getId()) {
                 user = userDAO.findById(jwtUser.getId());
             } else {
-                throw new JwtAuthenticationException(FORBIDDEN);
+                throw new JwtAuthenticationException(ServiceConstant.FORBIDDEN);
             }
         }
         List<Order> orders;
@@ -89,7 +83,7 @@ public class OrderServiceImpl implements OrderService {
         int checkedPage = PaginationUtil.checkPage(page);
         int checkedSize = PaginationUtil.checkSizePage(size);
         if (!user.isPresent()) {
-            throw new IdNotExistServiceException(KEY_USER_ID_NOT_EXIST);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_USER_ID_NOT_EXIST);
         }
         orders = orderDAO.getOrdersByUserId(user.get().getId());
         orderDtoList = orders.stream()
@@ -107,18 +101,18 @@ public class OrderServiceImpl implements OrderService {
         JwtUser jwtUser = (JwtUser) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         order = orderDAO.findById(id);
         if (!order.isPresent()) {
-            throw new IdNotExistServiceException(KEY_ID_NOT_EXSIST);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_ID_NOT_EXSIST);
         }
         if (!RoleUtil.hasAdminAuthority(jwtUser)) {
             if (jwtUser.getId() != order.get().getUser().getId()) {
-                throw new JwtAuthenticationException(FORBIDDEN);
+                throw new JwtAuthenticationException(ServiceConstant.FORBIDDEN);
             }
         }
         return modelMapper.map(order.get(), OrderDto.class);
     }
 
     private int calculateOrderCost(List<GiftCertificate> giftCertificateList) {
-        int cost = ZERO;
+        int cost = ServiceConstant.ZERO;
         for (GiftCertificate giftCertificate : giftCertificateList) {
             cost = cost + giftCertificate.getPrice();
         }
@@ -131,7 +125,8 @@ public class OrderServiceImpl implements OrderService {
         for (GiftCertificate giftCertificate : giftCertificateList) {
             GiftCertificate giftCertificate1 = giftCertificateDAO.readByNotDeletedName(giftCertificate.getName());
             if (Objects.isNull(giftCertificate1)) {
-                throw new CertificateNameNotExistServiceException(KEY_CERTIFICATE_NAME_NOT_EXIST, giftCertificate.getName());
+                throw new CertificateNameNotExistServiceException(ServiceConstant.KEY_CERTIFICATE_NAME_NOT_EXIST,
+                        giftCertificate.getName());
             }
             certificates.add(giftCertificate1);
         }

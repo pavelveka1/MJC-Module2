@@ -90,6 +90,7 @@ public class OrderServiceImplTest {
     @Mock
     private OrderServiceImpl orderService = new OrderServiceImpl();
 
+
     @DisplayName("should be returned OrderDto")
     @Test
     public void testMakeOrder() throws CertificateNameNotExistServiceException, IdNotExistServiceException {
@@ -147,5 +148,6 @@ public class OrderServiceImplTest {
             orderService.getOrder(1);
         });
     }
+
 
 }

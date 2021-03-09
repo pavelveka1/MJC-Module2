@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.entity.User;
 import com.epam.esm.service.dto.GiftCertificateDto;
 import com.epam.esm.service.dto.OrderDto;
@@ -13,8 +14,6 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 public class HATEOASBuilder {
-
-    private static final Integer ZERO = 0;
 
     public static void addLinksToGiftCertificates(List<GiftCertificateDto> giftCertificateDtoList) throws IdNotExistServiceException {
         List<GiftCertificateDto> certificatesHaveLink = new ArrayList<>();
@@ -33,7 +32,7 @@ public class HATEOASBuilder {
     }
 
     public static void addLinksToTags(List<TagDto> tagDtoList) throws IdNotExistServiceException {
-        if (tagDtoList.size() != ZERO) {
+        if (tagDtoList.size() != ControllerConstant.ZERO) {
             for (TagDto tagDto : tagDtoList) {
                 tagDto.add(linkTo(methodOn(TagController.class).readTagById(tagDto.getId())).withSelfRel());
             }
@@ -55,7 +54,7 @@ public class HATEOASBuilder {
     }
 
     public static void addLinksToOrders(List<OrderDto> orderDtoList) throws IdNotExistServiceException {
-        if (orderDtoList.size() != ZERO) {
+        if (orderDtoList.size() != ControllerConstant.ZERO) {
             orderDtoList.get(0).getUser().add(linkTo(methodOn(UserController.class).getUser(orderDtoList.get(0).getUser().getId())).withSelfRel());
             for (OrderDto orderDto : orderDtoList) {
                 addAllLinksToOrder(orderDto);

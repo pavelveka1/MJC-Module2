@@ -8,6 +8,7 @@ import com.epam.esm.dao.GiftCertificateDAO;
 import com.epam.esm.dao.TagDAO;
 import com.epam.esm.entity.Tag;
 import com.epam.esm.service.TagService;
+import com.epam.esm.service.constant.ServiceConstant;
 import com.epam.esm.service.dto.TagDto;
 import com.epam.esm.service.exception.DuplicateEntryServiceException;
 import com.epam.esm.service.exception.IdNotExistServiceException;
@@ -24,11 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class TagServiceImpl implements TagService {
-
-    private static final String KEY_TAG_DUPLICATE = "tag_duplicate";
-    private static final String KEY_TAG_ID_NOT_FOUND = "tag_id_not_found";
-    private static final String KEY_USER_NOT_FOUND_OR_NOR_ORDERS = "user_not_found_or_not_orders";
-    private static final String ID = "id";
 
     @Autowired
     private TagDAO tagDAO;
@@ -57,7 +53,7 @@ public class TagServiceImpl implements TagService {
         try {
             addedTag = tagDAO.save(addedTag);
         } catch (Exception e) {
-            throw new DuplicateEntryServiceException(KEY_TAG_DUPLICATE);
+            throw new DuplicateEntryServiceException(ServiceConstant.KEY_TAG_DUPLICATE);
         }
         return modelMapper.map(addedTag, TagDto.class);
     }
@@ -73,11 +69,11 @@ public class TagServiceImpl implements TagService {
             if (readTag.isPresent()) {
                 tag = readTag.get();
             } else {
-                throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
+                throw new IdNotExistServiceException(ServiceConstant.KEY_TAG_ID_NOT_FOUND);
             }
             tagDto = modelMapper.map(tag, TagDto.class);
         } catch (IllegalArgumentException e) {
-            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_TAG_ID_NOT_FOUND);
         }
 
         return tagDto;
@@ -90,7 +86,7 @@ public class TagServiceImpl implements TagService {
     public void delete(long id) throws IdNotExistServiceException {
         Optional<Tag> tag = tagDAO.findById(id);
         if (!tag.isPresent()) {
-            throw new IdNotExistServiceException(KEY_TAG_ID_NOT_FOUND);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_TAG_ID_NOT_FOUND);
         }
         tagDAO.delete(tag.get());
     }
@@ -99,7 +95,7 @@ public class TagServiceImpl implements TagService {
     public List<TagDto> findAll(Integer page, Integer size) throws PaginationException {
         int checkedPage = PaginationUtil.checkPage(page);
         int checkedSize = PaginationUtil.checkSizePage(size);
-        Pageable pageable = PageRequest.of(checkedPage - 1, checkedSize, Sort.by(ID).ascending());
+        Pageable pageable = PageRequest.of(checkedPage - 1, checkedSize, Sort.by(ServiceConstant.ID).ascending());
         List<Tag> tags = tagDAO.findAll(pageable).getContent();
         return tags.stream().map(tag -> modelMapper.map(tag, TagDto.class)).collect(Collectors.toList());
     }
@@ -112,7 +108,7 @@ public class TagServiceImpl implements TagService {
         try {
             idTag = tagDAO.getIdWidelyUsedByUserTagWithHighestCost(userId);
         } catch (NullPointerException e) {
-            throw new IdNotExistServiceException(KEY_USER_NOT_FOUND_OR_NOR_ORDERS);
+            throw new IdNotExistServiceException(ServiceConstant.KEY_USER_NOT_FOUND_OR_NOR_ORDERS);
         }
         return modelMapper.map(tagDAO.findById(idTag).get(), TagDto.class);
     }

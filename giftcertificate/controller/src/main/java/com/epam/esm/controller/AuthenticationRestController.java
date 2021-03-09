@@ -1,5 +1,6 @@
 package com.epam.esm.controller;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.entity.User;
 import com.epam.esm.exceptionhandler.ValidationException;
 import com.epam.esm.service.UserService;
@@ -24,11 +25,6 @@ import java.util.Objects;
 @RequestMapping(value = "/api/auth/")
 public class AuthenticationRestController {
 
-    private static final String TOKEN = "token";
-    private static final String DUPLICATE_USERNAME = "duplicate_username";
-    private static final String AUTHENTICATION_EXCEPTION = "authentication_exception";
-    private static final String USER_DTO_NOT_VALID = "user_not_valid";
-
     private final AuthenticationManager authenticationManager;
 
     private final JwtTokenProvider jwtTokenProvider;
@@ -52,22 +48,22 @@ public class AuthenticationRestController {
             User user = userService.findByUserName(username);
             String token = jwtTokenProvider.createToken(username, user.getRoles());
             Map<Object, Object> response = new HashMap<>();
-            response.put(TOKEN, token);
+            response.put(ControllerConstant.TOKEN, token);
             return ResponseEntity.ok(response);
         } catch (AuthenticationException e) {
-            throw new BadCredentialsException(AUTHENTICATION_EXCEPTION);
+            throw new BadCredentialsException(ControllerConstant.AUTHENTICATION_EXCEPTION);
         }
     }
 
     @PostMapping("signUp")
     public ResponseEntity signUp(@RequestBody UserDto userDto) throws UserRegistrationException, ValidationException {
         if (!UserDtoValidator.validate(userDto)) {
-            throw new ValidationException(USER_DTO_NOT_VALID);
+            throw new ValidationException(ControllerConstant.USER_DTO_NOT_VALID);
         }
         String username = userDto.getUsername();
         User user = userService.findByUserName(username);
         if (Objects.nonNull(user)) {
-            throw new UserRegistrationException(DUPLICATE_USERNAME);
+            throw new UserRegistrationException(ControllerConstant.DUPLICATE_USERNAME);
         }
         user = userService.register(userDto);
         return ResponseEntity.ok(user);

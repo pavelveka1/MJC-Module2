@@ -1,5 +1,6 @@
 package com.epam.esm.configuration;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.service.security.JwtConfigurer;
 import com.epam.esm.service.security.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,20 +22,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final JwtTokenProvider jwtTokenProvider;
-
-    private static final String ADMIN_ENDPOINT = "/api/**";
-    private static final String LOGIN_ENDPOINT = "/api/auth/**";
-    private static final String ORDER_ENDPOINT = "/api/orders";
-    private static final String READ_ENDPOINT = "/api/**";
-    private static final String READ_TAGS_ENDPOINT = "/api/tags";
-    private static final String READ_TAG_ENDPOINT = "/api/tags/*";
-    private static final String READ_TOP_TAG_USER = "/api/tags/toptag/**";
-    private static final String READ_USERS = "/api/users";
-    private static final String READ_USER = "/api/users/*";
-    private static final String READ_CERTIFICATES_ENDPOINT = "/api/certificates";
-    private static final String READ_CERTIFICATE_ENDPOINT = "/api/certificates/**";
-    private static final String USER_ROLE = "USER";
-    private static final String ADMIN_ROLE = "ADMIN";
 
     @Autowired
     public SecurityConfig(JwtTokenProvider jwtTokenProvider) {
@@ -58,15 +45,18 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 .and()
                 .authorizeRequests()
-                .antMatchers(LOGIN_ENDPOINT).permitAll()
-                .antMatchers(HttpMethod.GET, READ_TAG_ENDPOINT, READ_TAGS_ENDPOINT, READ_CERTIFICATE_ENDPOINT,
-                        READ_CERTIFICATES_ENDPOINT).permitAll()
-                .antMatchers(HttpMethod.GET, READ_ENDPOINT, READ_USER).hasRole(USER_ROLE)
-                .antMatchers(HttpMethod.GET, READ_USERS, READ_TOP_TAG_USER).hasRole(ADMIN_ROLE)
-                .antMatchers(HttpMethod.POST, ORDER_ENDPOINT).hasRole(USER_ROLE)
-                .antMatchers(HttpMethod.POST, ADMIN_ENDPOINT).hasRole(ADMIN_ROLE)
-                .antMatchers(HttpMethod.DELETE, ADMIN_ENDPOINT).hasRole(ADMIN_ROLE)
-                .antMatchers(HttpMethod.PATCH, ADMIN_ENDPOINT).hasRole(ADMIN_ROLE)
+                .antMatchers(ControllerConstant.LOGIN_ENDPOINT).permitAll()
+                .antMatchers(HttpMethod.GET, ControllerConstant.READ_TAG_ENDPOINT, ControllerConstant.READ_TAGS_ENDPOINT,
+                        ControllerConstant.READ_CERTIFICATE_ENDPOINT, ControllerConstant.READ_CERTIFICATES_ENDPOINT)
+                .permitAll()
+                .antMatchers(HttpMethod.GET, ControllerConstant.READ_ENDPOINT, ControllerConstant.READ_USER)
+                .hasRole(ControllerConstant.USER_ROLE)
+                .antMatchers(HttpMethod.GET, ControllerConstant.READ_USERS, ControllerConstant.READ_TOP_TAG_USER,
+                        ControllerConstant.ACTUATOR_ENDPOINT).hasRole(ControllerConstant.ADMIN_ROLE)
+                .antMatchers(HttpMethod.POST, ControllerConstant.ORDER_ENDPOINT).hasRole(ControllerConstant.USER_ROLE)
+                .antMatchers(HttpMethod.POST, ControllerConstant.ADMIN_ENDPOINT).hasRole(ControllerConstant.ADMIN_ROLE)
+                .antMatchers(HttpMethod.DELETE, ControllerConstant.ADMIN_ENDPOINT).hasRole(ControllerConstant.ADMIN_ROLE)
+                .antMatchers(HttpMethod.PATCH, ControllerConstant.ADMIN_ENDPOINT).hasRole(ControllerConstant.ADMIN_ROLE)
                 .anyRequest().authenticated()
                 .and()
                 .apply(new JwtConfigurer(jwtTokenProvider));

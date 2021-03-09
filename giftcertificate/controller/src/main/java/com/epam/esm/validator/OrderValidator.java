@@ -1,5 +1,6 @@
 package com.epam.esm.validator;
 
+import com.epam.esm.constant.ControllerConstant;
 import com.epam.esm.service.dto.OrderDto;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
@@ -8,9 +9,6 @@ import org.springframework.validation.Validator;
 
 @Component
 public class OrderValidator implements Validator {
-    private static final String CERTIFICATES = "certificates";
-    private static final String EMPTY_ORDER = "order.empty";
-    private static final Integer ZERO = 0;
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -20,10 +18,10 @@ public class OrderValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         OrderDto orderDto = (OrderDto) target;
-        ValidationUtils.rejectIfEmpty(errors, CERTIFICATES, EMPTY_ORDER);
+        ValidationUtils.rejectIfEmpty(errors, ControllerConstant.CERTIFICATES, ControllerConstant.EMPTY_ORDER);
         if (!errors.hasErrors()) {
-            if (orderDto.getCertificates().size() == ZERO) {
-                errors.rejectValue(CERTIFICATES, EMPTY_ORDER);
+            if (orderDto.getCertificates().size() == ControllerConstant.ZERO) {
+                errors.rejectValue(ControllerConstant.CERTIFICATES, ControllerConstant.EMPTY_ORDER);
             }
         }
     }

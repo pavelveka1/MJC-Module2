@@ -116,13 +116,13 @@ public class GiftCertificateDAOTest {
     @DisplayName("should be return equals name")
     @Test
     public void testReadByNotDeletedName() {
-        assertEquals("Массаж", giftCertificateDAO.readByNotDeletedName("Массаж").getName());
+        assertEquals("Поeлет на дельтоплане", giftCertificateDAO.readByNotDeletedName("Поeлет на дельтоплане").getName());
     }
 
     @DisplayName("should not be equals null")
     @Test
     public void testReadByNotDeletedNameNotNull() {
-        assertNotNull(giftCertificateDAO.readByNotDeletedName("Массаж"));
+        assertNotNull(giftCertificateDAO.readByNotDeletedName("Рисование"));
     }
 
 

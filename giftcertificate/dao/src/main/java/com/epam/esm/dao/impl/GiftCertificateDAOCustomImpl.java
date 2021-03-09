@@ -1,5 +1,6 @@
 package com.epam.esm.dao.impl;
 
+import com.epam.esm.constant.DAOConstant;
 import com.epam.esm.dao.GiftCertificateDAOCustom;
 import com.epam.esm.entity.GiftCertificate;
 import com.epam.esm.entity.Tag;
@@ -7,23 +8,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
-import javax.persistence.criteria.CriteriaBuilder;
-import javax.persistence.criteria.CriteriaQuery;
-import javax.persistence.criteria.Predicate;
-import javax.persistence.criteria.Root;
+import javax.persistence.criteria.*;
 import java.util.List;
 
 public class GiftCertificateDAOCustomImpl implements GiftCertificateDAOCustom {
-
-    private static final String NAME = "name";
-    private static final String DESCRIPTION = "description";
-    private static final String TAGS = "tags";
-    private static final int ONE = 1;
-    private static final int TWO = 2;
-    private static final int THREE = 3;
-    private static final int ZERO = 0;
-    private static final String DELETED = "deleted";
-    private static final String DESC = "desc";
 
     @Autowired
     private EntityManager entityManager;
@@ -38,7 +26,7 @@ public class GiftCertificateDAOCustomImpl implements GiftCertificateDAOCustom {
         Predicate[] predicates = getSuitablePredicates(name, description, tags, criteriaBuilder, giftCertificateRoot);
         setOrderingAndPredicates(sortType, orderType, criteriaBuilder, giftCertificateRoot, predicates, criteriaQuery);
         TypedQuery<GiftCertificate> query = entityManager.createQuery(criteriaQuery);
-        query.setFirstResult((page - ONE) * size);
+        query.setFirstResult((page - DAOConstant.ONE) * size);
         query.setMaxResults(size);
         return query.getResultList();
 
@@ -46,8 +34,9 @@ public class GiftCertificateDAOCustomImpl implements GiftCertificateDAOCustom {
 
     private Predicate[] getPredicatesForTags(List<Tag> tags, CriteriaBuilder cb, Root<GiftCertificate> giftCertificateRoot) {
         Predicate[] predicates = new Predicate[tags.size()];
-        for (int i = ZERO; i < tags.size(); i++) {
-            Predicate predicate = cb.isMember(tags.get(i), giftCertificateRoot.get(TAGS));
+        for (int i = DAOConstant.ZERO; i < tags.size(); i++) {
+            Predicate predicate = cb.like(giftCertificateRoot.join(DAOConstant.TAGS).get(DAOConstant.NAME),
+                    DAOConstant.ANY_SYMBOLS + tags.get(i).getName() + DAOConstant.ANY_SYMBOLS);
             predicates[i] = predicate;
         }
         return predicates;
@@ -55,16 +44,16 @@ public class GiftCertificateDAOCustomImpl implements GiftCertificateDAOCustom {
 
     private Predicate[] getSuitablePredicates(String name, String description, List<Tag> tags,
                                               CriteriaBuilder criteriaBuilder, Root<GiftCertificate> giftCertificateRoot) {
-        Predicate predicateNotDeleted = criteriaBuilder.notEqual(giftCertificateRoot.get(DELETED), true);
-        Predicate predicateLikeName = criteriaBuilder.like(giftCertificateRoot.get(NAME), name);
-        Predicate predicateLikeDescription = criteriaBuilder.like(giftCertificateRoot.get(DESCRIPTION), description);
+        Predicate predicateNotDeleted = criteriaBuilder.notEqual(giftCertificateRoot.get(DAOConstant.DELETED), true);
+        Predicate predicateLikeName = criteriaBuilder.like(giftCertificateRoot.get(DAOConstant.NAME), name);
+        Predicate predicateLikeDescription = criteriaBuilder.like(giftCertificateRoot.get(DAOConstant.DESCRIPTION), description);
         Predicate[] predicatesForTags = getPredicatesForTags(tags, criteriaBuilder, giftCertificateRoot);
-        Predicate[] predicates = new Predicate[predicatesForTags.length + THREE];
-        predicates[ZERO] = predicateNotDeleted;
-        predicates[ONE] = predicateLikeName;
-        predicates[TWO] = predicateLikeDescription;
-        for (int i = THREE; i < predicates.length; i++) {
-            predicates[i] = predicatesForTags[i - THREE];
+        Predicate[] predicates = new Predicate[predicatesForTags.length + DAOConstant.THREE];
+        predicates[DAOConstant.ZERO] = predicateNotDeleted;
+        predicates[DAOConstant.ONE] = predicateLikeName;
+        predicates[DAOConstant.TWO] = predicateLikeDescription;
+        for (int i = DAOConstant.THREE; i < predicates.length; i++) {
+            predicates[i] = predicatesForTags[i - DAOConstant.THREE];
         }
         return predicates;
     }
@@ -72,7 +61,7 @@ public class GiftCertificateDAOCustomImpl implements GiftCertificateDAOCustom {
     private void setOrderingAndPredicates(String sortType, String orderType, CriteriaBuilder cb,
                                           Root<GiftCertificate> giftCertificateRoot, Predicate[] predicates,
                                           CriteriaQuery<GiftCertificate> criteriaQuery) {
-        if (orderType.equals(DESC)) {
+        if (orderType.equals(DAOConstant.DESC)) {
             criteriaQuery.select(giftCertificateRoot).where(cb.and(predicates))
                     .orderBy(cb.desc(giftCertificateRoot.get(sortType)));
         } else {
